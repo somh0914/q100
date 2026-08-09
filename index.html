@@ -70,6 +70,11 @@ button{font-family:inherit}
 .list-row:last-child{border-bottom:none}
 .avatar{border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 auto;max-width:100%;overflow:hidden;white-space:nowrap}
 .backfab{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:max(14px, calc(50% - 246px));z-index:56;display:flex;align-items:center;gap:5px;padding:13px 20px;border-radius:999px;background:#fff;color:#000;font-size:15px;font-weight:900;border:none;box-shadow:0 8px 28px rgba(0,0,0,.6);cursor:pointer}
+.fabrow{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:max(14px, calc(50% - 246px));right:max(14px, calc(50% - 246px));z-index:56;display:flex;gap:7px}
+.fab{height:46px;border:none;border-radius:999px;font-weight:900;box-shadow:0 8px 26px rgba(0,0,0,.55);cursor:pointer;font-family:inherit}
+.fab.mid{flex:0 0 auto;padding:0 21px;background:#fff;color:#000;font-size:15px}
+.fab.side{flex:1 1 0;min-width:0;padding:0 13px;background:#1c1c1e;color:#e8e8e8;border:1px solid #3a3a3c;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fab.side.ph{visibility:hidden}
 .rank-n{width:20px;text-align:center;font-size:14.5px;font-weight:900;color:#666;font-variant-numeric:tabular-nums}
 .ccard{border-radius:18px;border:1px solid #1f1f1f;padding:15px;cursor:pointer;position:relative;overflow:hidden;background:#121212}
 .ccard .nm{font-size:17px;font-weight:900;margin-top:10px}
@@ -3925,7 +3930,8 @@ const st = {
   fav: new Set(), cmp: new Set(), adv: false,
   ind: '전체', trait: null, q: '', sort: 'qqq',
   rank: 'price', homeRank: 'price', retBase: 'ytd', rankAll: false, homeRankAll: false,
-  cur: null, prev: 'home', dtab: 'ov'
+  cur: null, prev: 'home', dtab: 'ov',
+  navList: null, encList: null
 };
 const doy = (() => { const n = new Date(); return Math.floor((n - new Date(n.getFullYear(),0,0)) / 864e5); })();
 const today = C[doy % C.length];
@@ -4092,7 +4098,7 @@ function ccard(c){
     <div class="cv2">${wv} <span style="color:${cc};font-size:11.5px">${chg}</span></div>
     <div class="cs">$${b}</div>`;
   }
-  return `<div class="ccard" onclick="openCompany('${c.id}')" style="background:linear-gradient(155deg,${c.color}24,#121212 58%)">
+  return `<div class="ccard" onclick="openEnc('${c.id}')" style="background:linear-gradient(155deg,${c.color}24,#121212 58%)">
     <div class="row sb">${avatar(c,38,12)}<span class="tiny" style="font-weight:800;color:#8f8f8f">${c.ticker}</span></div>
     <div class="tg" style="margin-top:10px">${c.name}</div>
     <div class="ck">시가총액 · <b style="color:#bbb">QQQ ${c.qqq}%</b></div>
@@ -4168,6 +4174,11 @@ function epsBadge(c){
   return `<div style="font-size:11.5px;font-weight:700;color:${col};margin-top:1px">${t}</div>`;
 }
 function rankDesc(k){ const d=RANKS[k].desc; return typeof d==='function'? d() : d; }
+function rankIds(key){
+  const r=RANKS[key];
+  return C.filter(c=>isFinite(r.get(c))).sort((a,b)=>r.get(b)-r.get(a)).map(c=>c.id);
+}
+function openRank(key,id){ st.navList=rankIds(key); openCompany(id,true); }
 function rankList(key, n=5){
   const r=RANKS[key];
   const arr=C.filter(c=>isFinite(r.get(c))).sort((a,b)=>r.get(b)-r.get(a)).slice(0,n);
@@ -4175,7 +4186,7 @@ function rankList(key, n=5){
   return arr.map((c,i)=>{
     const v=r.get(c);
     const vc = key==='price' ? (v>=0?'#4ade80':'#f87171') : '#fff';
-    return `<div class="list-row" onclick="openCompany('${c.id}')">
+    return `<div class="list-row" onclick="openRank('${key}','${c.id}')">
     <span class="rank-n">${i+1}</span>${avatar(c,34,11)}
     <div style="flex:1;min-width:0"><span class="tiny" style="font-weight:700;color:#c9c9c9">${c.name}</span>
       <div class="hbar" style="margin-top:5px;height:5px"><i style="width:${Math.max(Math.abs(v)/max*100,3).toFixed(0)}%;background:${c.color}"></i></div></div>
@@ -4279,11 +4290,13 @@ function renderCGrid(){
   const s={qqq:(a,b)=>b.qqq-a.qqq, cap:(a,b)=>b.capB-a.capB, growth:(a,b)=>lastG(b)-lastG(a),
     score:(a,b)=>b.score.total-a.score.total, name:(a,b)=>a.name.localeCompare(b.name)};
   arr.sort(s[st.sort]);
+  st.encList = arr.map(c=>c.id);
   $('#c-grid').innerHTML = arr.length? arr.map(ccard).join('')
     : `<div class="empty" style="grid-column:1/-1"><div class="e-ico">⌕</div>조건에 맞는 기업이 없습니다.<br>다른 검색어나 필터를 시도해 보세요.</div>`;
   $('#c-cnt').textContent = arr.length+'개 기업';
 }
 function goCompaniesQ(q){ st.q=q; st.ind='전체'; st.trait=null; nav('companies'); }
+function openEnc(id){ st.navList=st.encList; openCompany(id,true); }
 function toggleHomeRank(){
   st.homeRankAll=!st.homeRankAll; renderHome();
   if(!st.homeRankAll){ const el=document.getElementById('home-seg'); if(el) el.scrollIntoView({block:'center'}); }
@@ -4293,7 +4306,8 @@ function toggleDiscRank(){
   if(!st.rankAll){ const el=document.getElementById('disc-seg'); if(el) el.scrollIntoView({block:'center'}); }
 }
 /* ---------- COMPANY DETAIL ---------- */
-function openCompany(id){
+function openCompany(id, keep){
+  if(!keep) st.navList=null;
   st.cur=id; st.dtab='ov';
   const c=byId[id];
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));
@@ -4309,6 +4323,9 @@ function showDTab(t){
 }
 function buildDetail(c){
   const fav=st.fav.has(c.id), inCmp=st.cmp.has(c.id);
+  const ord=(st.navList && st.navList.indexOf(c.id)>=0)? st.navList : C.slice().sort((a,b)=>b.qqq-a.qqq).map(x=>x.id);
+  const ni=ord.indexOf(c.id);
+  const pv=ni>0? byId[ord[ni-1]] : null, nx=ni<ord.length-1? byId[ord[ni+1]] : null;
   const g=lastG(c), gOk=isFinite(g);
   const e=c.fin.eps, ea=e[e.length-2], eb=e[e.length-1];
   const epsW=Math.round(eb*FX).toLocaleString('ko-KR')+'원';
@@ -4348,7 +4365,11 @@ function buildDetail(c){
   <div class="dsec" data-t="va">${secVal(c)}</div>
   <div class="dsec" data-t="ct">${secContent(c)}</div>
   <div class="disc">${DB.meta.note}</div>
-  <button class="backfab" onclick="back()">‹ 뒤로</button>`;
+  <div class="fabrow">
+    ${pv?`<button class="fab side" onclick="openCompany('${pv.id}',true)">‹ ${krName(pv)}</button>`:'<button class="fab side ph"></button>'}
+    <button class="fab mid" onclick="back()">뒤로</button>
+    ${nx?`<button class="fab side" onclick="openCompany('${nx.id}',true)">${krName(nx)} ›</button>`:'<button class="fab side ph"></button>'}
+  </div>`;
 }
 function secOverview(c){
   const sc=c.score;
