@@ -18,7 +18,7 @@ html,body{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFon
 body{display:flex;justify-content:center;min-height:100vh}
 button{font-family:inherit}
 #app{position:relative;width:100%;max-width:520px;min-height:100vh;background:#050505;overflow-x:hidden;box-shadow:0 0 90px rgba(0,0,0,.9)}
-.scr{display:none;padding:0 16px 110px;min-height:100vh}
+.scr{display:none;padding:16px 16px 110px;min-height:100vh}
 .scr.active{display:block;animation:fade .22s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .hdr{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:16px 2px 10px;background:linear-gradient(#050505 78%,rgba(5,5,5,0))}
@@ -68,13 +68,18 @@ button{font-family:inherit}
 .hbar i{display:block;height:100%;border-radius:99px}
 .list-row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid #171717;cursor:pointer}
 .list-row:last-child{border-bottom:none}
-.avatar{border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 auto}
+.avatar{border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 auto;max-width:100%;overflow:hidden;white-space:nowrap}
+.backfab{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:max(14px, calc(50% - 246px));z-index:56;display:flex;align-items:center;gap:5px;padding:13px 20px;border-radius:999px;background:#fff;color:#000;font-size:15px;font-weight:900;border:none;box-shadow:0 8px 28px rgba(0,0,0,.6);cursor:pointer}
 .rank-n{width:20px;text-align:center;font-size:14.5px;font-weight:900;color:#666;font-variant-numeric:tabular-nums}
 .ccard{border-radius:18px;border:1px solid #1f1f1f;padding:15px;cursor:pointer;position:relative;overflow:hidden;background:#121212}
 .ccard .nm{font-size:17px;font-weight:900;margin-top:10px}
 .ccard .tg{font-size:12px;color:#8d8d8d;font-weight:600;margin-top:1px}
 .ccard .cap{font-size:18px;font-weight:900;margin-top:10px;font-variant-numeric:tabular-nums}
 .ccard .qq{font-size:11.5px;color:#999;font-weight:700;margin-top:2px}
+.ccard .ck{font-size:10.5px;color:#8a8a8a;font-weight:700;margin-top:11px}
+.ccard .cv{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:1px;letter-spacing:-.3px}
+.ccard .cv2{font-size:14.5px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:1px}
+.ccard .cs{font-size:10.5px;color:#767676;font-variant-numeric:tabular-nums}
 .search{width:100%;background:#121212;border:1px solid #242424;border-radius:13px;padding:13px 15px;font-size:14.5px;color:#fff;outline:none;font-family:inherit}
 .search::placeholder{color:#5f5f5f}
 .sel{background:#141414;color:#ccc;border:1px solid #242424;border-radius:10px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none}
@@ -3938,17 +3943,18 @@ const lastG = c => (last(c.fin.rev)/c.fin.rev[c.fin.rev.length-2]-1)*100;
 const lastOpm = c => last(c.fin.op)/last(c.fin.rev)*100;
 const fcfM = c => last(c.fin.fcf)/last(c.fin.rev)*100;
 const FX = DB.meta.fx;
-function krw(vB){
+function krw(vB, plain){
   if(!isFinite(vB) || vB===0) return '';
+  const pre = plain? '' : '약 ';
   const jo = vB*FX/1000, s = jo<0?'-':'', a = Math.abs(jo);
-  if(a>=100) return '약 '+s+Math.round(a).toLocaleString('ko-KR')+'조원';
-  if(a>=1) return '약 '+s+(a>=10? a.toFixed(0) : a.toFixed(1))+'조원';
-  return '약 '+s+Math.round(a*10000).toLocaleString('ko-KR')+'억원';
+  if(a>=100) return pre+s+Math.round(a).toLocaleString('ko-KR')+'조원';
+  if(a>=1) return pre+s+(a>=10? a.toFixed(0) : a.toFixed(1))+'조원';
+  return pre+s+Math.round(a*10000).toLocaleString('ko-KR')+'억원';
 }
-function krwS(str){
+function krwS(str, plain){
   const m=/\$([\d.]+)\s*(T|B)/.exec(str||'');
   if(!m) return '';
-  return krw(parseFloat(m[1])*(m[2]==='T'?1000:1));
+  return krw(parseFloat(m[1])*(m[2]==='T'?1000:1), plain);
 }
 
 function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show');
@@ -4060,8 +4066,11 @@ function hRow(label, val, max, color, valText){
 }
 
 /* ---------- shared components ---------- */
+function krName(c){ return c.kr.replace(/\s*\(.*\)$/,''); }
 function avatar(c, size=40, fs=13){
-  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${c.color};color:${c.tx};font-size:${fs}px">${c.name[0]}</div>`;
+  const n=krName(c), len=n.length;
+  const f=Math.max(8, Math.round(size*(len<=4?0.34: len<=6?0.29: len<=8?0.25:0.21)));
+  return `<div class="avatar" style="height:${size}px;padding:0 ${Math.round(size*0.24)}px;border-radius:${Math.round(size*0.3)}px;background:${c.color};color:${c.tx};font-size:${f}px">${n}</div>`;
 }
 function hdrHTML(){
   return `<div class="hdr"><div class="logo">Q100<small>QQQ 기업해부</small></div>
@@ -4070,23 +4079,40 @@ function hdrHTML(){
     </div></div>`;
 }
 function ccard(c){
+  const g=lastG(c), e=c.fin.eps;
+  let epsHtml='';
+  if(e){
+    const a=e[e.length-2], b=e[e.length-1];
+    const wv=Math.round(b*FX).toLocaleString('ko-KR')+'원';
+    let chg, cc;
+    if(a>0 && b>0){ const p=(b/a-1)*100; chg=fPct(p,0); cc=p>=0?'#4ade80':'#f87171'; }
+    else if(b>0){ chg='흑자전환'; cc='#4ade80'; }
+    else { chg='적자'; cc='#f87171'; }
+    epsHtml=`<div class="ck">주당순이익 (EPS)</div>
+    <div class="cv2">${wv} <span style="color:${cc};font-size:11.5px">${chg}</span></div>
+    <div class="cs">$${b}</div>`;
+  }
   return `<div class="ccard" onclick="openCompany('${c.id}')" style="background:linear-gradient(155deg,${c.color}24,#121212 58%)">
     <div class="row sb">${avatar(c,38,12)}<span class="tiny" style="font-weight:800;color:#8f8f8f">${c.ticker}</span></div>
-    <div class="nm">${c.name}</div><div class="tg">${c.kr}</div>
-    <div class="cap">${fB(c.capB)}</div>
-    <div class="krw">${krw(c.capB)}</div>
-    <div class="qq">QQQ ${c.qqq}%${c.capNote?' <span style="color:#555">~</span>':''}</div></div>`;
+    <div class="tg" style="margin-top:10px">${c.name}</div>
+    <div class="ck">시가총액 · <b style="color:#bbb">QQQ ${c.qqq}%</b></div>
+    <div class="cv">${krw(c.capB,true)}</div>
+    <div class="cs">${fB(c.capB)}${c.capNote?' ~':''}</div>
+    <div class="ck">매출 (FY)</div>
+    <div class="cv2">${krwS(c.key.rev,true)} <span style="color:${g>=0?'#4ade80':'#f87171'};font-size:11.5px">${fPct(g,0)}</span></div>
+    <div class="cs">${c.key.rev}</div>
+    ${epsHtml}</div>`;
 }
 function listRow(c, right, sub){
   return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,38,12)}
-    <div style="flex:1;min-width:0"><b style="font-size:15px">${c.name}</b> <span class="tiny">${c.kr}</span>
+    <div style="flex:1;min-width:0"><b style="font-size:13.5px;color:#d9d9d9">${c.name}</b>
     <div class="tiny" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub!==undefined?sub:c.industry}</div></div>
     <div style="text-align:right">${right}</div></div>`;
 }
 function videoCard(c, wide=false){
   const v=c.videos[0];
   if(!v) return `<div class="vthumb${wide?'':' hs-item'}" onclick="toast('이 기업의 영상은 준비 중입니다')" style="background:linear-gradient(140deg,${c.color}33,#0c0c0c 75%)${wide?'':';flex:0 0 78%'}">
-    <div class="vt" style="color:#999">${c.name} 편 준비 중</div></div>`;
+    <div class="vt" style="color:#999">${krName(c)} 편 준비 중</div></div>`;
   return `<div class="vthumb${wide?'':' hs-item'}" onclick="toast('영상 링크는 CMS에서 연결 예정입니다 (프로토타입)')" style="background:linear-gradient(140deg,${c.color}55,#0c0c0c 75%)${wide?'':';flex:0 0 78%'}">
     <span class="dur">${v.dur}</span><div class="play"></div>
     <div class="vt">${v.t}</div></div>`;
@@ -4125,12 +4151,22 @@ const RANKS = {
     desc:()=> st.retBase==='ytd'
       ? '2025년 12월 31일 종가 대비 현재 주가 등락률 (실제 데이터 · '+DB.meta.retAsOf+' 기준)'
       : '1년 전(2025년 8월 초) 대비 주가 등락률 — 2025년 하반기 주가 흐름을 반영한 근사치'},
-  growth:{k:'성장성', get:lastG, fmt:v=>fPct(v), desc:'최근 회계연도 매출이 전년보다 몇 % 늘었는지 (연매출 성장률)'},
+  growth:{k:'성장성', get:lastG, fmt:v=>fPct(v), desc:'최근 회계연도 매출 성장률 · 오른쪽 아래에 주당순이익(EPS) 증감도 표시'},
   cash:{k:'현금창출', get:fcfM, fmt:v=>'FCF '+mPct(v,0), desc:'매출 중 실제 현금(FCF)으로 남는 비율 — 높을수록 현금창출력이 강함'},
   margin:{k:'영업이익률', get:lastOpm, fmt:v=>mPct(v,1), desc:'최근 연매출 중 본업 이익이 차지하는 비율'},
-  moat:{k:'경제적 해자', get:c=>c.score.moat, fmt:v=>v+'점', desc:'경쟁자를 막는 방어력에 대한 Q100 내부 평가 점수 (100점 만점)'},
-  qqq:{k:'QQQ 비중', get:c=>c.qqq, fmt:v=>v+'%', desc:'QQQ ETF 안에서 이 기업이 차지하는 비중'}
+  qqq:{k:'QQQ 비중', get:c=>c.qqq, fmt:v=>v+'%', desc:'QQQ ETF 안에서 이 기업이 차지하는 비중'},
+  moat:{k:'경제적 해자', get:c=>c.score.moat, fmt:v=>v+'점', desc:'경쟁자를 막는 방어력에 대한 Q100 내부 평가 점수 (100점 만점)'}
 };
+function epsBadge(c){
+  const e=c.fin.eps; if(!e) return '';
+  const a=e[e.length-2], b=e[e.length-1];
+  let t,col;
+  if(a>0 && b>0){ const g=(b/a-1)*100; t='EPS '+fPct(g,0); col=g>=0?'#4ade80':'#f87171'; }
+  else if(b>0){ t='EPS 흑자전환'; col='#4ade80'; }
+  else if(a>0){ t='EPS 적자전환'; col='#f87171'; }
+  else { t='EPS 적자'; col='#f87171'; }
+  return `<div style="font-size:11.5px;font-weight:700;color:${col};margin-top:1px">${t}</div>`;
+}
 function rankDesc(k){ const d=RANKS[k].desc; return typeof d==='function'? d() : d; }
 function rankList(key, n=5){
   const r=RANKS[key];
@@ -4141,9 +4177,9 @@ function rankList(key, n=5){
     const vc = key==='price' ? (v>=0?'#4ade80':'#f87171') : '#fff';
     return `<div class="list-row" onclick="openCompany('${c.id}')">
     <span class="rank-n">${i+1}</span>${avatar(c,34,11)}
-    <div style="flex:1;min-width:0"><b style="font-size:14.5px">${c.name}</b> <span class="tiny">${c.kr}</span>
+    <div style="flex:1;min-width:0"><span class="tiny" style="font-weight:700;color:#c9c9c9">${c.name}</span>
       <div class="hbar" style="margin-top:5px;height:5px"><i style="width:${Math.max(Math.abs(v)/max*100,3).toFixed(0)}%;background:${c.color}"></i></div></div>
-    <b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v)}</b></div>`;
+    <div style="text-align:right"><b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v)}</b>${key==='growth'? epsBadge(c):''}</div></div>`;
   }).join('');
 }
 
@@ -4152,11 +4188,10 @@ function renderHome(){
   const t=today;
   const rec=[C[(doy+3)%C.length], C[(doy+6)%C.length], C[(doy+9)%C.length]];
   $('#scr-home').innerHTML = `
-  ${hdrHTML()}
   <div class="card" style="background:linear-gradient(165deg,${t.color}38,#101010 62%);padding:20px 18px">
     <div class="row sb"><span class="pill w">오늘의 Q100</span><span class="tiny">${DB.meta.asOf}</span></div>
-    <div style="margin-top:16px">${avatar(t,50,17)}</div>
-    <h2 style="font-size:28px;font-weight:900;margin-top:10px">${t.name} <span style="font-size:15.5px;color:#c9c9c9;font-weight:700">${t.kr}</span></h2>
+    <div style="margin-top:16px"><div class="avatar" style="height:50px;padding:0 14px;border-radius:15px;background:${t.color};color:${t.tx};font-size:17px;display:inline-flex">${t.ticker}</div></div>
+    <h2 style="font-size:28px;font-weight:900;margin-top:10px">${krName(t)} <span style="font-size:15.5px;color:#c9c9c9;font-weight:700">${t.name}</span></h2>
     <div style="font-size:15px;color:#cfcfcf;font-weight:700;margin-top:2px">${t.sub}</div>
     <p style="font-size:14px;color:#a8a8a8;margin-top:8px;line-height:1.6">${t.oneLiner}</p>
     <div class="row" style="gap:8px;margin-top:15px">
@@ -4179,7 +4214,7 @@ function renderHome(){
   </div>
   <div class="sec-t">최근 실적 발표 <small>2026년 7월 말</small></div>
   <div class="chiprow">${DB.recentEarnings.map(id=>{const c=byId[id];
-    return `<span class="chip" onclick="openCompany('${id}')"><span class="dot" style="background:${c.color}"></span>${c.name} <span style="color:#888">${c.kr}</span></span>`;}).join('')}</div>
+    return `<span class="chip" onclick="openCompany('${id}')"><span class="dot" style="background:${c.color}"></span>${krName(c)} <span style="color:#888">${c.name}</span></span>`;}).join('')}</div>
   <div class="sec-t">최근 영상 <small>Q100 채널</small></div>
   <div class="hscroll">${[today,...C.filter(c=>c.videos.length&&c.id!==today.id)].filter(c=>c.videos.length||c.id===today.id).slice(0,4).map(c=>videoCard(c)).join('')}</div>
   <div class="sec-t">기업 랭킹</div>
@@ -4193,14 +4228,13 @@ function renderHome(){
     <div class="serie hs-item" style="flex:0 0 64%" onclick="openSeries('${s.id}')">
       <b style="font-size:16px">${s.name}</b>
       <p class="tiny" style="margin-top:3px">${s.desc}</p>
-      <div class="row" style="margin-top:12px;gap:6px">${s.ids.map(id=>avatar(byId[id],28,10)).join('')}
+      <div class="row" style="margin-top:12px;gap:6px;flex-wrap:wrap">${s.ids.map(id=>{const sc=byId[id];return `<span class="chip sm" style="background:${sc.color}22;border-color:${sc.color}55">${krName(sc)}</span>`;}).join('')}
         ${s.soon.length?`<span class="tiny" style="margin-left:2px">+${s.soon.length}</span>`:''}</div>
     </div>`).join('')}</div>
   <div class="sec-t">이런 기업은 어때요</div>
   <div class="grid3">${rec.map(c=>`<div class="stat" style="cursor:pointer;padding:14px 6px" onclick="openCompany('${c.id}')">
     <div style="display:flex;justify-content:center">${avatar(c,40,13)}</div>
-    <div style="font-size:14px;font-weight:900;margin-top:8px">${c.name}</div>
-    <div class="tiny" style="margin-top:1px">${c.kr}</div></div>`).join('')}</div>
+    <div class="tiny" style="margin-top:8px;font-weight:700;color:#bbb">${c.name}</div></div>`).join('')}</div>
   <div class="disc">${DB.meta.note}</div>`;
 }
 
@@ -4208,7 +4242,6 @@ function renderHome(){
 const INDS=['전체','AI','반도체','클라우드','소프트웨어','플랫폼','소비재','유통','헬스케어','미디어','통신','산업재','에너지','유틸리티','여행','핀테크'];
 function renderCompanies(){
   $('#scr-companies').innerHTML = `
-  ${hdrHTML()}
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 12px">기업 백과사전 <span class="tiny" style="font-weight:600">나스닥100 · ${C.length}개 기업 수록</span></h2>
   <input id="q-in" class="search" placeholder="기업명, 티커, 특징 검색 (예: AI, 현금 많은 회사)" value="${st.q}" oninput="st.q=this.value;renderCGrid()">
   <div class="chiprow" style="margin-top:10px">${INDS.map(i=>`<span class="chip ${st.ind===i?'on':''}" onclick="st.ind='${i}';renderCompanies()">${i}</span>`).join('')}</div>
@@ -4286,8 +4319,8 @@ function buildDetail(c){
           <svg viewBox="0 0 24 24" fill="${fav?'currentColor':'none'}" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z"/></svg></button>
       </div>
     </div>
-    <div style="margin-top:18px">${avatar(c,54,19)}</div>
-    <h1 style="font-size:30px;font-weight:900;margin-top:10px;letter-spacing:-.5px">${c.name} <span style="font-size:14.5px;color:#999;font-weight:700">${c.kr}</span></h1>
+    <div style="margin-top:18px"><div class="avatar" style="height:54px;padding:0 15px;border-radius:16px;background:${c.color};color:${c.tx};font-size:19px;display:inline-flex">${c.ticker}</div></div>
+    <h1 style="font-size:30px;font-weight:900;margin-top:10px;letter-spacing:-.5px">${c.kr} <span style="font-size:14.5px;color:#999;font-weight:700">${c.name}</span></h1>
     <div class="row" style="gap:6px;margin-top:7px;flex-wrap:wrap">
       <span class="chip sm">NASDAQ: ${c.ticker}</span><span class="chip sm">${c.industry}</span>
     </div>
@@ -4307,7 +4340,8 @@ function buildDetail(c){
   <div class="dsec" data-t="ri">${secRisks(c)}</div>
   <div class="dsec" data-t="va">${secVal(c)}</div>
   <div class="dsec" data-t="ct">${secContent(c)}</div>
-  <div class="disc">${DB.meta.note}</div>`;
+  <div class="disc">${DB.meta.note}</div>
+  <button class="backfab" onclick="back()">‹ 뒤로</button>`;
 }
 function secOverview(c){
   const sc=c.score;
@@ -4416,7 +4450,7 @@ function secContent(c){
   if(!c.videos.length) return `
   <div class="sec-t">Q100 VIDEO</div>
   ${videoCard(c, true)}
-  <div class="card" style="margin-top:14px"><p style="font-size:14px;color:#c9c9c9;line-height:1.7">${c.name} 편 영상은 아직 제작 전입니다. 영상이 업로드되면 이 탭에서 본편·챕터·쇼츠를 함께 볼 수 있습니다.</p></div>
+  <div class="card" style="margin-top:14px"><p style="font-size:14px;color:#c9c9c9;line-height:1.7">${c.kr} 편 영상은 아직 제작 전입니다. 영상이 업로드되면 이 탭에서 본편·챕터·쇼츠를 함께 볼 수 있습니다.</p></div>
   <p class="tiny" style="margin-top:10px">관리자 CMS에서 유튜브 URL을 등록하면 자동으로 연결됩니다. (프로토타입)</p>`;
   return `
   <div class="sec-t">Q100 VIDEO</div>
@@ -4477,17 +4511,18 @@ function renderCompare(){
     <b style="font-size:19px">기업 비교 <span class="tiny">최대 4개</span></b></div>
     ${st.cmp.size?`<span class="chip" onclick="st.cmp.clear();renderCompare();updateCmpBar()">전체 비우기</span>`:''}</div>
   <div class="row" style="gap:8px">${slots}</div>
-  ${rest.length?`<div class="chiprow" style="margin-top:12px">${rest.map(c=>`<span class="chip" onclick="toggleCmp('${c.id}')"><span class="dot" style="background:${c.color}"></span>${c.name} <span style="color:#888">${c.kr}</span></span>`).join('')}</div>`:''}
+  ${rest.length?`<div class="chiprow" style="margin-top:12px">${rest.map(c=>`<span class="chip" onclick="toggleCmp('${c.id}')"><span class="dot" style="background:${c.color}"></span>${krName(c)} <span style="color:#888">${c.name}</span></span>`).join('')}</div>`:''}
   ${sel.length<2? `<div class="empty"><div class="e-ico">⇄</div>2개 이상 선택하면 비교 그래프가 나타납니다.<br>예: NVIDIA vs AMD vs Broadcom</div>`
   : metrics.map(m=>{
       const vals=sel.map(m.get); const mx=Math.max(...vals.map(Math.abs));
       return `<div class="sec-t">${m.k}</div><div class="card" style="padding:12px 16px">
         ${sel.map((c,i)=>`<div class="row" style="margin:8px 0">
-          <div class="metric-lbl" style="width:70px;font-weight:800;color:#ddd">${c.ticker}</div>
+          <div class="metric-lbl" style="width:84px;font-weight:800;color:#ddd;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${krName(c)}</div>
           <div class="hbar"><i style="width:${Math.max(Math.abs(vals[i])/mx*100,2).toFixed(1)}%;background:${c.color}"></i></div>
           <div class="metric-val" style="width:74px">${m.fmt(vals[i])}</div></div>`).join('')}</div>`;
     }).join('')}
-  ${sel.length>=2?`<div class="disc">${DB.meta.note}</div>`:''}`;
+  ${sel.length>=2?`<div class="disc">${DB.meta.note}</div>`:''}
+  <button class="backfab" onclick="back()">‹ 뒤로</button>`;
   updateCmpBar();
 }
 
@@ -4499,12 +4534,11 @@ function renderQQQ(){
     return `<div class="wrow" ${c?`style="cursor:pointer" onclick="openCompany('${c.id}')"`:''}>
       <span class="rank-n">${i+1}</span>
       ${c?avatar(c,32,11):`<div class="avatar" style="width:32px;height:32px;background:#222;color:#777;font-size:12.5px">${h.n[0]}</div>`}
-      <div style="flex:1;min-width:0"><b style="font-size:14px;${c?'':'color:#909090'}">${h.n}</b> <span class="tiny">${c? c.kr+' · ':''}${h.t}</span>
+      <div style="flex:1;min-width:0"><b style="font-size:13px;color:${c?'#d9d9d9':'#909090'}">${h.n}</b> <span class="tiny">${h.t}</span>
         <div class="hbar" style="margin-top:4px;height:5px"><i style="width:${(h.w/mx*100).toFixed(0)}%;background:${c?c.color:'#3a3a3a'}"></i></div></div>
       <div style="text-align:right"><b style="font-size:14px;font-variant-numeric:tabular-nums">${h.w}%</b>${c?'':'<div class="tiny" style="font-size:10.5px">준비 중</div>'}</div></div>`;
   };
   $('#scr-qqq').innerHTML=`
-  ${hdrHTML()}
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 4px">QQQ를 하나의 기업처럼</h2>
   <p class="tiny" style="margin:0 2px 14px">나스닥100 ETF는 100개 기업의 포트폴리오입니다. 비중 기준 ${DB.meta.weightsAsOf}</p>
   <div class="grid3">
@@ -4528,7 +4562,7 @@ function renderQQQ(){
   <div class="sec-t">수익률 기여도 <small>2026 YTD · 예시 데이터</small></div>
   <div class="card" style="padding:12px 16px">${DB.contrib.map(([n,v,id])=>{
     const c=id?byId[id]:null;
-    return `<div class="row" style="margin:8px 0"><div class="metric-lbl" style="width:96px;font-weight:800;color:${c?'#ddd':'#888'}">${n}${c?`<div class="tiny" style="font-weight:600">${c.kr}</div>`:''}</div>
+    return `<div class="row" style="margin:8px 0"><div class="metric-lbl" style="width:96px;font-weight:800;color:${c?'#ddd':'#888'}">${c?krName(c):n}${c?`<div class="tiny" style="font-weight:600">${n}</div>`:''}</div>
       <div class="hbar"><i style="width:${(v/DB.contrib[0][1]*100).toFixed(0)}%;background:${c?c.color:'#3a3a3a'}"></i></div>
       <div class="metric-val">+${v.toFixed(1)}%p</div></div>`;}).join('')}
     <p class="tiny" style="margin-top:8px">"QQQ가 왜 올랐는가"를 기업 단위로 분해한 예시입니다. 실제 수치는 데이터 연동 후 제공됩니다.</p></div>
@@ -4543,7 +4577,6 @@ function openSeries(id){
 }
 function renderDiscover(){
   $('#scr-discover').innerHTML=`
-  ${hdrHTML()}
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 12px">탐색</h2>
   <input class="search" placeholder="자연어로 검색해 보세요 (예: 현금 많은 회사)" onkeydown="if(event.key==='Enter'){goCompaniesQ(this.value)}">
   <div class="chiprow" style="margin-top:10px">${[['AI 기업','AI'],['영업이익률 높은 회사','수익'],['현금 많은 회사','현금'],['구독매출 회사','구독'],['저평가된 회사','저평가'],['해자 깊은 회사','해자']].map(([l,q])=>`<span class="chip" onclick="goCompaniesQ('${q}')">${l}</span>`).join('')}</div>
@@ -4553,7 +4586,7 @@ function renderDiscover(){
       <div class="row sb"><b style="font-size:16.5px">${s.name}</b>${s.ids.length?`<span class="tiny" style="font-weight:800;color:#bbb">비교로 보기 →</span>`:`<span class="pill g">준비 중</span>`}</div>
       <p class="tiny" style="margin-top:3px">${s.desc}</p>
       <div class="row" style="margin-top:11px;gap:6px;flex-wrap:wrap">
-        ${s.ids.map(id=>{const c=byId[id];return `<span class="chip sm" style="cursor:pointer" onclick="event.stopPropagation();openCompany('${id}')"><span class="dot" style="background:${c.color}"></span>${c.name} <span style="color:#888">${c.kr}</span></span>`;}).join('')}
+        ${s.ids.map(id=>{const c=byId[id];return `<span class="chip sm" style="cursor:pointer" onclick="event.stopPropagation();openCompany('${id}')"><span class="dot" style="background:${c.color}"></span>${krName(c)} <span style="color:#888">${c.name}</span></span>`;}).join('')}
         ${s.soon.map(n=>`<span class="chip sm" style="opacity:.5">${n}</span>`).join('')}
       </div></div>`).join('')}
   <div class="sec-t">산업·테마</div>
@@ -4569,7 +4602,7 @@ function renderDiscover(){
   <div class="sec-t">실적 캘린더 <small>예상 일정</small></div>
   <div class="card" style="padding:8px 16px">${DB.earnings.map(e=>{const c=byId[e.id];
     return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,32,11)}
-      <div style="flex:1"><b style="font-size:14px">${c.name}</b> <span class="tiny">${c.kr}</span><div class="tiny">${e.q}</div></div>
+      <div style="flex:1"><b style="font-size:13px;color:#d9d9d9">${c.name}</b><div class="tiny">${e.q}</div></div>
       <span style="font-size:13.5px;font-weight:800;color:#ccc">${e.d}</span></div>`;}).join('')}</div>`;
 }
 
@@ -4578,21 +4611,20 @@ function setMode(adv){ st.adv=adv; document.getElementById('app').classList.togg
 function renderMy(){
   const favs=[...st.fav].map(id=>byId[id]);
   $('#scr-my').innerHTML=`
-  ${hdrHTML()}
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 12px">MY</h2>
   <div class="sec-t">관심기업 <small>${favs.length}개</small></div>
   ${favs.length? `<div class="card" style="padding:6px 16px">${favs.map(c=>listRow(c, `<b style="font-size:14px">${fB(c.capB)}</b><div class="tiny">${krw(c.capB)}</div>`)).join('')}</div>`
     : `<div class="card"><div class="empty" style="padding:18px 10px"><div class="e-ico">★</div>기업 상세에서 별을 누르면<br>이곳에 저장됩니다.</div>
        <button class="btn ghost blk" onclick="nav('companies')">기업 둘러보기</button></div>`}
   <div class="sec-t">비교함 <small>${st.cmp.size}/4</small></div>
-  <div class="card">${st.cmp.size? `<div class="chiprow" style="margin-bottom:12px">${[...st.cmp].map(id=>{const c=byId[id];return `<span class="chip"><span class="dot" style="background:${c.color}"></span>${c.name}<span style="color:#888;margin-left:2px" onclick="event.stopPropagation();toggleCmp('${id}')">✕</span></span>`;}).join('')}</div>
+  <div class="card">${st.cmp.size? `<div class="chiprow" style="margin-bottom:12px">${[...st.cmp].map(id=>{const c=byId[id];return `<span class="chip"><span class="dot" style="background:${c.color}"></span>${krName(c)}<span style="color:#888;margin-left:2px" onclick="event.stopPropagation();toggleCmp('${id}')">✕</span></span>`;}).join('')}</div>
     <button class="btn blk" onclick="openCompare()">비교 화면 열기</button>`
     : `<p class="tiny">기업 상세에서 [+ 비교]를 누르면 최대 4개까지 담아 비교할 수 있습니다.</p>
     <button class="btn ghost blk" style="margin-top:10px" onclick="openCompare()">비교 화면 열기</button>`}</div>
   <div class="sec-t">알림 <small>예시</small></div>
   <div class="card" style="padding:8px 16px">${DB.alerts.map(a=>{const c=byId[a.id];
     return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,32,11)}
-      <div style="flex:1"><b style="font-size:14px">${c.name}</b> <span class="tiny">${c.kr}</span> <span class="pill g" style="margin-left:4px">${a.k}</span>
+      <div style="flex:1"><b style="font-size:13px;color:#d9d9d9">${c.name}</b> <span class="pill g" style="margin-left:4px">${a.k}</span>
       <div class="tiny" style="margin-top:2px">${a.d}</div></div></div>`;}).join('')}
     <p class="tiny" style="padding:8px 0 6px">주가 단기 알림이 아니라, 기업을 이해하는 데 필요한 소식만 보냅니다.</p></div>
   <div class="sec-t">보기 모드</div>
