@@ -4171,7 +4171,7 @@ const last = a => a[a.length-1];
 const lastG = c => (last(c.fin.rev)/c.fin.rev[c.fin.rev.length-2]-1)*100;
 const lastOpm = c => last(c.fin.op)/last(c.fin.rev)*100;
 const fcfM = c => last(c.fin.fcf)/last(c.fin.rev)*100;
-const FX = DB.meta.fx;
+let FX = DB.meta.fx;
 function krw(vB, plain){
   if(!isFinite(vB) || vB===0) return '';
   const pre = plain? '' : '약 ';
@@ -4463,7 +4463,7 @@ function renderHome(){
       ${cell('원·달러 환율', m.fx, DB.meta.fxYE.toLocaleString()+'원 → '+DB.meta.fx.toLocaleString()+'원')}
       ${cell('나스닥100 지수', m.ndx, Math.round(DB.meta.ndxYE).toLocaleString()+' → '+Math.round(DB.meta.ndxNow).toLocaleString())}
     </div>
-    <p class="tiny" style="margin-top:9px">QQQ·나스닥100은 실제 종가 기준, 환율은 2026.08.07 기준 근사치입니다.</p>
+    <p class="tiny" style="margin-top:9px">QQQ·나스닥100·환율 모두 ${DB.meta.ytdAsOf} 종가 기준입니다.</p>
   </div>`;})()}
   <div class="card" onclick="nav('qqq')" style="cursor:pointer">
     <div class="row sb"><b style="font-size:15px">Top 10 집중도</b><b class="big" style="font-size:21px">${DB.top10.toFixed(0)}%</b></div>
@@ -4947,4 +4947,31 @@ function renderMy(){
 updateCmpBar();
 nav('home');
 document.getElementById('splash').classList.add('hide');
+
+/* ---------- 라이브 데이터 덮어쓰기 (live.json — GitHub Actions가 매일 갱신) ---------- */
+(function(){
+  if(location.protocol==='file:') return;
+  fetch('live.json?v='+Date.now()).then(r=>r.ok? r.json() : null).then(L=>{
+    if(!L || !L.ret) return;
+    if(isFinite(L.fx) && L.fx>500){ DB.meta.fx=Math.round(L.fx); FX=DB.meta.fx; }
+    if(isFinite(L.fxYE) && L.fxYE>500) DB.meta.fxYE=Math.round(L.fxYE);
+    ['qqqYE','qqqNow','ndxYE','ndxNow'].forEach(k=>{ if(isFinite(L[k]) && L[k]>0) DB.meta[k]=L[k]; });
+    if(L.updated){ DB.meta.ytdAsOf=L.updated; DB.meta.retAsOf=L.updated; DB.meta.asOf=L.updated; }
+    let n=0;
+    C.forEach(c=>{
+      const r=L.ret[c.ticker];
+      if(r && isFinite(r.ytd)){
+        c.ret={ ytd:Math.round(r.ytd*10)/10, y1: isFinite(r.y1)? Math.round(r.y1*10)/10 : (c.ret? c.ret.y1 : NaN) };
+        n++;
+      }
+    });
+    if(!n) return;
+    const act=document.querySelector('.scr.active');
+    if(act){
+      const id=act.id.replace('scr-','');
+      const r={home:renderHome, companies:renderCompanies, qqq:renderQQQ, discover:renderDiscover, my:renderMy};
+      if(r[id]) r[id]();
+    }
+  }).catch(()=>{});
+})();
 </script></body></html>
