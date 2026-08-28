@@ -225,6 +225,10 @@ meta: {
   asOf: '2026.08.08',
   weightsAsOf: '2026.08 초',
   fx: 1410,
+  fxYE: 1439,
+  qqqYE: 614.31, qqqNow: 721.11,
+  ndxYE: 25249.85, ndxNow: 29630,
+  ytdAsOf: '2026.08.27',
   note: '재무는 각 사 공시 기반 근사치(FY2025), 시가총액·QQQ 비중은 2026년 7~8월 기준 근사치입니다. 원화 금액은 1달러 = 1,410원(2026.08.07) 환산 근사치입니다. 프로토타입 예시 데이터로, 투자 판단의 근거로 사용할 수 없습니다.'
 },
 companies: [
@@ -4353,7 +4357,10 @@ function nav(name){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));
   $('#scr-'+name).classList.add('active');
   document.querySelectorAll('.nav-it').forEach(n=>n.classList.toggle('on', n.dataset.s===name));
-  if(['home','companies','qqq','discover','my'].includes(name)) st.prev=name;
+  if(['home','companies','qqq','discover','my'].includes(name)){
+    if(st.prev!==name){ st.homeRankAll={}; st.rankAll={}; st.contribAll=false; }
+    st.prev=name;
+  }
   const r={home:renderHome, companies:renderCompanies, qqq:renderQQQ, discover:renderDiscover, my:renderMy, compare:renderCompare};
   if(r[name]) r[name]();
   toTop(); updateCmpBar();
@@ -4393,6 +4400,14 @@ function epsBadge(c){
   return `<div style="font-size:11.5px;font-weight:700;color:${col};margin-top:1px">${t}</div>`;
 }
 function rankDesc(k){ const d=RANKS[k].desc; return typeof d==='function'? d() : d; }
+function qqqYtdStats(){
+  const m=DB.meta;
+  const usd=(m.qqqNow/m.qqqYE-1)*100;
+  const ndx=(m.ndxNow/m.ndxYE-1)*100;
+  const fx=(m.fx/m.fxYE-1)*100;
+  const krw=((m.qqqNow/m.qqqYE)*(m.fx/m.fxYE)-1)*100;
+  return {usd, ndx, fx, krw};
+}
 function rankIds(key){
   const r=RANKS[key];
   return C.filter(c=>isFinite(r.get(c))).sort((a,b)=>r.get(b)-r.get(a)).map(c=>c.id);
@@ -4438,6 +4453,18 @@ function renderHome(){
     <div class="stat"><div class="k">QQQ 비중</div><div class="v">${t.qqq}%</div></div>
   </div>
   <div class="sec-t">QQQ 지금 <small>비중 기준 ${DB.meta.weightsAsOf}</small></div>
+  ${(()=>{const m=qqqYtdStats();
+    const cell=(k,v,sub)=>`<div class="stat" style="padding:12px 4px"><div class="k">${k}</div><div class="v" style="font-size:18.5px;color:${v>=0?'#4ade80':'#f87171'}">${v>=0?'+':''}${v.toFixed(1)}%</div><div class="tiny" style="margin-top:3px">${sub}</div></div>`;
+    return `<div class="card" style="padding:14px 16px;margin-bottom:10px">
+    <div class="row sb"><b style="font-size:15px">연초 대비 (YTD)</b><span class="tiny">${DB.meta.ytdAsOf} 종가 기준</span></div>
+    <div class="grid2" style="margin-top:10px">
+      ${cell('QQQ · 달러 기준', m.usd, Math.round(DB.meta.qqqYE)+' → '+Math.round(DB.meta.qqqNow)+'달러')}
+      ${cell('QQQ · 원화 기준', m.krw, '환율 반영 체감 수익률')}
+      ${cell('원·달러 환율', m.fx, DB.meta.fxYE.toLocaleString()+'원 → '+DB.meta.fx.toLocaleString()+'원')}
+      ${cell('나스닥100 지수', m.ndx, Math.round(DB.meta.ndxYE).toLocaleString()+' → '+Math.round(DB.meta.ndxNow).toLocaleString())}
+    </div>
+    <p class="tiny" style="margin-top:9px">QQQ·나스닥100은 실제 종가 기준, 환율은 2026.08.07 기준 근사치입니다.</p>
+  </div>`;})()}
   <div class="card" onclick="nav('qqq')" style="cursor:pointer">
     <div class="row sb"><b style="font-size:15px">Top 10 집중도</b><b class="big" style="font-size:21px">${DB.top10.toFixed(0)}%</b></div>
     <div class="hbar" style="margin-top:9px"><i style="width:${DB.top10}%;background:#fff"></i></div>
@@ -4834,12 +4861,15 @@ function renderQQQ(){
       <div class="hbar"><i style="width:${Math.max(Math.abs(r.v)/mx*100,2).toFixed(0)}%;background:${neg?'#f87171':c.color}"></i></div>
       <div class="metric-val" style="color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
   })()}
-    <p class="tiny" style="margin-top:10px;line-height:1.6">기여도 ≈ <b style="color:#ccc">QQQ 내 비중 × 그 기업의 YTD 주가수익률</b>. 예를 들어 비중 9%인 기업이 +30% 오르면 QQQ 전체를 약 +2.7%p 끌어올린 셈입니다. 기간 중 비중 변화·리밸런싱은 반영하지 않은 근사치입니다.</p></div>
+    <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 실제 QQQ 연초 대비 수익률(${fPct(qqqYtdStats().usd,1)})을 나눠 배분한 근사치입니다. 99개 기여도를 전부 더하면 QQQ 수익률과 같아집니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
   <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>
   <div class="disc">${DB.meta.note}</div>`;
 }
 function contribRows(){
-  return C.filter(c=>c.ret&&isFinite(c.ret.ytd)).map(c=>({c, v:c.qqq*c.ret.ytd/100})).sort((a,b)=>b.v-a.v);
+  const raw=C.filter(c=>c.ret&&isFinite(c.ret.ytd)).map(c=>({c, r:c.qqq*c.ret.ytd/100}));
+  const sum=raw.reduce((s,x)=>s+x.r,0)||1;
+  const scale=qqqYtdStats().usd/sum;
+  return raw.map(x=>({c:x.c, v:x.r*scale})).sort((a,b)=>b.v-a.v);
 }
 function toggleContrib(){
   st.contribAll=!st.contribAll; renderQQQ();
