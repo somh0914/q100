@@ -45,6 +45,9 @@ button{font-family:inherit}
 .dhero{position:relative;overflow:hidden}
 .dhero>*:not(.heroart){position:relative;z-index:1}
 .heroart{position:absolute;z-index:0;right:-22px;top:8px;height:240px;max-width:335px;object-fit:contain;object-position:top right;opacity:.42;transform:rotate(6deg);-webkit-mask-image:linear-gradient(265deg,#000 55%,transparent 96%);mask-image:linear-gradient(265deg,#000 55%,transparent 96%);pointer-events:none}
+.dcard{position:relative;overflow:hidden}
+.dcard>*:not(.dailyart){position:relative;z-index:1}
+.dailyart{position:absolute;z-index:0;right:-22px;top:8px;height:240px;max-width:335px;object-fit:contain;object-position:top right;opacity:.42;transform:rotate(6deg);-webkit-mask-image:linear-gradient(265deg,#000 55%,transparent 96%);mask-image:linear-gradient(265deg,#000 55%,transparent 96%);pointer-events:none}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:4px 0 14px}
 .pgrid .pcell{background:#fff;border-radius:16px;overflow:hidden}
 .pgrid .pcell img{width:100%;height:98px;object-fit:cover;display:block}
@@ -4145,7 +4148,7 @@ const byId = Object.fromEntries(C.map(c => [c.id, c]));
 const st = {
   fav: new Set(), cmp: new Set(), adv: false,
   ind: '전체', trait: null, q: '', sort: 'qqq',
-  rank: 'price', homeRank: 'price', retBase: 'ytd', rankAll: false, homeRankAll: false,
+  rank: 'price', homeRank: 'price', retBase: 'ytd', rankAll: {}, homeRankAll: {}, contribAll: false,
   cur: null, prev: 'home', dtab: 'ov',
   navList: null, encList: null
 };
@@ -4415,7 +4418,8 @@ function renderHome(){
   const t=today;
   const rec=[C[(doy+3)%C.length], C[(doy+6)%C.length], C[(doy+9)%C.length]];
   $('#scr-home').innerHTML = `
-  <div class="card" style="background:linear-gradient(165deg,${t.color}38,#101010 62%);padding:20px 18px">
+  <div class="card dcard" style="background:linear-gradient(165deg,${t.color}38,#101010 62%);padding:20px 18px">
+    ${PRODIMG[t.id]?`<img class="dailyart" src="${PRODIMG[t.id].bg}" alt="">`:''}
     <div class="row sb"><span class="pill w">오늘의 Q100</span><span class="tiny">${DB.meta.asOf}</span></div>
     <div style="margin-top:16px"><div class="avatar" style="height:50px;padding:0 14px;border-radius:15px;background:${t.color};color:${t.tx};font-size:17px;display:inline-flex">${t.ticker}</div></div>
     <h2 style="font-size:28px;font-weight:900;margin-top:10px">${krName(t)} <span style="font-size:15.5px;color:#c9c9c9;font-weight:700">${t.name}</span></h2>
@@ -4448,8 +4452,8 @@ function renderHome(){
   <div class="seg" id="home-seg">${Object.entries(RANKS).map(([k,v])=>`<b class="${st.homeRank===k?'on':''}" onclick="st.homeRank='${k}';renderHome()">${v.k}</b>`).join('')}</div>
   ${st.homeRank==='price'?`<div class="chiprow" style="margin-top:8px"><span class="chip ${st.retBase==='ytd'?'on':''}" onclick="st.retBase='ytd';renderHome()">전년도말 대비 (YTD)</span><span class="chip ${st.retBase==='y1'?'on':''}" onclick="st.retBase='y1';renderHome()">최근 1년 (근사)</span></div>`:''}
   <p class="tiny" style="margin:8px 4px 0">${rankDesc(st.homeRank)}</p>
-  <div class="card" style="margin-top:8px;padding:6px 16px">${rankList(st.homeRank, st.homeRankAll? C.length : 5)}</div>
-  <button class="btn ghost blk" onclick="toggleHomeRank()">${st.homeRankAll? '접기 ↑' : '전체 '+C.length+'개 기업 더보기'}</button>
+  <div class="card" style="margin-top:8px;padding:6px 16px">${rankList(st.homeRank, st.homeRankAll[st.homeRank]? C.length : 5)}</div>
+  <button class="btn ghost blk" onclick="toggleHomeRank()">${st.homeRankAll[st.homeRank]? '접기 ↑' : '전체 '+C.length+'개 기업 더보기'}</button>
   <div class="sec-t">시리즈로 보기 <small>탐색 탭에서 전체 보기</small></div>
   <div class="hscroll">${DB.series.filter(s=>s.ids.length).map(s=>`
     <div class="serie hs-item" style="flex:0 0 64%" onclick="openSeries('${s.id}')">
@@ -4514,12 +4518,12 @@ function renderCGrid(){
 function goCompaniesQ(q){ st.q=q; st.ind='전체'; st.trait=null; nav('companies'); }
 function openEnc(id){ st.navList=st.encList; openCompany(id,true); }
 function toggleHomeRank(){
-  st.homeRankAll=!st.homeRankAll; renderHome();
-  if(!st.homeRankAll){ const el=document.getElementById('home-seg'); if(el) el.scrollIntoView({block:'center'}); }
+  st.homeRankAll[st.homeRank]=!st.homeRankAll[st.homeRank]; renderHome();
+  if(!st.homeRankAll[st.homeRank]){ const el=document.getElementById('home-seg'); if(el) el.scrollIntoView({block:'center'}); }
 }
 function toggleDiscRank(){
-  st.rankAll=!st.rankAll; renderDiscover();
-  if(!st.rankAll){ const el=document.getElementById('disc-seg'); if(el) el.scrollIntoView({block:'center'}); }
+  st.rankAll[st.rank]=!st.rankAll[st.rank]; renderDiscover();
+  if(!st.rankAll[st.rank]){ const el=document.getElementById('disc-seg'); if(el) el.scrollIntoView({block:'center'}); }
 }
 /* ---------- COMPANY DETAIL ---------- */
 function openCompany(id, keep){
@@ -4820,14 +4824,26 @@ function renderQQQ(){
   </div>
   <div class="sec-t">산업 구성</div>
   <div class="card">${DB.sectors.map(([n,p],i)=>hRow(n,p,60,['#fff','#ffffffB3','#ffffff80','#ffffff59','#ffffff40','#ffffff30','#ffffff20'][i]||'#333',p+'%')).join('')}</div>
-  <div class="sec-t">수익률 기여도 <small>2026 YTD · 예시 데이터</small></div>
-  <div class="card" style="padding:12px 16px">${DB.contrib.map(([n,v,id])=>{
-    const c=id?byId[id]:null;
-    return `<div class="row" style="margin:8px 0"><div class="metric-lbl" style="width:96px;font-weight:800;color:${c?'#ddd':'#888'}">${c?krName(c):n}${c?`<div class="tiny" style="font-weight:600">${n}</div>`:''}</div>
-      <div class="hbar"><i style="width:${(v/DB.contrib[0][1]*100).toFixed(0)}%;background:${c?c.color:'#3a3a3a'}"></i></div>
-      <div class="metric-val">+${v.toFixed(1)}%p</div></div>`;}).join('')}
-    <p class="tiny" style="margin-top:8px">"QQQ가 왜 올랐는가"를 기업 단위로 분해한 예시입니다. 실제 수치는 데이터 연동 후 제공됩니다.</p></div>
+  <div class="sec-t" id="contrib-sec">수익률 기여도 <small>YTD · ${DB.meta.retAsOf} 기준 근사</small></div>
+  <div class="card" style="padding:12px 16px">${(()=>{
+    const rows=contribRows();
+    const show=st.contribAll? rows : rows.slice(0,10);
+    const mx=Math.max(...rows.map(r=>Math.abs(r.v)))||1;
+    return show.map((r,i)=>{const c=r.c, neg=r.v<0;
+      return `<div class="row" style="margin:8px 0;cursor:pointer" onclick="openCompany('${c.id}')"><span class="rank-n">${i+1}</span><div class="metric-lbl" style="width:100px;font-weight:800;color:#ddd">${krName(c)}<div class="tiny" style="font-weight:600;white-space:nowrap">${c.qqq}% × ${fPct(c.ret.ytd,0)}</div></div>
+      <div class="hbar"><i style="width:${Math.max(Math.abs(r.v)/mx*100,2).toFixed(0)}%;background:${neg?'#f87171':c.color}"></i></div>
+      <div class="metric-val" style="color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
+  })()}
+    <p class="tiny" style="margin-top:10px;line-height:1.6">기여도 ≈ <b style="color:#ccc">QQQ 내 비중 × 그 기업의 YTD 주가수익률</b>. 예를 들어 비중 9%인 기업이 +30% 오르면 QQQ 전체를 약 +2.7%p 끌어올린 셈입니다. 기간 중 비중 변화·리밸런싱은 반영하지 않은 근사치입니다.</p></div>
+  <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>
   <div class="disc">${DB.meta.note}</div>`;
+}
+function contribRows(){
+  return C.filter(c=>c.ret&&isFinite(c.ret.ytd)).map(c=>({c, v:c.qqq*c.ret.ytd/100})).sort((a,b)=>b.v-a.v);
+}
+function toggleContrib(){
+  st.contribAll=!st.contribAll; renderQQQ();
+  if(!st.contribAll){ const el=document.getElementById('contrib-sec'); if(el) el.scrollIntoView({block:'center'}); }
 }
 
 /* ---------- DISCOVER ---------- */
@@ -4858,8 +4874,8 @@ function renderDiscover(){
   <div class="seg" id="disc-seg">${Object.entries(RANKS).map(([k,v])=>`<b class="${st.rank===k?'on':''}" onclick="st.rank='${k}';renderDiscover()">${v.k}</b>`).join('')}</div>
   ${st.rank==='price'?`<div class="chiprow" style="margin-top:8px"><span class="chip ${st.retBase==='ytd'?'on':''}" onclick="st.retBase='ytd';renderDiscover()">전년도말 대비 (YTD)</span><span class="chip ${st.retBase==='y1'?'on':''}" onclick="st.retBase='y1';renderDiscover()">최근 1년 (근사)</span></div>`:''}
   <p class="tiny" style="margin:8px 4px 0">${rankDesc(st.rank)}</p>
-  <div class="card" style="margin-top:8px;padding:6px 16px">${rankList(st.rank, st.rankAll? C.length : 10)}</div>
-  <button class="btn ghost blk" onclick="toggleDiscRank()">${st.rankAll? '접기 ↑' : '전체 '+C.length+'개 기업 더보기'}</button>
+  <div class="card" style="margin-top:8px;padding:6px 16px">${rankList(st.rank, st.rankAll[st.rank]? C.length : 10)}</div>
+  <button class="btn ghost blk" onclick="toggleDiscRank()">${st.rankAll[st.rank]? '접기 ↑' : '전체 '+C.length+'개 기업 더보기'}</button>
   <div class="sec-t">실적 캘린더 <small>예상 일정</small></div>
   <div class="card" style="padding:8px 16px">${DB.earnings.map(e=>{const c=byId[e.id];
     return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,32,11)}
