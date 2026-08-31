@@ -4505,7 +4505,7 @@ function enterApp(t){
 const RANKS = {
   price:{k:'주가수익률', get:c=> c.ret? c.ret[st.retBase] : NaN, fmt:v=>fPct(v, Math.abs(v)>=100?0:1),
     desc:()=> st.retBase==='ytd'
-      ? '전년도 말(12/31) 종가 대비 현재 주가 등락률 (실제 데이터 · '+DB.meta.retAsOf+' 기준)'
+      ? '전년도 말(12/31) 종가 대비 현재 주가 등락률 · 연중 상장 기업은 상장일 종가 기준 (실제 데이터 · '+DB.meta.retAsOf+' 기준)'
       : '1년 전 같은 시기 대비 주가 등락률 (실제 데이터 · '+DB.meta.retAsOf+' 기준)'},
   growth:{k:'성장성', get:lastG, fmt:v=>fPct(v), desc:'최근 회계연도 매출 성장률 · 오른쪽 아래에 주당순이익(EPS) 증감도 표시'},
   cash:{k:'현금창출', get:fcfM, fmt:v=>'FCF '+mPct(v,0), desc:'매출 중 실제 현금(FCF)으로 남는 비율 — 높을수록 현금창출력이 강함'},
@@ -4548,7 +4548,7 @@ function rankList(key, n=5){
     <span class="rank-n">${i+1}</span>${avatar(c,34,11)}
     <div style="flex:1;min-width:0"><span class="tiny" style="font-weight:700;color:#c9c9c9">${c.name}</span>
       <div class="hbar" style="margin-top:5px;height:5px"><i style="width:${Math.max(Math.abs(v)/max*100,3).toFixed(0)}%;background:${c.color}"></i></div></div>
-    <div style="text-align:right"><b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v)}</b>${key==='growth'? epsBadge(c):''}</div></div>`;
+    <div style="text-align:right"><b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v)}</b>${key==='growth'? epsBadge(c):''}${key==='price'&&c.ret&&c.ret.ipo?`<div style="font-size:11px;font-weight:700;color:#7fb2ff;margin-top:1px">상장 후 (${c.ret.ipo.slice(5).replace('-','.')}~)</div>`:''}</div></div>`;
   }).join('');
 }
 
@@ -5104,6 +5104,7 @@ document.getElementById('splash').classList.add('hide');
       if(!r) return;
       if(isFinite(r.ytd)){
         c.ret={ ytd:Math.round(r.ytd*10)/10, y1: isFinite(r.y1)? Math.round(r.y1*10)/10 : (c.ret? c.ret.y1 : NaN) };
+        if(r.ipo) c.ret.ipo=r.ipo;   // 연중 상장 — 상장일 종가 기준 수익률 표시용
         n++;
       }
       if(isFinite(r.w) && r.w>0) c.qqq=Math.round(r.w*100)/100;
