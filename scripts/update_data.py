@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Q100 데이터 자동 업데이트 스크립트 (GitHub Actions에서 매일 실행)
-- 99개 기업 + QQQ + 나스닥100 지수 + 원달러 환율의 종가를 받아
-- 연초대비(YTD)·1년 수익률을 계산해 live.json 파일로 저장합니다.
+- 나스닥100 전체 101개 기업 + QQQ + 나스닥100 지수 + 원달러 환율의 종가를 받아
+- 연초대비(YTD)·1년 수익률과 시가총액을 계산해 live.json 파일로 저장합니다.
+- 신규 상장사(스페이스X·하니웰 에어로스페이스)는 연초 종가가 없어 YTD 대신
+  시가총액·상장 후 데이터만 수집합니다.
 - 앱(index.html)은 열릴 때 live.json을 읽어 최신값으로 화면을 갱신합니다.
 데이터 출처: Yahoo Finance (1순위) → Stooq (2순위). 외부 키 불필요.
 """
@@ -18,9 +20,12 @@ TICKERS = [
  "PCAR","AEP","MPWR","LITE","ABNB","WBD","PDD","TER","FANG","ALAB",
  "FAST","NXPI","BKR","CCEP","NBIS","AXON","PYPL","ADSK","EXC","XEL",
  "FER","IDXX","ODFL","MCHP","RKLB","PAYX","TTWO","CRWV","KDP","ROP",
- "TRI","WDAY","MSTR","DXCM","GEHC","KHC","ALNY","CPRT","QQQ",
+ "TRI","WDAY","MSTR","DXCM","GEHC","KHC","ALNY","CPRT",
+ "SPCX","HONA",  # 2026년 신규 편입 (스페이스X·하니웰 에어로스페이스) — 앱 반영 전이라도 데이터 선수집
+ "QQQ",
 ]
-YE_DATE = datetime.date(2025, 12, 31)          # 연초 기준일 (전년도 말)
+# 연초 기준일 = 항상 "작년 12월 31일" — 해가 바뀌면 1월 첫 실행 때 자동으로 새 기준년도로 전환됨
+YE_DATE = datetime.date(datetime.date.today().year - 1, 12, 31)
 REF_DATE = datetime.date(2026, 8, 7)           # 앱에 내장된 시가총액의 기준일
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 INVESCO_URL = ("https://www.invesco.com/us/financial-products/etfs/holdings/"
@@ -63,11 +68,12 @@ def from_stooq(sym):
     return out
 
 def get_history(yahoo_sym, stooq_sym):
+    # 최소 15거래일 — 신규 상장사(상장 몇 달)도 수집 가능하도록
     for fn, sym in ((from_yahoo, yahoo_sym), (from_stooq, stooq_sym)):
         for attempt in (1, 2):
             try:
                 h = fn(sym)
-                if len(h) >= 100:
+                if len(h) >= 15:
                     return h
             except Exception:
                 pass
@@ -93,6 +99,31 @@ def returns(hist):
     r1y = (last_c / y1 - 1) * 100 if y1 else None
     return ytd, r1y, last_c, last_d, ye
 
+def yahoo_caps(symbols):
+    """야후에서 시가총액을 직접 받음 — 증자·자사주 소각에 따른 주식 수 변화가 자동 반영됨."""
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
+    try:
+        opener.open(urllib.request.Request("https://fc.yahoo.com", headers=UA), timeout=15)
+    except Exception:
+        pass  # 응답이 404여도 쿠키는 심어짐
+    crumb = opener.open(urllib.request.Request(
+        "https://query1.finance.yahoo.com/v1/test/getcrumb", headers=UA), timeout=15
+    ).read().decode("utf-8", "replace").strip()
+    caps = {}
+    for i in range(0, len(symbols), 40):
+        chunk = symbols[i:i + 40]
+        url = ("https://query1.finance.yahoo.com/v7/finance/quote?symbols="
+               + ",".join(chunk) + "&fields=marketCap&crumb=" + urllib.parse.quote(crumb))
+        data = json.loads(opener.open(urllib.request.Request(url, headers=UA), timeout=25)
+                          .read().decode("utf-8", "replace"))
+        for q in data.get("quoteResponse", {}).get("result", []):
+            mc = q.get("marketCap")
+            if mc and mc > 1e9:
+                caps[q.get("symbol", "").upper()] = round(mc / 1e9, 1)
+        time.sleep(0.5)
+    return caps
+
+
 def main():
     live = {}
     if os.path.exists("live.json"):
@@ -111,19 +142,26 @@ def main():
         if not h:
             fail.append(t); continue
         ytd, r1y, last_c, last_d, ye = returns(h)
-        if ytd is None:
-            fail.append(t); continue
         if t == "QQQ":
+            if ytd is None:
+                fail.append(t); continue
             live["qqqNow"] = round(last_c, 2)
             if ye: live["qqqYE"] = round(ye, 2)
             latest_date = last_d
         else:
-            live["ret"][t] = {"ytd": round(ytd, 1)}
+            ent = {}
+            if ytd is not None:
+                ent["ytd"] = round(ytd, 1)
             if r1y is not None:
-                live["ret"][t]["y1"] = round(r1y, 1)
+                ent["y1"] = round(r1y, 1)
             ref = close_on_or_before(sorted(h), REF_DATE)
             if ref:  # 시가총액 환산 배율 (내장 기준일 대비 주가 변화)
-                live["ret"][t]["m"] = round(last_c / ref, 4)
+                ent["m"] = round(last_c / ref, 4)
+            if not ent:
+                fail.append(t); continue
+            old = live["ret"].get(t, {})
+            old.update(ent)
+            live["ret"][t] = old
         ok += 1
         time.sleep(0.35)
 
@@ -146,6 +184,17 @@ def main():
         ok += 1
     else:
         fail.append("USDKRW")
+
+    # 3.7) 시가총액 직접 갱신 (야후 — 주식 수 변화 자동 반영, 실패 시 주가 배율 방식 유지)
+    try:
+        caps = yahoo_caps([t for t in TICKERS if t != "QQQ"])
+        capn = 0
+        for t, b in caps.items():
+            live["ret"].setdefault(t, {})["cap"] = b
+            capn += 1
+        print(f"시가총액 직접 수집: {capn}개 (야후 공시 기반)")
+    except Exception as e:
+        print("시가총액 직접 수집 실패 (주가 배율 방식으로 대체):", repr(e))
 
     # 3.5) 새 실적 공시 감지 (SEC EDGAR 공식 접수 기록)
     try:
