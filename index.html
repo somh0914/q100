@@ -177,7 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
-    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.08.31-G</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.08.31-H</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -4790,7 +4790,9 @@ function buildDetail(c){
   const ni=ord.indexOf(c.id);
   const pv=ni>0? byId[ord[ni-1]] : null, nx=ni<ord.length-1? byId[ord[ni+1]] : null;
   const g=lastG(c), gOk=isFinite(g);
-  const qTag=c.lastQ?`<span style="color:#6f9fd8;font-weight:700"> · ${c.lastQ.replace(' ','.')}</span>`:'';
+  /* 분기 라벨 한 줄 + 원화값 한 줄 강제(길면 글자 축소) */
+  const qLine=c.lastQ?`<div style="font-size:11.5px;color:#6f9fd8;font-weight:800;margin-top:2px;white-space:nowrap">${c.lastQ.replace(' ','.')}</div>`:'';
+  const vFit=s=>{s=String(s);const f=s.length>=9?13.5:(s.length>=8?15:(s.length>=6?17:20));return `<div class="v" style="white-space:nowrap;font-size:${f}px;letter-spacing:-.3px">${s}</div>`;};
   /* 다음 발표 분기 = 반영된 최신 분기 + 1 (4Q면 다음 회계연도 1Q) */
   const nq=(()=>{ const m=c.lastQ&&c.lastQ.match(/^FY(\d+)\s(\d)Q$/); if(!m) return '';
     let y=+m[1], q=+m[2]+1; if(q>4){ q=1; y++; } return `FY${y}.${q}Q`; })();
@@ -4821,9 +4823,9 @@ function buildDetail(c){
     </div>
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
     <div class="grid3" style="margin-top:15px">
-      <div class="stat"><div class="k">시가총액</div><div class="v">${krw(c.capB,true)}</div><div class="krw">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb">QQQ ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}</div>
-      <div class="stat"><div class="k">매출 (FY)</div><div class="v">${krwS(c.key.rev,true)}</div><div class="krw">${c.key.rev}${qTag}</div>${gOk?`<div class="s" style="color:${g>=0?'#4ade80':'#f87171'}">${fPct(g,0)}</div>`:''}</div>
-      <div class="stat"><div class="k">주당순이익 (EPS)</div><div class="v">${epsW}</div><div class="krw">${epsD}${qTag}</div><div class="s" style="color:${epsCc}">${epsChg}</div></div>
+      <div class="stat"><div class="k">시가총액</div>${vFit(krw(c.capB,true))}<div class="krw" style="white-space:nowrap">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb;white-space:nowrap">QQQ ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}</div>
+      <div class="stat"><div class="k">매출 (FY)</div>${vFit(krwS(c.key.rev,true))}<div class="krw" style="white-space:nowrap">${c.key.rev}</div>${qLine}${gOk?`<div class="s" style="color:${g>=0?'#4ade80':'#f87171'};white-space:nowrap">${fPct(g,0)}</div>`:''}</div>
+      <div class="stat"><div class="k">주당순이익 (EPS)</div>${vFit(epsW)}<div class="krw" style="white-space:nowrap">${epsD}</div>${qLine}<div class="s" style="color:${epsCc};white-space:nowrap">${epsChg}</div></div>
     </div>
   </div>
   <div class="tabbar">${DTABS.map(([t,k,e])=>`<span class="tab dtab ${t==='ov'?'on':''}" data-t="${t}" onclick="showDTab('${t}')">${k}<small>${e}</small></span>`).join('')}</div>
