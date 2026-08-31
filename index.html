@@ -177,6 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.08.31-E</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -4336,6 +4337,29 @@ DB.companies.forEach(c => { if (LASTQ[c.ticker]) c.lastQ = LASTQ[c.ticker]; });
   (DB.earnings || []).forEach(e => { if (!m[e.id]) m[e.id] = e; });
   DB.companies.forEach(c => { const e = m[c.id]; if (e) { c.nextEarn = e.d; c.nextEarnQ = e.q || ''; } });
 })();
+
+/* ===== 결산월 + 다음 실적 추정 (전 기업) =====
+   FYEND: 회계연도 종료 월 (없으면 12월 결산).
+   실적 캘린더에 정확한 날짜가 없는 기업은 결산월 기반 추정 시기를 표시하고,
+   온라인에서는 live.json의 next(야후 실제 예정일)가 이를 덮어씀. */
+const FYEND = {
+  NVDA:1, CRWD:1, MRVL:1, ADSK:1, WDAY:1, ROST:1, WMT:1,
+  MCHP:3, TTWO:3, ARM:3,
+  PAYX:5, CTAS:5,
+  MSFT:6, ADP:6, LRCX:6, KLAC:6, STX:6, WDC:6, LITE:6, SNDK:6,
+  CSCO:7, PANW:7, INTU:7, CPRT:7,
+  COST:8, MU:8,
+  AAPL:9, QCOM:9, SBUX:9,
+  AVGO:10, AMAT:10, SNPS:10,
+  ADBE:11, ADI:11
+};
+DB.companies.forEach(c => { c.fyEnd = FYEND[c.ticker] || 12; });
+/* 다음 발표 추정 시기 (2026.08.31 기준 — live.json이 실제 날짜로 매일 대체) */
+const NEXTE = {1:'11월 말경', 3:'10월 말경', 5:'9월 말경', 6:'10월 말경', 7:'11월 중순경',
+               8:'9월 하순경', 9:'10월 말경', 10:'11월 중순경', 11:'11월 말경', 12:'10월 말~11월 초'};
+DB.companies.forEach(c => {
+  if (!c.nextEarn && NEXTE[c.fyEnd]) { c.nextEarn = NEXTE[c.fyEnd]; c.nextEarnQ = ''; }
+});
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
 const C = DB.companies;
@@ -4789,7 +4813,7 @@ function buildDetail(c){
       <span class="chip sm">NASDAQ: ${c.ticker}</span><span class="chip sm">${c.industry}</span>
       ${c.newIn?`<span class="chip sm" style="background:#0a2e1a;border-color:#1f8a4d;color:#4ade80;font-weight:800">🆕 ${c.newIn} 지수 편입</span>`:''}
       ${c.freshEarn?`<span class="chip sm" style="background:#3a2c0a;border-color:#8a6d1f;color:#fbbf24;font-weight:800">🔔 ${c.freshEarn} 새 실적 발표</span>`:''}
-      ${c.nextEarn?`<span class="chip sm" style="background:#0a1c33;border-color:#1f4c7a;color:#7fb2ff;font-weight:800">🔔 다음 실적 ${c.nextEarn}${c.nextEarnQ?` · ${c.nextEarnQ}`:''} (예정)</span>`:''}
+      ${c.nextEarn?`<span class="chip sm" style="background:#0a1c33;border-color:#1f4c7a;color:#7fb2ff;font-weight:800">🔔 다음 실적 ${c.nextEarn}${c.nextEarnQ?` · ${c.nextEarnQ}`:''} (예정)<span style="color:#5f86b8;font-weight:700"> · ${c.fyEnd||12}월 결산</span></span>`:''}
     </div>
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
     <div class="grid3" style="margin-top:15px">
