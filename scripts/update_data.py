@@ -5,6 +5,7 @@ Q100 데이터 자동 업데이트 스크립트 (GitHub Actions에서 매일 실
 - 연초대비(YTD)·1년 수익률과 시가총액을 계산해 live.json 파일로 저장합니다.
 - 신규 상장사(스페이스X·하니웰 에어로스페이스)는 연초 종가가 없어 YTD 대신
   시가총액·상장 후 데이터만 수집합니다.
+- 새 실적 발표 감지 + 각 기업의 "다음 실적 발표 예정일"도 수집합니다 (🔔 표시용).
 - 앱(index.html)은 열릴 때 live.json을 읽어 최신값으로 화면을 갱신합니다.
 데이터 출처: Yahoo Finance (1순위) → Stooq (2순위). 외부 키 불필요.
 """
@@ -143,8 +144,19 @@ def main():
     ok, fail = 0, []
     latest_date = None
 
-    # 1) 99개 기업 + QQQ
-    for t in TICKERS:
+    # 0.5) 지수에 새로 편입된 종목도 자동으로 수집 대상에 포함
+    #      (어제까지 확보한 구성종목 명단과 내장 TICKERS의 합집합 —
+    #       앱에 기업 페이지가 만들어지기 전이라도 주가·시총·실적일 데이터가 먼저 쌓임)
+    fetch_list = list(TICKERS)
+    if isinstance(live.get("members"), list):
+        extra = [t for t in live["members"]
+                 if t not in fetch_list and t.replace("-", "").isalpha() and len(t) <= 6]
+        if extra:
+            fetch_list += extra
+            print("구성종목 명단 기반 자동 추가 수집:", ", ".join(extra))
+
+    # 1) 전체 기업 + QQQ
+    for t in fetch_list:
         h = get_history(t, t.lower() + ".us")
         if not h:
             fail.append(t); continue
@@ -199,17 +211,20 @@ def main():
     else:
         fail.append("USDKRW")
 
-    # 3.5) 야후 일괄 조회 — 시가총액 갱신 + 새 실적 발표 감지 (같은 통로)
+    # 3.5) 야후 일괄 조회 — 시가총액 갱신 + 새 실적 발표 감지 + 다음 발표 예정일 (같은 통로)
     #      * SEC는 GitHub 서버 접속을 차단(403)하여 야후의 실적 발표일 데이터로 대체
     try:
-        quotes = yahoo_quotes([t for t in TICKERS if t != "QQQ"])
+        quotes = yahoo_quotes([t for t in fetch_list if t != "QQQ"])
         live.setdefault("fresh", {})
         cutoff = (datetime.date.today() - datetime.timedelta(days=45)).isoformat()
         for t in list(live["fresh"].keys()):
             if live["fresh"][t].get("d", "") < cutoff:
                 del live["fresh"][t]
+        prev_next = live.get("next") if isinstance(live.get("next"), dict) else {}
+        new_next = {}
         capn = ern = 0
         now = datetime.datetime.now(datetime.timezone.utc)
+        today_d = datetime.date.today()
         for t, q in quotes.items():
             mc = q.get("cap")
             if mc and mc > 1e9:
@@ -219,13 +234,31 @@ def main():
             if ets:
                 edt = datetime.datetime.fromtimestamp(ets, datetime.timezone.utc)
                 days_ago = (now - edt).total_seconds() / 86400
-                # 발표일이 지난 5일 이내면 "새 실적 발표"로 기록 (미래 예정일은 무시)
+                # 발표일이 지난 5일 이내면 "새 실적 발표"로 기록
                 if 0 <= days_ago <= 5:
                     d = edt.date().isoformat()
                     if d > live["fresh"].get(t, {}).get("d", ""):
                         live["fresh"][t] = {"d": d, "f": "발표"}
                         ern += 1
-        print(f"시가총액 {capn}개 갱신 · 새 실적 발표 감지 {ern}건 (현재 배지 {len(live['fresh'])}개)")
+                # 미래 예정일이면 "다음 실적 발표일"로 저장 (앱의 🔔 다음 실적 표시용)
+                elif days_ago < 0 and -days_ago <= 200:
+                    new_next[t] = edt.date().isoformat()
+        # 엔비디아형 사각지대 보완: 발표 직후 야후가 날짜를 곧바로 다음 분기로
+        # 바꿔버리면 위의 "지난 5일" 검사에 안 걸림 → 어제까지 저장해 둔
+        # 예정일이 방금 지났으면 그 날을 발표일로 간주해 감지한다.
+        for t, d in prev_next.items():
+            try:
+                gap = (today_d - datetime.date.fromisoformat(d)).days
+            except Exception:
+                continue
+            if 0 < gap <= 7:
+                if d > live["fresh"].get(t, {}).get("d", ""):
+                    live["fresh"][t] = {"d": d, "f": "발표"}
+                    ern += 1
+            elif gap <= 0 and t not in new_next:
+                new_next[t] = d  # 아직 미래인 예정일은 유지 (야후 일시 누락 대비)
+        live["next"] = new_next
+        print(f"시가총액 {capn}개 갱신 · 새 실적 발표 감지 {ern}건 (현재 배지 {len(live['fresh'])}개) · 다음 발표 예정일 {len(new_next)}개 확보")
     except Exception as e:
         print("야후 일괄 조회 실패 (기존 값 유지):", repr(e))
 
