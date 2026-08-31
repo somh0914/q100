@@ -4269,6 +4269,28 @@ DB.idxChanges = {
     {n:'일렉트로닉 아츠', t:'EA', d:'2026.08', why:'사우디 PIF 컨소시엄에 550억 달러 인수되어 상장폐지'}
   ]
 };
+/* --- QQQ 실제 비중 (인베스코 공식 보유내역 2026.08.28 · 분기마다 갱신) --- */
+const QW = {AAPL:7.49, ABNB:0.35, ADBE:0.52, ADI:0.78, ADP:0.51, ADSK:0.24, AEP:0.3, ALAB:0.22, ALNY:0.14, AMAT:1.62, AMD:3.34, AMGN:1.03, AMZN:4.57, APP:0.43, ARM:0.45, ASML:0.68, AVGO:2.79, AXON:0.21, BKNG:0.7, BKR:0.27, CCEP:0.21, CDNS:0.41, CEG:0.44, CMCSA:0.42, COST:1.85, CPRT:0.13, CRWD:0.98, CRWV:0.17, CSCO:1.91, CSX:0.42, CTAS:0.36, DASH:0.43, DDOG:0.35, DXCM:0.15, EXC:0.2, FANG:0.24, FAST:0.25, FER:0.19, FTNT:0.54, GEHC:0.14, GILD:0.8, GOOGL:6.2, HON:0.3, HONA:0.23, IDXX:0.19, INTC:1.98, INTU:0.43, ISRG:0.58, KDP:0.19, KHC:0.13, KLAC:1.01, LIN:1.0, LITE:0.31, LRCX:1.66, MAR:0.41, MCHP:0.18, MDLZ:0.35, MELI:0.44, META:2.73, MNST:0.4, MPWR:0.27, MRVL:0.83, MSFT:6.09, MSTR:0.19, MU:4.63, NBIS:0.2, NFLX:1.51, NVDA:8.4, NXPI:0.25, ODFL:0.18, ORLY:0.32, PANW:1.33, PAYX:0.2, PCAR:0.29, PDD:0.25, PEP:0.85, PLTR:1.88, PYPL:0.21, QCOM:0.76, REGN:0.36, RKLB:0.16, ROP:0.19, ROST:0.32, SBUX:0.54, SHOP:0.82, SNDK:0.97, SNPS:0.37, SPCX:1.19, STX:0.82, TER:0.24, TMUS:0.87, TRI:0.18, TSLA:2.78, TTWO:0.19, TXN:1.04, VRTX:0.61, WBD:0.32, WDAY:0.18, WDC:0.7, WMT:2.22, XEL:0.21};
+DB.companies.forEach(c => { if (QW[c.ticker] != null) c.qqq = QW[c.ticker]; });
+DB.qqqTop = [
+  {n:'NVIDIA', t:'NVDA', w:8.4, id:'nvda'},
+  {n:'Apple', t:'AAPL', w:7.49, id:'aapl'},
+  {n:'Microsoft', t:'MSFT', w:6.09, id:'msft'},
+  {n:'Micron', t:'MU', w:4.63, id:'mu'},
+  {n:'Amazon', t:'AMZN', w:4.57, id:'amzn'},
+  {n:'AMD', t:'AMD', w:3.34, id:'amd'},
+  {n:'Alphabet A', t:'GOOGL', w:3.22, id:'googl'},
+  {n:'Alphabet C', t:'GOOG', w:2.98, id:'googl'},
+  {n:'Broadcom', t:'AVGO', w:2.79, id:'avgo'},
+  {n:'Tesla', t:'TSLA', w:2.78, id:'tsla'},
+  {n:'Meta', t:'META', w:2.73, id:'meta'},
+  {n:'Walmart', t:'WMT', w:2.22, id:'wmt'},
+  {n:'Intel', t:'INTC', w:1.98, id:'intc'},
+  {n:'Cisco', t:'CSCO', w:1.91, id:'csco'},
+  {n:'Palantir', t:'PLTR', w:1.88, id:'pltr'}
+];
+DB.top10 = 46.3;
+DB.meta.weightsAsOf = '2026.08.28';
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
 const C = DB.companies;
@@ -4592,7 +4614,7 @@ function renderHome(){
   <div class="card" onclick="nav('qqq')" style="cursor:pointer">
     <div class="row sb"><b style="font-size:15px">Top 10 집중도</b><b class="big" style="font-size:21px">${DB.top10.toFixed(0)}%</b></div>
     <div class="hbar" style="margin-top:9px"><i style="width:${DB.top10}%;background:#fff"></i></div>
-    <div class="row sb" style="margin-top:9px"><span class="tiny">100개 기업 중 상위 10개의 비중</span><span class="tiny" style="font-weight:800;color:#bbb">QQQ 분석 →</span></div>
+    <div class="row sb" style="margin-top:9px"><span class="tiny">${C.length}개 기업 중 상위 10개의 비중</span><span class="tiny" style="font-weight:800;color:#bbb">QQQ 분석 →</span></div>
   </div>
   <div class="sec-t">최근 실적 발표 <small>${DB.earnLabel||'2026년 7월 말'}</small></div>
   <div class="chiprow">${DB.recentEarnings.map(id=>{const c=byId[id];
@@ -4958,16 +4980,16 @@ function renderQQQ(){
   };
   $('#scr-qqq').innerHTML=`
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 4px">QQQ를 하나의 기업처럼</h2>
-  <p class="tiny" style="margin:0 2px 14px">나스닥100 ETF는 100개 기업의 포트폴리오입니다. 비중 기준 ${DB.meta.weightsAsOf}</p>
+  <p class="tiny" style="margin:0 2px 14px">나스닥100 ETF는 ${C.length}개 기업의 포트폴리오입니다. 비중 기준 ${DB.meta.weightsAsOf}</p>
   <div class="grid3">
-    <div class="stat"><div class="k">구성 기업</div><div class="v">100개</div></div>
+    <div class="stat"><div class="k">구성 기업</div><div class="v">${C.length}개</div></div>
     <div class="stat"><div class="k">Q100 수록</div><div class="v">${C.length}개</div></div>
     <div class="stat"><div class="k">Top10 비중</div><div class="v">${DB.top10.toFixed(0)}%</div></div>
   </div>
   <div class="sec-t">Top Holdings <small>상위 15 · 전 종목 수록</small></div>
   <div class="card" style="padding:8px 16px">${DB.qqqTop.map(wrow).join('')}
     <p class="tiny" style="padding:8px 0 6px">알파벳은 A·C 두 클래스로 나뉘어 있습니다 (합산 시 3위권).</p></div>
-  <button class="btn ghost blk" onclick="st.sort='qqq';st.ind='전체';st.trait=null;st.q='';nav('companies')">100개 기업 전체 보기</button>
+  <button class="btn ghost blk" onclick="st.sort='qqq';st.ind='전체';st.trait=null;st.q='';nav('companies')">${C.length}개 기업 전체 보기</button>
   <div class="sec-t">내부 집중도</div>
   <div class="card">
     <div class="hero-num">${DB.top10.toFixed(0)}%</div>
