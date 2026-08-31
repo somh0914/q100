@@ -722,20 +722,22 @@ top10:46.4,
 sectors:[['기술',60],['경기소비재',19],['통신서비스',4],['헬스케어',4],['산업재',4],['필수소비재',5],['기타',4]],
 contrib:[['NVIDIA',3.9,'nvda'],['Micron',2.1,'mu'],['AMD',1.5,'amd'],['Apple',1.2,'aapl'],['Broadcom',0.9,'avgo'],['Microsoft',0.7,'msft']],
 earnings:[
+  {id:'panw', d:'9월 1일', q:'FY26 4Q'},
   {id:'avgo', d:'9월 3일', q:'FY26 3Q'},
+  {id:'cprt', d:'9월 초', q:'FY26 4Q'},
   {id:'adbe', d:'9월 10일', q:'FY26 3Q'},
   {id:'mu', d:'9월 22일', q:'FY26 4Q'},
   {id:'cost', d:'9월 24일', q:'FY26 4Q'},
-  {id:'nflx', d:'10월 16일', q:'3Q'},
-  {id:'tsla', d:'10월 21일', q:'3Q'},
-  {id:'intc', d:'10월 22일', q:'3Q'},
-  {id:'cdns', d:'10월 26일', q:'3Q'},
+  {id:'nflx', d:'10월 16일', q:'FY26 3Q'},
+  {id:'tsla', d:'10월 21일', q:'FY26 3Q'},
+  {id:'intc', d:'10월 22일', q:'FY26 3Q'},
+  {id:'cdns', d:'10월 26일', q:'FY26 3Q'},
   {id:'msft', d:'10월 27일', q:'FY27 1Q'},
-  {id:'googl', d:'10월 27일', q:'3Q'},
-  {id:'meta', d:'10월 28일', q:'3Q'},
+  {id:'googl', d:'10월 27일', q:'FY26 3Q'},
+  {id:'meta', d:'10월 28일', q:'FY26 3Q'},
   {id:'aapl', d:'10월 29일', q:'FY26 4Q'},
-  {id:'amzn', d:'10월 29일', q:'3Q'},
-  {id:'amd', d:'11월 3일', q:'3Q'},
+  {id:'amzn', d:'10월 29일', q:'FY26 3Q'},
+  {id:'amd', d:'11월 3일', q:'FY26 3Q'},
   {id:'qcom', d:'11월 4일', q:'FY26 4Q'},
   {id:'nvda', d:'11월 중순', q:'FY27 3Q'},
   {id:'wday', d:'11월 말', q:'FY27 3Q'},
@@ -759,6 +761,7 @@ glossary:[
   {t:'ARR', s:'연간 반복매출', d:'구독처럼 매년 자동으로 반복되는 매출. 소프트웨어 기업의 핵심 지표.', ex:'Adobe의 디지털 미디어 ARR은 $18B가 넘는다.'},
   {t:'RPO', s:'수주잔고', d:'계약은 됐지만 아직 매출로 잡히지 않은 금액. 미래 매출의 가시성을 보여준다.', ex:'Cadence는 수년치 계약이 쌓여 있어 실적 예측 가능성이 높다.'},
   {t:'SBC', s:'주식보상비용', d:'직원에게 주식으로 주는 보상. 현금은 아니지만 주주 지분을 희석시킨다.', ex:'빅테크 대부분은 매출의 5~10%를 SBC로 지출한다.'},
+  {t:'회계연도 (FY)', s:'기업마다 다른 1년 결산 구간', d:'기업의 "1년"은 달력과 다를 수 있다. 12월에 결산하는 회사는 FY26 = 2026년이지만, 1월에 결산하는 엔비디아·월마트는 2026년 2월~2027년 1월 구간을 "FY27"이라고 부른다. 그래서 2026년 여름에 발표된 엔비디아 실적이 "FY27 2분기"가 된다 — 오류가 아니라 회사의 공식 표기다. 6월 결산인 마이크로소프트도 2026년 10월 발표분부터 FY27이다.', ex:'앱의 매출·EPS 옆 파란 태그(예: FY27.2Q)는 그 회사 공식 표기 기준으로 "어느 분기 실적까지 반영됐는지"를 뜻한다. 뉴스 제목의 분기 표기와 그대로 비교하면 된다.'},
   {t:'환율 효과', s:'환헤지 없는 달러 투자', d:'미국 주식은 수익률이 두 번 결정된다 — 한 번은 주가로, 한 번은 환율로. 원화를 달러로 바꿔 투자했다가 다시 원화로 돌아오기 때문에, 최종 수익률은 두 숫자의 단순 덧셈이 아니라 (1+주가수익률) × (1+환율변동률)로 곱해서 계산된다. 환율 변동이 원금뿐 아니라 수익분에도 똑같이 적용되기 때문. 원화가 강해지면(환율 하락) 달러로 번 수익이 깎이고, 원화가 약해지면(환율 상승) 환차익이 얹어진다.', ex:'2026년 8월 기준 QQQ는 달러로 +17.4% 올랐지만 환율이 −4.2% 내려, 원화 체감 수익률은 17.4−4.2=13.2%가 아니라 곱하기로 +12.5%였다. 홈 화면의 "QQQ 원화 기준"이 바로 이 값이다.'}
 ]
 };
@@ -920,9 +923,9 @@ DB.companies.push(
     {t:'고마진 신사업', d:'광고·멤버십·마켓플레이스가 이익 성장 견인'}
   ],
   segments:[{n:'미국 월마트',p:69},{n:'해외',p:17},{n:'샘스클럽',p:14}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[572.8,611.3,648.1,681.0,704.0], op:[25.9,20.4,27.0,29.3,30.5], ni:[13.7,11.7,15.5,19.4,21.0], fcf:[11.1,7.0,15.1,12.7,13.5], eps:[1.69,1.42,1.91,2.41,2.60]},
-  finNote:'회계연도 1월 종료 · FY26은 근사치 · 나스닥 이전 상장으로 지수 편입',
-  key:{rev:'$704B', revG:'+3%', opm:'4.3%', fcf:'$13.5B', extraK:'광고 성장', extraV:'+25%대'},
+  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[611.3,648.1,681.0,704.0,740], op:[20.4,27.0,29.3,30.5,35.0], ni:[11.7,15.5,19.4,21.0,24.0], fcf:[7.0,15.1,12.7,13.5,15.0], eps:[1.42,1.91,2.41,2.60,2.95]},
+  finNote:'회계연도 1월 종료 · FY27E는 2Q 실적(매출 +5.9%) 기반 근사치 · 나스닥 이전 상장으로 지수 편입',
+  key:{rev:'$740B', revG:'+5%', opm:'4.7%', fcf:'$15B', extraK:'이커머스 성장', extraV:'+23%'},
   score:{biz:90, growth:72, profit:70, cash:82, moat:93, fin:94, val:48, total:82},
   moat:[93,70,75,99,80,68,85],
   moatNote:'세계 최대 구매력과 물류망. 아마존에 맞설 수 있는 유일한 오프라인 기반 유통.',
@@ -979,7 +982,7 @@ DB.companies.push(
   sector:'기술', industry:'네트워크 장비', tags:['통신','AI'],
   tagline:'Network Backbone', sub:'인터넷의 배관공',
   oneLiner:'전 세계 기업 네트워크의 표준 장비에 보안·소프트웨어를 얹어가는 회사',
-  capB:320, qqq:2.10,
+  capB:480, qqq:2.10,
   products:['네트워크 장비 (스위치·라우터)','보안 (Splunk 포함)','협업 (Webex)','AI 데이터센터 네트워킹'],
   customers:['전 세계 기업·통신사','정부·클라우드'],
   competitors:['아리스타 네트웍스','주니퍼·화웨이','팔로알토 (보안)'],
@@ -990,9 +993,9 @@ DB.companies.push(
     {t:'배당·자사주', d:'안정적 현금으로 꾸준한 주주환원'}
   ],
   segments:[{n:'네트워킹',p:54},{n:'보안·협업',p:32},{n:'서비스',p:14}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[49.8,51.6,57.0,53.8,56.7], op:[12.9,13.5,15.0,12.2,12.8], ni:[10.6,11.8,12.6,10.3,10.2], fcf:[15.5,12.8,19.0,12.7,13.5], eps:[2.50,2.82,3.07,2.54,2.58]},
-  finNote:'회계연도 7월 종료',
-  key:{rev:'$56.7B', revG:'+5%', opm:'23%', fcf:'$13.5B', extraK:'배당수익률', extraV:'~2%대'},
+  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[57.0,53.8,56.7,63.3,72.8], op:[15.0,12.2,12.8,15.5,18.5], ni:[12.6,10.3,10.2,13.3,16.0], fcf:[19.0,12.7,13.5,15.0,17.0], eps:[3.07,2.54,2.58,3.33,4.03]},
+  finNote:'회계연도 7월 종료 · FY26 매출 $63.3B (+12%) 확정 · FY27E는 회사 가이던스 기준 (AI 인프라 수주 급증)',
+  key:{rev:'$72.8B', revG:'+15%', opm:'25%', fcf:'$17B', extraK:'AI 인프라 수주', extraV:'$9.3B (FY26)'},
   score:{biz:82, growth:65, profit:85, cash:90, moat:85, fin:92, val:70, total:80},
   moat:[88,85,75,88,70,75,85],
   moatNote:'기업 네트워크에 깊이 박힌 설치 기반과 인증 엔지니어 생태계가 해자.',
@@ -1189,7 +1192,7 @@ DB.companies.push(
   sector:'소비재', industry:'이커머스', tags:['플랫폼','유통'],
   tagline:'Discount Empire', sub:'초저가 커머스의 세계 정복',
   oneLiner:'중국 핀둬둬와 글로벌 테무로 초저가 이커머스를 수출하는 회사',
-  capB:180, qqq:0.27,
+  capB:135, qqq:0.27,
   products:['핀둬둬 (중국 커머스)','Temu (글로벌)','농산물 직거래'],
   customers:['중국 소비자 9억','글로벌 테무 사용자'],
   competitors:['알리바바·징둥','Shein','아마존'],
@@ -1200,9 +1203,9 @@ DB.companies.push(
     {t:'박리다매 순환', d:'가격 우위 → 트래픽 → 셀러 → 더 싼 가격'}
   ],
   segments:[{n:'거래 서비스 (수수료)',p:60},{n:'온라인 마케팅 (광고)',p:40}],
-  fin:{years:['2021','2022','2023','2024','2025'], rev:[14.7,20.5,34.9,54.6,60.0], op:[1.0,4.5,8.3,15.3,16.0], ni:[1.2,4.9,8.5,15.6,16.5], fcf:[4.5,7.0,13.0,17.0,17.5], eps:[0.86,3.43,5.95,10.87,11.50]},
-  finNote:'12월 결산 · 위안화 실적의 달러 환산 근사치',
-  key:{rev:'$60B', revG:'+10%', opm:'27%', fcf:'$17.5B', extraK:'현금 보유', extraV:'$50B+'},
+  fin:{years:['2022','2023','2024','2025','2026E'], rev:[20.5,34.9,54.6,60.0,65.0], op:[4.5,8.3,15.3,16.0,15.0], ni:[4.9,8.5,15.6,16.5,15.0], fcf:[7.0,13.0,17.0,17.5,16.0], eps:[3.43,5.95,10.87,11.50,10.40]},
+  finNote:'12월 결산 · 위안화 실적의 달러 환산 근사치 · 2026E는 2Q(매출 +8%, 이익 -12%) 반영',
+  key:{rev:'$65B', revG:'+8%', opm:'23%', fcf:'$16B', extraK:'현금 보유', extraV:'$50B+'},
   score:{biz:85, growth:80, profit:90, cash:92, moat:78, fin:95, val:75, total:82},
   moat:[75,60,88,92,85,75,80],
   moatNote:'중국 제조 공급망 장악력이 해자. 다만 정치·규제 변수가 해자 밖에 존재한다.',
@@ -1402,7 +1405,7 @@ DB.companies.push(
   sector:'기술', industry:'아날로그 반도체', tags:['반도체','산업재'],
   tagline:'Real World Chips', sub:'현실 세계와 디지털의 다리',
   oneLiner:'센서 신호를 디지털로 바꾸는 고성능 아날로그 칩의 프리미엄 강자',
-  capB:130, qqq:0.81,
+  capB:171, qqq:0.81,
   products:['고성능 아날로그·믹스드시그널','전력관리 칩','산업·항공우주 솔루션'],
   customers:['산업·자동차·통신·의료 기업 12만+'],
   competitors:['텍사스 인스트루먼트','인피니언'],
@@ -1413,9 +1416,9 @@ DB.companies.push(
     {t:'배당 성장', d:'20년 연속 배당 인상'}
   ],
   segments:[{n:'산업',p:50},{n:'자동차',p:30},{n:'통신·소비자',p:20}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[7.3,12.0,12.3,9.4,11.2], op:[1.7,2.9,3.8,2.0,2.9], ni:[1.4,2.7,3.3,1.6,2.5], fcf:[2.4,3.5,3.6,3.0,3.6], eps:[3.71,5.25,6.55,3.29,5.00]},
-  finNote:'회계연도 11월 종료 · FY22부터 Maxim 인수 반영',
-  key:{rev:'$11.2B', revG:'+19%', opm:'26%', fcf:'$3.6B', extraK:'배당 인상', extraV:'20년 연속'},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[12.0,12.3,9.4,11.2,15.0], op:[2.9,3.8,2.0,2.9,4.5], ni:[2.7,3.3,1.6,2.5,3.7], fcf:[3.5,3.6,3.0,3.6,5.0], eps:[5.25,6.55,3.29,5.00,7.40]},
+  finNote:'회계연도 11월 종료 · FY22부터 Maxim 인수 반영 · FY26E는 분기 실적 기반 근사치 (3Q 매출 $4.0B, +40%)',
+  key:{rev:'$15.0B', revG:'+34%', opm:'30%', fcf:'$5B', extraK:'AI 인프라 수요', extraV:'3Q +40%'},
   score:{biz:84, growth:70, profit:85, cash:90, moat:87, fin:90, val:58, total:80},
   moat:[82,86,58,80,68,88,75],
   moatNote:'한 번 설계에 들어가면 10년을 가는 산업·의료·항공 칩. 전환비용형 해자의 전형.',
@@ -1650,7 +1653,7 @@ DB.companies.push(
   sector:'기술', industry:'반도체 장비', tags:['반도체'],
   tagline:'Fab Everything', sub:'반도체 공장의 백화점',
   oneLiner:'증착·식각 등 칩 제조 거의 모든 공정의 장비를 파는 세계 최대 반도체 장비사',
-  capB:240, qqq:1.86,
+  capB:370, qqq:1.86,
   products:['증착·식각·이온주입 장비','계측·검사','디스플레이 장비','서비스 (AGS)'],
   customers:['TSMC·삼성·인텔','마이크론·하이닉스·중국 팹'],
   competitors:['램리서치','도쿄일렉트론','KLA'],
@@ -1661,9 +1664,9 @@ DB.companies.push(
     {t:'기술 전환 수혜', d:'GAA·어드밴스드 패키징 등 신공정'}
   ],
   segments:[{n:'반도체 시스템',p:73},{n:'서비스',p:22},{n:'디스플레이',p:5}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[23.1,25.8,26.5,27.2,28.4], op:[6.9,7.9,7.6,7.9,8.7], ni:[5.9,6.5,6.9,7.2,7.6], fcf:[4.8,4.6,7.6,7.5,7.0], eps:[6.40,7.44,8.11,8.61,9.40]},
-  finNote:'회계연도 10월 종료',
-  key:{rev:'$28.4B', revG:'+4%', opm:'31%', fcf:'$7B', extraK:'서비스 매출', extraV:'$6B+'},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[25.8,26.5,27.2,28.4,35.0], op:[7.9,7.6,7.9,8.7,11.5], ni:[6.5,6.9,7.2,7.6,10.2], fcf:[4.6,7.6,7.5,7.0,9.5], eps:[7.44,8.11,8.61,9.40,12.60]},
+  finNote:'회계연도 10월 종료 · FY26E는 분기 실적 기반 근사치 (3Q 매출 $9.1B 사상 최대)',
+  key:{rev:'$35B', revG:'+23%', opm:'33%', fcf:'$9.5B', extraK:'서비스 매출', extraV:'$6B+'},
   score:{biz:88, growth:76, profit:88, cash:88, moat:90, fin:92, val:60, total:83},
   moat:[85,88,65,92,75,92,85],
   moatNote:'공정 노하우와 설치 기반의 해자. 장비 3~4사 과점 구조는 수십 년째 굳건하다.',
@@ -1860,7 +1863,7 @@ DB.companies.push(
   sector:'기술', industry:'광통신 부품', tags:['AI','반도체'],
   tagline:'Light Speed AI', sub:'AI를 잇는 빛의 부품',
   oneLiner:'AI 데이터센터 안팎을 빛으로 연결하는 광부품·레이저 기업',
-  capB:28, qqq:0.28, capNote:'근사치',
+  capB:34, qqq:0.28, capNote:'근사치',
   products:['데이터센터 광트랜시버 부품','EML·CW 레이저','산업용 레이저'],
   customers:['클라우드 데이터센터','광모듈·네트워크 장비사'],
   competitors:['코히런트','이노라이트 등 중국 모듈사'],
@@ -1871,9 +1874,9 @@ DB.companies.push(
     {t:'적자 → 흑자 전환', d:'수요 폭발로 이익률 급반등'}
   ],
   segments:[{n:'클라우드·네트워킹',p:85},{n:'산업 레이저',p:15}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[1.71,1.77,1.36,1.65,2.40], op:[0.24,-0.03,-0.40,0.00,0.35], ni:[0.20,-0.13,-0.55,-0.10,0.30], fcf:[0.30,0.10,-0.20,0.10,0.40], eps:[2.80,-1.90,-8.10,-1.40,4.00]},
-  finNote:'회계연도 6월 종료 · FY26 AI 수요로 급반등 중',
-  key:{rev:'$1.65B', revG:'+21%', opm:'0%', fcf:'$0.1B', extraK:'AI 광부품', extraV:'수요 폭증'},
+  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[1.77,1.36,1.65,3.01,5.50], op:[-0.03,-0.40,0.00,0.45,1.65], ni:[-0.13,-0.55,-0.10,-6.94,1.10], fcf:[0.10,-0.20,0.10,0.50,1.20], eps:[-1.90,-8.10,-1.40,-92.96,10.50]},
+  finNote:'회계연도 6월 종료 · FY26 매출 $3.0B (+83%, AI 광통신) 확정 · FY26 GAAP 손실은 전환사채 관련 일회성 비현금 비용($7.8B) 탓 — 조정 EPS는 $8.67 흑자 · FY27E는 근사치',
+  key:{rev:'$5.5B', revG:'+83%', opm:'30%', fcf:'$1.2B', extraK:'AI 광부품', extraV:'수요 폭증'},
   score:{biz:70, growth:88, profit:60, cash:62, moat:72, fin:70, val:48, total:68},
   moat:[60,70,45,65,55,88,60],
   moatNote:'인듐인화물 레이저 기술력이 해자. 다만 고객·경쟁 모두 변화가 빠른 시장.',
@@ -1976,9 +1979,9 @@ DB.companies.push(
     {t:'재투자 루프', d:'계약 → 차입 → 증설의 고레버리지 순환'}
   ],
   segments:[{n:'AI 클라우드',p:100}],
-  fin:{years:['2022','2023','2024','2025','2026E'], rev:[0.02,0.23,1.92,5.50,12.00], op:[-0.03,-0.01,-0.32,-0.70,0.50], ni:[-0.03,-0.59,-0.86,-1.50,-1.00], fcf:[-0.1,-1.1,-6.0,-12.0,-8.0], eps:[0,0,-2.30,-3.20,-2.00]},
-  finNote:'12월 결산 · 2025.3 상장 · 근사치 · 대규모 부채로 데이터센터 투자',
-  key:{rev:'$5.5B', revG:'+186%', opm:'적자', fcf:'대규모 적자', extraK:'수주 잔고', extraV:'$50B+'},
+  fin:{years:['2022','2023','2024','2025','2026E'], rev:[0.02,0.23,1.92,5.50,12.80], op:[-0.03,-0.01,-0.32,-0.70,0.60], ni:[-0.03,-0.59,-0.86,-1.50,-0.80], fcf:[-0.1,-1.1,-6.0,-12.0,-8.0], eps:[0,0,-2.30,-3.20,-1.60]},
+  finNote:'12월 결산 · 2025.3 상장 · 2026E는 회사 가이던스($12.4~13.2B) 기준 · 대규모 부채로 데이터센터 투자',
+  key:{rev:'$12.8B', revG:'+133%', opm:'흑자 전환 중', fcf:'대규모 적자', extraK:'수주 잔고', extraV:'$50B+'},
   score:{biz:65, growth:97, profit:40, cash:25, moat:60, fin:45, val:38, total:58},
   moat:[55,60,40,70,50,75,60],
   moatNote:'엔비디아와의 관계·운영 노하우가 자산. 그러나 본질은 자본 게임 — 해자보다 속도로 승부.',
@@ -2073,7 +2076,7 @@ DB.companies.push(
   sector:'기술', industry:'금융 소프트웨어', tags:['소프트웨어','핀테크'],
   tagline:'Money OS', sub:'미국인의 세금·장부 독점',
   oneLiner:'미국의 세금 신고(터보택스)와 중소기업 장부(퀵북스)를 사실상 독점한 회사',
-  capB:185, qqq:0.39,
+  capB:72, qqq:0.39,
   products:['QuickBooks (중소기업 회계)','TurboTax (세금 신고)','Credit Karma','Mailchimp'],
   customers:['미국 중소기업 수백만','개인 납세자 수천만'],
   competitors:['H&R Block','Xero·무료 신고 서비스'],
@@ -2084,9 +2087,9 @@ DB.companies.push(
     {t:'AI 재무비서', d:'데이터 기반 AI로 서비스 업셀'}
   ],
   segments:[{n:'중소기업 (QB)',p:55},{n:'소비자 (TurboTax)',p:30},{n:'Credit Karma·기타',p:15}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[9.6,12.7,14.4,16.3,18.8], op:[2.5,2.6,3.1,3.6,4.6], ni:[2.1,2.1,2.4,3.0,3.9], fcf:[3.2,3.9,4.6,4.9,6.0], eps:[7.28,7.28,8.42,10.43,13.60]},
-  finNote:'회계연도 7월 종료',
-  key:{rev:'$18.8B', revG:'+16%', opm:'24%', fcf:'$6B', extraK:'비GAAP 마진', extraV:'40%'},
+  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[14.4,16.3,18.8,21.4,23.4], op:[3.1,3.6,4.6,5.4,6.5], ni:[2.4,3.0,3.9,4.6,5.7], fcf:[4.6,4.9,6.0,6.8,7.5], eps:[8.42,10.43,13.60,16.46,20.24]},
+  finNote:'회계연도 7월 종료 · FY26 매출 $21.4B (+14%) 확정 · FY27E는 회사 가이던스 기준',
+  key:{rev:'$23.4B', revG:'+9%', opm:'28%', fcf:'$7.5B', extraK:'비GAAP 마진', extraV:'40%'},
   score:{biz:91, growth:82, profit:90, cash:92, moat:93, fin:93, val:60, total:86},
   moat:[90,94,75,85,88,85,90],
   moatNote:'세금 코드와 회계사 생태계에 얽힌 전환비용. 미국 중소기업의 재무 OS.',
@@ -2143,7 +2146,7 @@ DB.companies.push(
   sector:'기술', industry:'사이버보안', tags:['소프트웨어','AI'],
   tagline:'Security Platform', sub:'보안 백화점 전략',
   oneLiner:'방화벽에서 출발해 보안 전 영역을 플랫폼으로 통합하는 세계 최대 보안 기업',
-  capB:130, qqq:1.30,
+  capB:220, qqq:1.30,
   products:['차세대 방화벽','Prisma (클라우드 보안)','Cortex (AI 보안운영)','CyberArk (인수)'],
   customers:['글로벌 대기업·정부 9만+'],
   competitors:['크라우드스트라이크','포티넷','마이크로소프트'],
@@ -2154,9 +2157,9 @@ DB.companies.push(
     {t:'AI 보안 확장', d:'AI 시대 보안 운영 자동화'}
   ],
   segments:[{n:'구독·지원',p:85},{n:'제품 (하드웨어)',p:15}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[4.3,5.5,6.9,8.0,9.2], op:[0.18,-0.19,0.39,0.68,0.90], ni:[-0.50,-0.27,0.44,2.58,1.20], fcf:[1.4,1.8,2.6,3.1,3.5], eps:[-1.61,-0.85,1.28,7.55,3.40]},
-  finNote:'회계연도 7월 종료 · FY24 순익엔 일회성 세금혜택 포함',
-  key:{rev:'$9.2B', revG:'+15%', opm:'10%', fcf:'$3.5B', extraK:'NGS ARR', extraV:'$5B+'},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[5.5,6.9,8.0,9.2,11.4], op:[-0.19,0.39,0.68,0.90,1.40], ni:[-0.27,0.44,2.58,1.20,1.50], fcf:[1.8,2.6,3.1,3.5,4.3], eps:[-0.85,1.28,7.55,3.40,2.20]},
+  finNote:'회계연도 7월 종료 · FY24 순익엔 일회성 세금혜택 포함 · FY26E는 회사 가이던스 기준 (확정 실적 9/1 발표 예정)',
+  key:{rev:'$11.4B', revG:'+24%', opm:'12%', fcf:'$4.3B', extraK:'NGS ARR', extraV:'$8.9B'},
   score:{biz:86, growth:82, profit:78, cash:90, moat:85, fin:88, val:48, total:81},
   moat:[86,88,72,80,82,85,86],
   moatNote:'보안은 한 번 깔면 바꾸기 무서운 영역. 플랫폼 통합 전략이 전환비용을 더 키운다.',
@@ -2741,7 +2744,7 @@ DB.companies.push(
   sector:'소비재', industry:'할인 유통', tags:['유통','소비재'],
   tagline:'Treasure Hunt', sub:'불황에 강한 보물찾기 매장',
   oneLiner:'브랜드 재고를 싸게 사서 싸게 파는 오프프라이스 유통 2위 기업',
-  capB:50, qqq:0.36,
+  capB:72, qqq:0.36,
   products:['오프프라이스 의류·잡화 (Ross)','dd\'s DISCOUNTS'],
   customers:['가성비 중시 미국 소비자'],
   competitors:['TJX (티제이맥스)','벌링턴'],
@@ -2752,9 +2755,9 @@ DB.companies.push(
     {t:'불황 수혜', d:'경기 나쁠수록 고객 증가'}
   ],
   segments:[{n:'Ross 매장',p:90},{n:'dd\'s',p:10}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[18.9,18.7,20.4,21.1,22.0], op:[2.3,2.0,2.3,2.6,2.6], ni:[1.72,1.51,1.87,2.09,2.10], fcf:[1.7,1.2,2.2,1.6,1.7], eps:[4.87,4.38,5.56,6.32,6.50]},
-  finNote:'회계연도 1월 종료',
-  key:{rev:'$21.1B', revG:'+4%', opm:'12%', fcf:'$1.6B', extraK:'매장 수', extraV:'2,200+'},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[18.9,18.7,20.4,21.1,23.4], op:[2.3,2.0,2.3,2.6,3.5], ni:[1.72,1.51,1.87,2.09,2.80], fcf:[1.7,1.2,2.2,1.6,2.2], eps:[4.87,4.38,5.56,6.32,8.70]},
+  finNote:'회계연도 1월 종료 · FY26E는 회사 가이던스 기준 (2Q 매출 +13%, 동일점 +10%)',
+  key:{rev:'$23.4B', revG:'+11%', opm:'15%', fcf:'$2.2B', extraK:'동일점 성장', extraV:'+10%'},
   score:{biz:80, growth:66, profit:76, cash:80, moat:82, fin:92, val:62, total:76},
   moat:[75,50,55,90,60,45,78],
   moatNote:'바잉 파워와 저비용 구조가 해자. 아마존이 못 이기는 몇 안 되는 오프라인 모델.',
@@ -4297,6 +4300,42 @@ DB.qqqTop = [
 ];
 DB.top10 = 46.3;
 DB.meta.weightsAsOf = '2026.08.28';
+DB.meta.weightsQ = '2026.3Q';   // 비중 기준 분기 — 분기 CSV 갱신 때 함께 수정
+
+/* ===== 재무 데이터 '반영 분기' 라벨 (검증용) =====
+   각 기업의 재무 숫자에 어느 분기 실적까지 반영됐는지 표시.
+   실적 업데이트 때마다 해당 기업의 라벨을 함께 갱신할 것. (2026.08.31 동기화) */
+const LASTQ = {
+NVDA:'FY27 2Q', AAPL:'FY26 3Q', GOOGL:'FY26 2Q', MSFT:'FY26 4Q', AMZN:'FY26 2Q',
+MU:'FY26 3Q', AMD:'FY26 2Q', AVGO:'FY26 2Q', META:'FY26 2Q', TSLA:'FY26 2Q',
+WMT:'FY27 2Q', INTC:'FY26 2Q', CSCO:'FY26 4Q', AMAT:'FY26 3Q', COST:'FY26 3Q',
+LRCX:'FY26 4Q', PLTR:'FY26 2Q', NFLX:'FY26 2Q', PANW:'FY26 3Q', TXN:'FY26 2Q',
+KLAC:'FY26 4Q', LIN:'FY26 2Q', AMGN:'FY26 2Q', CRWD:'FY27 2Q', SNDK:'FY26 4Q',
+STX:'FY26 4Q', PEP:'FY26 2Q', TMUS:'FY26 2Q', ADI:'FY26 3Q', WDC:'FY26 4Q',
+SHOP:'FY26 2Q', QCOM:'FY26 3Q', GILD:'FY26 2Q', MRVL:'FY27 2Q', BKNG:'FY26 2Q',
+ASML:'FY26 2Q', ARM:'FY27 1Q', ISRG:'FY26 2Q', APP:'FY26 2Q', FTNT:'FY26 2Q',
+VRTX:'FY26 2Q', SBUX:'FY26 3Q', ADP:'FY26 4Q', ADBE:'FY26 2Q', MELI:'FY26 2Q',
+MAR:'FY26 2Q', CSX:'FY26 2Q', CEG:'FY26 2Q', CDNS:'FY26 2Q', DDOG:'FY26 2Q',
+MNST:'FY26 2Q', CMCSA:'FY26 2Q', INTU:'FY26 4Q', DASH:'FY26 2Q', ROST:'FY26 2Q',
+CTAS:'FY26 4Q', MDLZ:'FY26 2Q', REGN:'FY26 2Q', HON:'FY26 2Q', SNPS:'FY26 3Q',
+ORLY:'FY26 2Q', PCAR:'FY26 2Q', AEP:'FY26 2Q', MPWR:'FY26 2Q', LITE:'FY26 4Q',
+ABNB:'FY26 2Q', WBD:'FY26 2Q', PDD:'FY26 2Q', TER:'FY26 2Q', FANG:'FY26 2Q',
+ALAB:'FY26 2Q', FAST:'FY26 2Q', NXPI:'FY26 2Q', BKR:'FY26 2Q', CCEP:'FY26 2Q',
+NBIS:'FY26 2Q', AXON:'FY26 2Q', PYPL:'FY26 2Q', ADSK:'FY27 2Q', EXC:'FY26 2Q',
+XEL:'FY26 2Q', FER:'FY26 2Q', IDXX:'FY26 2Q', ODFL:'FY26 2Q', MCHP:'FY27 1Q',
+RKLB:'FY26 2Q', PAYX:'FY26 4Q', TTWO:'FY27 1Q', CRWV:'FY26 2Q', KDP:'FY26 2Q',
+ROP:'FY26 2Q', TRI:'FY26 2Q', WDAY:'FY27 2Q', MSTR:'FY26 2Q', DXCM:'FY26 2Q',
+GEHC:'FY26 2Q', KHC:'FY26 2Q', ALNY:'FY26 2Q', CPRT:'FY26 3Q'
+};
+DB.companies.forEach(c => { if (LASTQ[c.ticker]) c.lastQ = LASTQ[c.ticker]; });
+
+/* ===== 다음 실적 발표 예정일 — 정적 예비값 (실적 캘린더 기반) =====
+   온라인에서는 live.json의 next(야후 예정일)가 이 값을 덮어씀 */
+(function(){
+  const m = {};
+  (DB.earnings || []).forEach(e => { if (!m[e.id]) m[e.id] = e; });
+  DB.companies.forEach(c => { const e = m[c.id]; if (e) { c.nextEarn = e.d; c.nextEarnQ = e.q || ''; } });
+})();
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
 const C = DB.companies;
@@ -4538,7 +4577,7 @@ const RANKS = {
   growth:{k:'성장성', get:lastG, fmt:v=>fPct(v), desc:'최근 회계연도 매출 성장률 · 오른쪽 아래에 주당순이익(EPS) 증감도 표시'},
   cash:{k:'현금창출', get:fcfM, fmt:v=>'FCF '+mPct(v,0), desc:'매출 중 실제 현금(FCF)으로 남는 비율 — 높을수록 현금창출력이 강함'},
   margin:{k:'영업이익률', get:lastOpm, fmt:v=>mPct(v,1), desc:'최근 연매출 중 본업 이익이 차지하는 비율'},
-  qqq:{k:'QQQ 비중', get:c=>c.qqq, fmt:v=>v+'%', desc:'QQQ ETF 안에서 이 기업이 차지하는 비중'},
+  qqq:{k:'QQQ 비중', get:c=>c.qqq, fmt:v=>v+'%', desc:()=>'QQQ 안에서 차지하는 비중 · 인베스코 공식, 분기마다 리밸런싱 · '+(DB.meta.weightsQ||DB.meta.weightsAsOf)+' 기준'},
   moat:{k:'경제적 해자', get:c=>c.score.moat, fmt:v=>v+'점', desc:'경쟁자를 막는 방어력에 대한 Q100 내부 평가 점수 (100점 만점)'}
 };
 function epsBadge(c){
@@ -4604,7 +4643,7 @@ function renderHome(){
     <div class="stat"><div class="k">영업이익률</div><div class="v">${t.key.opm}</div></div>
     <div class="stat"><div class="k">QQQ 비중</div><div class="v">${t.qqq}%</div></div>
   </div>
-  <div class="sec-t">QQQ 지금 <small>비중 기준 ${DB.meta.weightsAsOf}</small></div>
+  <div class="sec-t">QQQ 지금 <small>비중 기준 ${DB.meta.weightsQ||DB.meta.weightsAsOf}</small></div>
   ${(()=>{const m=qqqYtdStats();
     const cell=(k,v,sub)=>`<div class="stat" style="padding:12px 4px"><div class="k">${k}</div><div class="v" style="font-size:18.5px;color:${v>=0?'#4ade80':'#f87171'}">${v>=0?'+':''}${v.toFixed(1)}%</div><div class="tiny" style="margin-top:3px">${sub}</div></div>`;
     return `<div class="card" style="padding:14px 16px;margin-bottom:10px">
@@ -4726,6 +4765,7 @@ function buildDetail(c){
   const ni=ord.indexOf(c.id);
   const pv=ni>0? byId[ord[ni-1]] : null, nx=ni<ord.length-1? byId[ord[ni+1]] : null;
   const g=lastG(c), gOk=isFinite(g);
+  const qTag=c.lastQ?`<span style="color:#6f9fd8;font-weight:700"> · ${c.lastQ.replace(' ','.')}</span>`:'';
   const e=c.fin.eps, ea=e[e.length-2], eb=e[e.length-1];
   const epsW=Math.round(eb*FX).toLocaleString('ko-KR')+'원';
   const epsD=(eb<0?'-$'+Math.abs(eb):'$'+eb);
@@ -4749,12 +4789,13 @@ function buildDetail(c){
       <span class="chip sm">NASDAQ: ${c.ticker}</span><span class="chip sm">${c.industry}</span>
       ${c.newIn?`<span class="chip sm" style="background:#0a2e1a;border-color:#1f8a4d;color:#4ade80;font-weight:800">🆕 ${c.newIn} 지수 편입</span>`:''}
       ${c.freshEarn?`<span class="chip sm" style="background:#3a2c0a;border-color:#8a6d1f;color:#fbbf24;font-weight:800">🔔 ${c.freshEarn} 새 실적 발표</span>`:''}
+      ${c.nextEarn?`<span class="chip sm" style="background:#0a1c33;border-color:#1f4c7a;color:#7fb2ff;font-weight:800">🔔 다음 실적 ${c.nextEarn}${c.nextEarnQ?` · ${c.nextEarnQ}`:''} (예정)</span>`:''}
     </div>
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
     <div class="grid3" style="margin-top:15px">
       <div class="stat"><div class="k">시가총액</div><div class="v">${krw(c.capB,true)}</div><div class="krw">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb">QQQ ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}</div>
-      <div class="stat"><div class="k">매출 (FY)</div><div class="v">${krwS(c.key.rev,true)}</div><div class="krw">${c.key.rev}</div>${gOk?`<div class="s" style="color:${g>=0?'#4ade80':'#f87171'}">${fPct(g,0)}</div>`:''}</div>
-      <div class="stat"><div class="k">주당순이익 (EPS)</div><div class="v">${epsW}</div><div class="krw">${epsD}</div><div class="s" style="color:${epsCc}">${epsChg}</div></div>
+      <div class="stat"><div class="k">매출 (FY)</div><div class="v">${krwS(c.key.rev,true)}</div><div class="krw">${c.key.rev}${qTag}</div>${gOk?`<div class="s" style="color:${g>=0?'#4ade80':'#f87171'}">${fPct(g,0)}</div>`:''}</div>
+      <div class="stat"><div class="k">주당순이익 (EPS)</div><div class="v">${epsW}</div><div class="krw">${epsD}${qTag}</div><div class="s" style="color:${epsCc}">${epsChg}</div></div>
     </div>
   </div>
   <div class="tabbar">${DTABS.map(([t,k,e])=>`<span class="tab dtab ${t==='ov'?'on':''}" data-t="${t}" onclick="showDTab('${t}')">${k}<small>${e}</small></span>`).join('')}</div>
@@ -4827,7 +4868,7 @@ function secFin(c){
   const f=c.fin, col=c.color==='#F5F5F7'?'#fff':c.color;
   const opm=f.rev.map((r,i)=> r ? f.op[i]/r*100 : 0);
   return `
-  <div class="sec-t">핵심 숫자 <small>${f.years[4]} 기준</small></div>
+  <div class="sec-t">핵심 숫자 <small>${f.years[4]} 기준${c.lastQ?` · ${c.lastQ.replace(' ','.')} 반영`:''}</small></div>
   <div class="grid2">
     <div class="stat"><div class="k">매출</div><div class="v">${c.key.rev}</div><div class="krw">${krwS(c.key.rev)}</div><div class="s" style="color:#4ade80">${c.key.revG}</div></div>
     <div class="stat"><div class="k">영업이익률</div><div class="v">${c.key.opm}</div></div>
@@ -4986,7 +5027,7 @@ function renderQQQ(){
   };
   $('#scr-qqq').innerHTML=`
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 4px">QQQ를 하나의 기업처럼</h2>
-  <p class="tiny" style="margin:0 2px 14px">나스닥100 ETF는 ${C.length}개 기업의 포트폴리오입니다. 비중 기준 ${DB.meta.weightsAsOf}</p>
+  <p class="tiny" style="margin:0 2px 14px">나스닥100 ETF는 ${C.length}개 기업의 포트폴리오입니다. 비중: 인베스코 · ${DB.meta.weightsQ||DB.meta.weightsAsOf} 기준</p>
   <div class="grid3">
     <div class="stat"><div class="k">구성 기업</div><div class="v">${C.length}개</div></div>
     <div class="stat"><div class="k">Q100 수록</div><div class="v">${C.length}개</div></div>
@@ -4994,7 +5035,8 @@ function renderQQQ(){
   </div>
   <div class="sec-t">Top Holdings <small>상위 15 · 전 종목 수록</small></div>
   <div class="card" style="padding:8px 16px">${DB.qqqTop.map(wrow).join('')}
-    <p class="tiny" style="padding:8px 0 6px">알파벳은 A·C 두 클래스로 나뉘어 있습니다 (합산 시 3위권).</p></div>
+    <p class="tiny" style="padding:8px 0 6px">알파벳은 A·C 두 클래스로 나뉘어 있습니다 (합산 시 3위권).</p>
+    <p class="tiny" style="padding:0 0 6px;color:#8fb98f">✓ 인베스코 공식 · 분기마다 리밸런싱 · ${DB.meta.weightsQ||DB.meta.weightsAsOf} 기준</p></div>
   <button class="btn ghost blk" onclick="st.sort='qqq';st.ind='전체';st.trait=null;st.q='';nav('companies')">${C.length}개 기업 전체 보기</button>
   <div class="sec-t">내부 집중도</div>
   <div class="card">
@@ -5030,7 +5072,7 @@ function renderQQQ(){
       <div class="hbar"><i style="width:${Math.max(Math.abs(r.v)/mx*100,2).toFixed(0)}%;background:${neg?'#f87171':c.color}"></i></div>
       <div class="metric-val" style="color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
   })()}
-    <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 실제 QQQ 연초 대비 수익률(${fPct(qqqYtdStats().usd,1)})을 나눠 배분한 근사치입니다. 99개 기여도를 전부 더하면 QQQ 수익률과 같아집니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
+    <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 실제 QQQ 연초 대비 수익률(${fPct(qqqYtdStats().usd,1)})을 나눠 배분한 근사치입니다. ${C.length}개 기여도를 전부 더하면 QQQ 수익률과 같아집니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
   <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>
   <div class="disc">${DB.meta.note}</div>`;
 }
@@ -5156,6 +5198,15 @@ document.getElementById('splash').classList.add('hide');
         DB.recentEarnings=fr.slice(0,6).map(x=>x.id);
         DB.earnLabel='최근 3주 · 공시 기준';
       }
+    }
+    if(L.next && typeof L.next==='object'){
+      C.forEach(c=>{
+        const d=L.next[c.ticker];
+        if(typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)){
+          const dt=new Date(d+'T12:00:00Z');
+          if(dt.getTime() > Date.now()-864e5){ c.nextEarn=(dt.getUTCMonth()+1)+'월 '+dt.getUTCDate()+'일'; c.nextEarnQ=''; }
+        }
+      });
     }
     if(Array.isArray(L.top) && L.top.length>=10 && Array.isArray(DB.qqqTop)){
       DB.qqqTop.forEach(h=>{ const f=L.top.find(x=>x.t===h.t); if(f && isFinite(f.w)) h.w=f.w; });
