@@ -149,11 +149,20 @@ def main():
 
     # 3.5) 새 실적 공시 감지 (SEC EDGAR 공식 접수 기록)
     try:
-        sec_ua = {"User-Agent": "Q100App/1.0 (educational app; github.com/somh0914/q100)"}
-        def sec_get(url):
-            req = urllib.request.Request(url, headers=sec_ua)
-            with urllib.request.urlopen(req, timeout=25) as r:
-                return json.loads(r.read().decode("utf-8", "replace"))
+        sec_ua = {"User-Agent": "Q100App/1.0 (educational app; github.com/somh0914/q100)",
+                  "Accept-Encoding": "identity", "Host": "data.sec.gov"}
+        def sec_get(url, tries=2):
+            last = None
+            for _ in range(tries):
+                try:
+                    h = dict(sec_ua)
+                    h["Host"] = urllib.parse.urlparse(url).netloc
+                    req = urllib.request.Request(url, headers=h)
+                    with urllib.request.urlopen(req, timeout=25) as r:
+                        return json.loads(r.read().decode("utf-8", "replace"))
+                except Exception as e:
+                    last = e; time.sleep(2)
+            raise last
         tick2cik = {}
         for row in sec_get("https://www.sec.gov/files/company_tickers.json").values():
             tick2cik[row["ticker"].upper()] = int(row["cik_str"])
@@ -190,12 +199,27 @@ def main():
             time.sleep(0.15)
         print(f"새 실적 공시 감지: {found}건 (현재 배지 {len(live['fresh'])}개)")
     except Exception as e:
-        print("실적 공시 감지 실패 (기존 값 유지):", type(e).__name__)
+        print("실적 공시 감지 실패 (기존 값 유지):", repr(e))
 
     # 4) QQQ 편입 비중 (인베스코 공식 보유내역 CSV)
     try:
         import csv, io
-        txt = http_get(INVESCO_URL, timeout=40)
+        inv_h = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+                 "Accept": "text/csv,application/csv,text/plain,*/*",
+                 "Referer": "https://www.invesco.com/us/financial-products/etfs/product-detail?audienceType=Investor&ticker=QQQ"}
+        txt = None
+        for _ in range(2):
+            try:
+                req = urllib.request.Request(INVESCO_URL, headers=inv_h)
+                with urllib.request.urlopen(req, timeout=40) as r:
+                    body = r.read().decode("utf-8", "replace")
+                if "," in body and body.count("\n") > 50:
+                    txt = body; break
+            except Exception:
+                pass
+            time.sleep(3)
+        if txt is None:
+            raise RuntimeError("invesco_unreachable")
         rows = list(csv.reader(io.StringIO(txt)))
         head = next(i for i, r in enumerate(rows)
                     if any("weight" in c.lower() for c in r) and any("ticker" in c.lower() for c in r))
@@ -226,10 +250,67 @@ def main():
             live["top"] = [{"t": s, "w": round(w, 2)} for s, w in raw[:15]]
             live["top10"] = round(sum(w for _, w in raw[:10]), 1)
             print(f"QQQ 비중 갱신: {hit}개 기업 (보유내역 {len(raw)}종목)")
+
+            # 5) 지수 편입·편출 감지 (보유내역이 충분히 완전할 때만)
+            if len(raw) >= 95:
+                cur = sorted(comb.keys())
+                prev = live.get("members")
+                today_s = datetime.date.today().isoformat()
+                if prev:
+                    added = [t for t in cur if t not in prev]
+                    removed = [t for t in prev if t not in cur]
+                    if added or removed:
+                        chg = live.setdefault("chg", {"added": [], "removed": []})
+                        for t in added:
+                            if not any(x["t"] == t for x in chg["added"]):
+                                chg["added"].append({"t": t, "d": today_s})
+                        for t in removed:
+                            if not any(x["t"] == t for x in chg["removed"]):
+                                chg["removed"].append({"t": t, "d": today_s})
+                        print(f"⚠️ 지수 변경 감지! 편입: {added} / 편출: {removed}")
+                # 120일 지난 변경 기록 정리
+                old = (datetime.date.today() - datetime.timedelta(days=120)).isoformat()
+                if "chg" in live:
+                    for k in ("added", "removed"):
+                        live["chg"][k] = [x for x in live["chg"][k] if x.get("d", "") >= old]
+                live["members"] = cur
         else:
             print("QQQ 비중: 보유내역이 너무 적어 건너뜀 (기존 값 유지)")
     except Exception as e:
-        print("QQQ 비중 수집 실패 (기존 값 유지):", type(e).__name__)
+        print("QQQ 비중 수집 실패 (기존 값 유지):", repr(e))
+        # 예비 경로: 슬릭차트에서 구성종목 명단만 받아 편입·편출 감지 (비중은 갱신 안 함)
+        try:
+            import re
+            req = urllib.request.Request("https://www.slickcharts.com/nasdaq100",
+                                         headers={"User-Agent": UA["User-Agent"]})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                html = r.read().decode("utf-8", "replace")
+            syms = []
+            for m in re.finditer(r'/symbol/([A-Z][A-Z0-9.\-]{0,6})', html):
+                s = m.group(1)
+                if s not in syms:
+                    syms.append(s)
+            if len(syms) >= 95:
+                comb2 = sorted(set("GOOGL" if s in ("GOOG", "GOOGL") else s for s in syms))
+                cur = comb2
+                prev = live.get("members")
+                today_s = datetime.date.today().isoformat()
+                if prev:
+                    added = [t for t in cur if t not in prev]
+                    removed = [t for t in prev if t not in cur]
+                    if added or removed:
+                        chg = live.setdefault("chg", {"added": [], "removed": []})
+                        for t in added:
+                            if not any(x["t"] == t for x in chg["added"]):
+                                chg["added"].append({"t": t, "d": today_s})
+                        for t in removed:
+                            if not any(x["t"] == t for x in chg["removed"]):
+                                chg["removed"].append({"t": t, "d": today_s})
+                        print(f"⚠️ 지수 변경 감지(예비 경로)! 편입: {added} / 편출: {removed}")
+                live["members"] = cur
+                print(f"구성종목 명단 확보(예비 경로 슬릭차트): {len(syms)}개 티커")
+        except Exception as e2:
+            print("예비 경로도 실패:", repr(e2))
 
     if latest_date:
         live["updated"] = latest_date.strftime("%Y.%m.%d")
