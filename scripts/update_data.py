@@ -47,7 +47,7 @@ def from_yahoo(sym):
     out = []
     for t, c in zip(ts, closes):
         if c is not None:
-            d = datetime.datetime.utcfromtimestamp(t).date()
+            d = datetime.datetime.fromtimestamp(t, datetime.timezone.utc).date()
             out.append((d, float(c)))
     return out
 
@@ -99,8 +99,8 @@ def returns(hist):
     r1y = (last_c / y1 - 1) * 100 if y1 else None
     return ytd, r1y, last_c, last_d, ye
 
-def yahoo_caps(symbols):
-    """야후에서 시가총액을 직접 받음 — 증자·자사주 소각에 따른 주식 수 변화가 자동 반영됨."""
+def yahoo_quotes(symbols):
+    """야후 일괄 조회 — 시가총액(주식 수 변화 자동 반영) + 실적 발표일을 한 번에 받음."""
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
     try:
         opener.open(urllib.request.Request("https://fc.yahoo.com", headers=UA), timeout=15)
@@ -109,19 +109,22 @@ def yahoo_caps(symbols):
     crumb = opener.open(urllib.request.Request(
         "https://query1.finance.yahoo.com/v1/test/getcrumb", headers=UA), timeout=15
     ).read().decode("utf-8", "replace").strip()
-    caps = {}
+    out = {}
     for i in range(0, len(symbols), 40):
         chunk = symbols[i:i + 40]
         url = ("https://query1.finance.yahoo.com/v7/finance/quote?symbols="
-               + ",".join(chunk) + "&fields=marketCap&crumb=" + urllib.parse.quote(crumb))
+               + ",".join(chunk)
+               + "&fields=marketCap,earningsTimestamp,earningsTimestampEnd&crumb="
+               + urllib.parse.quote(crumb))
         data = json.loads(opener.open(urllib.request.Request(url, headers=UA), timeout=25)
                           .read().decode("utf-8", "replace"))
         for q in data.get("quoteResponse", {}).get("result", []):
-            mc = q.get("marketCap")
-            if mc and mc > 1e9:
-                caps[q.get("symbol", "").upper()] = round(mc / 1e9, 1)
+            sym = q.get("symbol", "").upper()
+            if sym:
+                out[sym] = {"cap": q.get("marketCap"),
+                            "ets": q.get("earningsTimestamp")}
         time.sleep(0.5)
-    return caps
+    return out
 
 
 def main():
@@ -196,70 +199,35 @@ def main():
     else:
         fail.append("USDKRW")
 
-    # 3.7) 시가총액 직접 갱신 (야후 — 주식 수 변화 자동 반영, 실패 시 주가 배율 방식 유지)
+    # 3.5) 야후 일괄 조회 — 시가총액 갱신 + 새 실적 발표 감지 (같은 통로)
+    #      * SEC는 GitHub 서버 접속을 차단(403)하여 야후의 실적 발표일 데이터로 대체
     try:
-        caps = yahoo_caps([t for t in TICKERS if t != "QQQ"])
-        capn = 0
-        for t, b in caps.items():
-            live["ret"].setdefault(t, {})["cap"] = b
-            capn += 1
-        print(f"시가총액 직접 수집: {capn}개 (야후 공시 기반)")
-    except Exception as e:
-        print("시가총액 직접 수집 실패 (주가 배율 방식으로 대체):", repr(e))
-
-    # 3.5) 새 실적 공시 감지 (SEC EDGAR 공식 접수 기록)
-    try:
-        # SEC 규정: 자동 접속 시 "이름 + 연락처" 형식의 신원 표기가 필요
-        sec_ua = {"User-Agent": "Q100 Education App somh0914@users.noreply.github.com",
-                  "Accept-Encoding": "identity",
-                  "Accept": "application/json"}
-        def sec_get(url, tries=2):
-            last = None
-            for _ in range(tries):
-                try:
-                    req = urllib.request.Request(url, headers=sec_ua)
-                    with urllib.request.urlopen(req, timeout=25) as r:
-                        return json.loads(r.read().decode("utf-8", "replace"))
-                except Exception as e:
-                    last = e; time.sleep(2)
-            raise last
-        tick2cik = {}
-        for row in sec_get("https://www.sec.gov/files/company_tickers.json").values():
-            tick2cik[row["ticker"].upper()] = int(row["cik_str"])
-        FOREIGN_ANNUAL_ONLY = {"ASML", "PDD", "ARM", "CCEP", "FER", "NBIS"}
+        quotes = yahoo_quotes([t for t in TICKERS if t != "QQQ"])
         live.setdefault("fresh", {})
         cutoff = (datetime.date.today() - datetime.timedelta(days=45)).isoformat()
-        # 오래된 항목 정리
         for t in list(live["fresh"].keys()):
             if live["fresh"][t].get("d", "") < cutoff:
                 del live["fresh"][t]
-        found = 0
-        for t in TICKERS:
-            if t == "QQQ" or t not in tick2cik:
-                continue
-            try:
-                sub = sec_get(f"https://data.sec.gov/submissions/CIK{tick2cik[t]:010d}.json")
-                rec = sub["filings"]["recent"]
-                want = ("20-F",) if t in FOREIGN_ANNUAL_ONLY else ("10-Q", "10-K")
-                items_arr = rec.get("items") or [""] * len(rec["form"])
-                best = None
-                # 최신순 목록에서 실적 관련 공시를 찾음:
-                # 10-Q/10-K(분기·연간 보고서) 또는 8-K 중 Item 2.02(실적 발표)
-                for form, fdate, its in list(zip(rec["form"], rec["filingDate"], items_arr))[:60]:
-                    is_earn = form in want or (
-                        t not in FOREIGN_ANNUAL_ONLY and form == "8-K" and "2.02" in (its or ""))
-                    if is_earn:
-                        best = (fdate, form)
-                        break
-                if best and best[0] >= cutoff and best[0] > live["fresh"].get(t, {}).get("d", ""):
-                    live["fresh"][t] = {"d": best[0], "f": best[1]}
-                    found += 1
-            except Exception:
-                pass
-            time.sleep(0.15)
-        print(f"새 실적 공시 감지: {found}건 (현재 배지 {len(live['fresh'])}개)")
+        capn = ern = 0
+        now = datetime.datetime.now(datetime.timezone.utc)
+        for t, q in quotes.items():
+            mc = q.get("cap")
+            if mc and mc > 1e9:
+                live["ret"].setdefault(t, {})["cap"] = round(mc / 1e9, 1)
+                capn += 1
+            ets = q.get("ets")
+            if ets:
+                edt = datetime.datetime.fromtimestamp(ets, datetime.timezone.utc)
+                days_ago = (now - edt).total_seconds() / 86400
+                # 발표일이 지난 5일 이내면 "새 실적 발표"로 기록 (미래 예정일은 무시)
+                if 0 <= days_ago <= 5:
+                    d = edt.date().isoformat()
+                    if d > live["fresh"].get(t, {}).get("d", ""):
+                        live["fresh"][t] = {"d": d, "f": "발표"}
+                        ern += 1
+        print(f"시가총액 {capn}개 갱신 · 새 실적 발표 감지 {ern}건 (현재 배지 {len(live['fresh'])}개)")
     except Exception as e:
-        print("실적 공시 감지 실패 (기존 값 유지):", repr(e))
+        print("야후 일괄 조회 실패 (기존 값 유지):", repr(e))
 
     # 4) QQQ 편입 비중 (인베스코 공식 보유내역 CSV)
     try:
@@ -281,8 +249,12 @@ def main():
         if txt is None:
             raise RuntimeError("invesco_unreachable")
         rows = list(csv.reader(io.StringIO(txt)))
-        head = next(i for i, r in enumerate(rows)
-                    if any("weight" in c.lower() for c in r) and any("ticker" in c.lower() for c in r))
+        head = None
+        for i, r in enumerate(rows):
+            if any("weight" in c.lower() for c in r) and any("ticker" in c.lower() for c in r):
+                head = i; break
+        if head is None:
+            raise RuntimeError("인베스코 응답이 CSV 형식이 아님 (봇 차단 페이지)")
         cols = [c.strip().lower() for c in rows[head]]
         ti = next(i for i, c in enumerate(cols) if "holding" in c and "ticker" in c)
         wi = next(i for i, c in enumerate(cols) if "weight" in c)
