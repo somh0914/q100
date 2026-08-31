@@ -21,7 +21,10 @@ TICKERS = [
  "TRI","WDAY","MSTR","DXCM","GEHC","KHC","ALNY","CPRT","QQQ",
 ]
 YE_DATE = datetime.date(2025, 12, 31)          # 연초 기준일 (전년도 말)
+REF_DATE = datetime.date(2026, 8, 7)           # 앱에 내장된 시가총액의 기준일
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+INVESCO_URL = ("https://www.invesco.com/us/financial-products/etfs/holdings/"
+               "main/sitedetail/ajax?audienceType=Investor&action=download&ticker=QQQ")
 
 def http_get(url, timeout=20):
     req = urllib.request.Request(url, headers=UA)
@@ -118,6 +121,9 @@ def main():
             live["ret"][t] = {"ytd": round(ytd, 1)}
             if r1y is not None:
                 live["ret"][t]["y1"] = round(r1y, 1)
+            ref = close_on_or_before(sorted(h), REF_DATE)
+            if ref:  # 시가총액 환산 배율 (내장 기준일 대비 주가 변화)
+                live["ret"][t]["m"] = round(last_c / ref, 4)
         ok += 1
         time.sleep(0.35)
 
@@ -140,6 +146,90 @@ def main():
         ok += 1
     else:
         fail.append("USDKRW")
+
+    # 3.5) 새 실적 공시 감지 (SEC EDGAR 공식 접수 기록)
+    try:
+        sec_ua = {"User-Agent": "Q100App/1.0 (educational app; github.com/somh0914/q100)"}
+        def sec_get(url):
+            req = urllib.request.Request(url, headers=sec_ua)
+            with urllib.request.urlopen(req, timeout=25) as r:
+                return json.loads(r.read().decode("utf-8", "replace"))
+        tick2cik = {}
+        for row in sec_get("https://www.sec.gov/files/company_tickers.json").values():
+            tick2cik[row["ticker"].upper()] = int(row["cik_str"])
+        FOREIGN_ANNUAL_ONLY = {"ASML", "PDD", "ARM", "CCEP", "FER", "NBIS"}
+        live.setdefault("fresh", {})
+        cutoff = (datetime.date.today() - datetime.timedelta(days=45)).isoformat()
+        # 오래된 항목 정리
+        for t in list(live["fresh"].keys()):
+            if live["fresh"][t].get("d", "") < cutoff:
+                del live["fresh"][t]
+        found = 0
+        for t in TICKERS:
+            if t == "QQQ" or t not in tick2cik:
+                continue
+            try:
+                sub = sec_get(f"https://data.sec.gov/submissions/CIK{tick2cik[t]:010d}.json")
+                rec = sub["filings"]["recent"]
+                want = ("20-F",) if t in FOREIGN_ANNUAL_ONLY else ("10-Q", "10-K")
+                items_arr = rec.get("items") or [""] * len(rec["form"])
+                best = None
+                # 최신순 목록에서 실적 관련 공시를 찾음:
+                # 10-Q/10-K(분기·연간 보고서) 또는 8-K 중 Item 2.02(실적 발표)
+                for form, fdate, its in list(zip(rec["form"], rec["filingDate"], items_arr))[:60]:
+                    is_earn = form in want or (
+                        t not in FOREIGN_ANNUAL_ONLY and form == "8-K" and "2.02" in (its or ""))
+                    if is_earn:
+                        best = (fdate, form)
+                        break
+                if best and best[0] >= cutoff and best[0] > live["fresh"].get(t, {}).get("d", ""):
+                    live["fresh"][t] = {"d": best[0], "f": best[1]}
+                    found += 1
+            except Exception:
+                pass
+            time.sleep(0.15)
+        print(f"새 실적 공시 감지: {found}건 (현재 배지 {len(live['fresh'])}개)")
+    except Exception as e:
+        print("실적 공시 감지 실패 (기존 값 유지):", type(e).__name__)
+
+    # 4) QQQ 편입 비중 (인베스코 공식 보유내역 CSV)
+    try:
+        import csv, io
+        txt = http_get(INVESCO_URL, timeout=40)
+        rows = list(csv.reader(io.StringIO(txt)))
+        head = next(i for i, r in enumerate(rows)
+                    if any("weight" in c.lower() for c in r) and any("ticker" in c.lower() for c in r))
+        cols = [c.strip().lower() for c in rows[head]]
+        ti = next(i for i, c in enumerate(cols) if "holding" in c and "ticker" in c)
+        wi = next(i for i, c in enumerate(cols) if "weight" in c)
+        raw = []
+        for r in rows[head + 1:]:
+            if len(r) <= max(ti, wi): continue
+            sym = r[ti].strip().upper()
+            try:
+                w = float(r[wi].replace("%", "").replace(",", "").strip())
+            except ValueError:
+                continue
+            if sym and w > 0:
+                raw.append((sym, w))
+        if len(raw) >= 80:
+            comb = {}
+            for sym, w in raw:
+                key = "GOOGL" if sym in ("GOOG", "GOOGL") else sym
+                comb[key] = comb.get(key, 0) + w
+            hit = 0
+            for t in TICKERS:
+                if t != "QQQ" and t in comb:
+                    live["ret"].setdefault(t, {})["w"] = round(comb[t], 2)
+                    hit += 1
+            raw.sort(key=lambda x: -x[1])
+            live["top"] = [{"t": s, "w": round(w, 2)} for s, w in raw[:15]]
+            live["top10"] = round(sum(w for _, w in raw[:10]), 1)
+            print(f"QQQ 비중 갱신: {hit}개 기업 (보유내역 {len(raw)}종목)")
+        else:
+            print("QQQ 비중: 보유내역이 너무 적어 건너뜀 (기존 값 유지)")
+    except Exception as e:
+        print("QQQ 비중 수집 실패 (기존 값 유지):", type(e).__name__)
 
     if latest_date:
         live["updated"] = latest_date.strftime("%Y.%m.%d")

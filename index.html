@@ -4471,7 +4471,7 @@ function renderHome(){
     <div class="hbar" style="margin-top:9px"><i style="width:${DB.top10}%;background:#fff"></i></div>
     <div class="row sb" style="margin-top:9px"><span class="tiny">100개 기업 중 상위 10개의 비중</span><span class="tiny" style="font-weight:800;color:#bbb">QQQ 분석 →</span></div>
   </div>
-  <div class="sec-t">최근 실적 발표 <small>2026년 7월 말</small></div>
+  <div class="sec-t">최근 실적 발표 <small>${DB.earnLabel||'2026년 7월 말'}</small></div>
   <div class="chiprow">${DB.recentEarnings.map(id=>{const c=byId[id];
     return `<span class="chip" onclick="openCompany('${id}')"><span class="dot" style="background:${c.color}"></span>${krName(c)} <span style="color:#888">${c.name}</span></span>`;}).join('')}</div>
   <div class="sec-t">최근 영상 <small>Q100 채널</small></div>
@@ -4596,6 +4596,7 @@ function buildDetail(c){
     <h1 style="font-size:30px;font-weight:900;margin-top:10px;letter-spacing:-.5px">${c.kr} <span style="font-size:14.5px;color:#999;font-weight:700">${c.name}</span></h1>
     <div class="row" style="gap:6px;margin-top:7px;flex-wrap:wrap">
       <span class="chip sm">NASDAQ: ${c.ticker}</span><span class="chip sm">${c.industry}</span>
+      ${c.freshEarn?`<span class="chip sm" style="background:#3a2c0a;border-color:#8a6d1f;color:#fbbf24;font-weight:800">🔔 ${c.freshEarn} 새 실적 발표</span>`:''}
     </div>
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
     <div class="grid3" style="margin-top:15px">
@@ -4961,11 +4962,36 @@ document.getElementById('splash').classList.add('hide');
     let n=0;
     C.forEach(c=>{
       const r=L.ret[c.ticker];
-      if(r && isFinite(r.ytd)){
+      if(!r) return;
+      if(isFinite(r.ytd)){
         c.ret={ ytd:Math.round(r.ytd*10)/10, y1: isFinite(r.y1)? Math.round(r.y1*10)/10 : (c.ret? c.ret.y1 : NaN) };
         n++;
       }
+      if(isFinite(r.w) && r.w>0) c.qqq=Math.round(r.w*100)/100;
+      if(isFinite(r.m) && r.m>0 && isFinite(c.capB)){
+        const b=c.capB*r.m;
+        c.capB = b>=100? Math.round(b) : Math.round(b*10)/10;
+      }
     });
+    if(L.fresh && typeof L.fresh==='object'){
+      const now=Date.now(), fr=[];
+      C.forEach(c=>{
+        const f=L.fresh[c.ticker];
+        if(!f || !f.d) return;
+        const days=(now-new Date(f.d+'T12:00:00Z').getTime())/864e5;
+        if(days>=-1 && days<=21){ c.freshEarn=f.d.slice(5).replace('-','.'); fr.push({id:c.id, d:f.d}); }
+      });
+      if(fr.length){
+        fr.sort((a,b)=>b.d.localeCompare(a.d));
+        DB.recentEarnings=fr.slice(0,6).map(x=>x.id);
+        DB.earnLabel='최근 3주 · 공시 기준';
+      }
+    }
+    if(Array.isArray(L.top) && L.top.length>=10 && Array.isArray(DB.qqqTop)){
+      DB.qqqTop.forEach(h=>{ const f=L.top.find(x=>x.t===h.t); if(f && isFinite(f.w)) h.w=f.w; });
+      DB.qqqTop.sort((a,b)=>b.w-a.w);
+    }
+    if(isFinite(L.top10) && L.top10>20) DB.top10=L.top10;
     if(!n) return;
     const act=document.querySelector('.scr.active');
     if(act){
