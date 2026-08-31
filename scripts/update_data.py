@@ -152,6 +152,13 @@ def main():
             ent = {}
             if ytd is not None:
                 ent["ytd"] = round(ytd, 1)
+            else:
+                # 연중 상장 기업: 첫 상장일 종가를 기준으로 수익률 계산
+                # (다음 해 1월부터는 연초 종가가 생기므로 자동으로 위의 일반 YTD로 전환됨)
+                first_d, first_c = sorted(h)[0]
+                if first_d > YE_DATE and first_c > 0:
+                    ent["ytd"] = round((last_c / first_c - 1) * 100, 1)
+                    ent["ipo"] = first_d.isoformat()
             if r1y is not None:
                 ent["y1"] = round(r1y, 1)
             ref = close_on_or_before(sorted(h), REF_DATE)
