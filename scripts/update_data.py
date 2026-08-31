@@ -132,6 +132,10 @@ def main():
         except Exception:
             live = {}
     live.setdefault("ret", {})
+    # 이전 실행에서 명단에 섞여 들어온 ETF 티커 청소 (가짜 편출 알림 방지)
+    if isinstance(live.get("members"), list):
+        _bad = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
+        live["members"] = [t for t in live["members"] if t not in _bad]
 
     ok, fail = 0, []
     latest_date = None
@@ -205,15 +209,15 @@ def main():
 
     # 3.5) 새 실적 공시 감지 (SEC EDGAR 공식 접수 기록)
     try:
-        sec_ua = {"User-Agent": "Q100App/1.0 (educational app; github.com/somh0914/q100)",
-                  "Accept-Encoding": "identity", "Host": "data.sec.gov"}
+        # SEC 규정: 자동 접속 시 "이름 + 연락처" 형식의 신원 표기가 필요
+        sec_ua = {"User-Agent": "Q100 Education App somh0914@users.noreply.github.com",
+                  "Accept-Encoding": "identity",
+                  "Accept": "application/json"}
         def sec_get(url, tries=2):
             last = None
             for _ in range(tries):
                 try:
-                    h = dict(sec_ua)
-                    h["Host"] = urllib.parse.urlparse(url).netloc
-                    req = urllib.request.Request(url, headers=h)
+                    req = urllib.request.Request(url, headers=sec_ua)
                     with urllib.request.urlopen(req, timeout=25) as r:
                         return json.loads(r.read().decode("utf-8", "replace"))
                 except Exception as e:
@@ -341,12 +345,13 @@ def main():
                                          headers={"User-Agent": UA["User-Agent"]})
             with urllib.request.urlopen(req, timeout=30) as r:
                 html = r.read().decode("utf-8", "replace")
+            NOT_STOCK = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
             syms = []
             for m in re.finditer(r'/symbol/([A-Z][A-Z0-9.\-]{0,6})', html):
                 s = m.group(1)
-                if s not in syms:
+                if s not in syms and s not in NOT_STOCK:
                     syms.append(s)
-            if len(syms) >= 95:
+            if 95 <= len(syms) <= 110:
                 comb2 = sorted(set("GOOGL" if s in ("GOOG", "GOOGL") else s for s in syms))
                 cur = comb2
                 prev = live.get("members")
