@@ -180,6 +180,7 @@ def main():
                     ent["ipo"] = first_d.isoformat()
             if r1y is not None:
                 ent["y1"] = round(r1y, 1)
+            ent["p"] = round(last_c, 2)   # 최신 종가 (앱의 주가 표시줄용)
             ref = close_on_or_before(sorted(h), REF_DATE)
             if ref:  # 시가총액 환산 배율 (내장 기준일 대비 주가 변화)
                 ent["m"] = round(last_c / ref, 4)
