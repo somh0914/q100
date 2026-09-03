@@ -178,7 +178,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
-    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.03-T</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.03-W</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -4369,12 +4369,12 @@ DB.companies.forEach(c => {
    rev/eps=실제, revE/epsE=발표 직전 월가 컨센서스, revD/epsD=차이, g*=다음 분기 회사 가이던스 */
 const QR = {
  PANW:{q:'FY26 4Q', d:'9월 1일', rev:'$3.41B', revE:'$3.35B', revD:'+1.8%', eps:'$1.02', epsE:'$0.98', epsD:'+4.1%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$3.31B', gRevE:'$3.21B', gRevD:'+3.0%', gEps:'$0.97', gEpsE:'$0.94', gEpsD:'+3.2%'},
- NVDA:{q:'FY27 2Q', d:'8월 26일', rev:'$96.2B', revE:'$92.2B', revD:'+4.4%', eps:'$2.22', epsE:'$2.10', epsD:'+5.7%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$108B', gRevE:'$104.2B', gRevD:'+3.7%', gNote:'매출 가이던스는 $108B ±2% · EPS 가이던스는 미제공(매출·마진 중심)'},
+ NVDA:{q:'FY27 2Q', d:'8월 26일', rev:'$96.2B', revE:'$92.2B', revD:'+4.4%', eps:'$2.22', epsE:'$2.10', epsD:'+5.7%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$108B', gRevE:'$104.2B', gRevD:'+3.7%', gEpsE:'$2.46', gNote:'매출 가이던스는 $108B ±2% · EPS 가이던스는 미제공 — EPS는 월가 예상만 표시'},
  CRWD:{q:'FY27 2Q', d:'8월 26일', rev:'$1.47B', revE:'$1.44B', revD:'+2.2%', eps:'$0.31', epsE:'$0.29', epsD:'+6.9%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$1.53B', gRevE:'$1.52B', gRevD:'+0.4%', gEps:'$0.31', gEpsE:'$0.31', gEpsD:'+0.0%'},
  SNPS:{q:'FY26 3Q', d:'8월 26일', rev:'$2.48B', revE:'$2.44B', revD:'+1.6%', eps:'$3.91', epsE:'$3.67', epsD:'+6.4%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$2.56B', gRevE:'$2.55B', gRevD:'+0.1%', gEps:'$4.13', gEpsE:'$3.99', gEpsD:'+3.5%'},
  MRVL:{q:'FY27 2Q', d:'8월 27일', rev:'$2.74B', revE:'$2.71B', revD:'+1.1%', eps:'$0.94', epsE:'$0.93', epsD:'+1.1%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$3.15B', gRevE:'$3.03B', gRevD:'+4.0%', gEps:'$1.10', gEpsE:'$1.08', gEpsD:'+1.9%'},
  ADSK:{q:'FY27 2Q', d:'8월 27일', rev:'$2.05B', revE:'$2.01B', revD:'+2.0%', eps:'$3.30', epsE:'$3.12', epsD:'+5.8%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$2.13B', gRevE:'$2.08B', gRevD:'+2.5%', gEps:'$3.07', gEpsE:'$3.14', gEpsD:'-2.4%'},
- WDAY:{q:'FY27 2Q', d:'8월 27일', rev:'$2.65B', revE:'$2.64B', revD:'+0.5%', eps:'$2.75', epsE:'$2.61', epsD:'+5.3%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$2.52B', gRevE:'$2.51B', gRevD:'+0.2%', gNote:'구독매출 기준 가이던스 · 연간 구독매출 전망도 +13%로 상향'}
+ WDAY:{q:'FY27 2Q', d:'8월 27일', rev:'$2.65B', revE:'$2.64B', revD:'+0.5%', eps:'$2.75', epsE:'$2.61', epsD:'+5.3%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$2.52B', gRevE:'$2.51B', gRevD:'+0.2%', gEpsE:'$2.64', gNote:'매출 가이던스는 구독매출 기준 (총매출 월가 예상은 $2.70B) · EPS는 월가 예상만 표시'}
 };
 DB.companies.forEach(c => { if (QR[c.ticker]) c.qr = QR[c.ticker]; });
 /* 나머지 기업 (2026.09.02 일괄 조사 — 실적 반영 사이클마다 갱신) */
@@ -4387,7 +4387,7 @@ Object.assign(QR, {
  META:{q:'FY26 2Q', d:'7월 29일', rev:'$60.8B', revE:'$60.2B', revD:'+1.0%', eps:'$6.18', epsE:'$7.22', epsD:'-14.4%', basis:'GAAP', verdict:'mixed', gq:'2026 3Q', gRev:'$61.0~64.0B'},
  TSLA:{q:'FY26 2Q', d:'7월 22일', rev:'$28.2B', revE:'$25.6B', revD:'+10.5%', eps:'$0.33', epsE:'$0.49', epsD:'-32.7%', basis:'조정', verdict:'mixed'},
  NFLX:{q:'FY26 2Q', d:'7월 16일', rev:'$12.6B', revE:'$12.6B', revD:'-0.1%', eps:'$0.80', epsE:'$0.79', epsD:'+1.3%', basis:'GAAP', verdict:'mixed', gq:'2026 3Q', gRev:'$12.86B'},
- AVGO:{q:'FY26 3Q', d:'9월 2일', rev:'$29.6B', revE:'$29.3B', revD:'+1.2%', eps:'$3.32', epsE:'$3.21', epsD:'+3.4%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$34.8B', gRevE:'$35.0B', gRevD:'-0.7%', gNote:'EPS 가이던스는 미제공(매출·마진 중심)'},
+ AVGO:{q:'FY26 3Q', d:'9월 2일', rev:'$29.6B', revE:'$29.3B', revD:'+1.2%', eps:'$3.32', epsE:'$3.21', epsD:'+3.4%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$34.8B', gRevE:'$35.0B', gRevD:'-0.7%', gEpsE:'$3.84', gNote:'EPS 가이던스는 미제공(매출·마진 중심) — EPS는 월가 예상만 표시'},
  AMD:{q:'FY26 2Q', d:'8월 4일', rev:'$11.5B', revE:'$11.3B', revD:'+2.6%', eps:'$1.66', epsE:'$1.60', epsD:'+3.8%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$13.0B±0.3B'},
  MU:{q:'FY26 3Q', d:'6월 24일', rev:'$41.5B', revE:'$35.7B', revD:'+16.2%', eps:'$25.11', epsE:'$20.49', epsD:'+22.5%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$50.0B±1.0B', gEps:'$31.00±1.00'},
  INTC:{q:'FY26 2Q', d:'7월 23일', rev:'$16.1B', revE:'$14.3B', revD:'+12.6%', eps:'$0.42', epsE:'$0.21', epsD:'+100.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$15.8~16.8B', gEps:'$0.38'},
@@ -4473,6 +4473,67 @@ Object.assign(QR, {
 });
 DB.companies.forEach(c => { if (QR[c.ticker] && !c.qr) c.qr = QR[c.ticker]; });
 
+
+/* 가이던스 미제시 기업의 다음 분기 월가 예상 (2026.09.03 조사 — 각 기업 실적 반영 때마다 갱신) */
+const GEXP = {
+ COST:{gq:'FY26 4Q', gRevE:'$94.5B', gEpsE:'$6.56'},
+ GOOGL:{gq:'FY26 3Q', gRevE:'$126.7B', gEpsE:'$3.02'},
+ TSLA:{gq:'FY26 3Q', gRevE:'$27.7B', gEpsE:'$0.46'},
+ TMUS:{gq:'FY26 3Q', gRevE:'$23.2B', gEpsE:'$2.90'},
+ CMCSA:{gq:'FY26 3Q', gRevE:'$29.5B', gEpsE:'$1.01'},
+ PYPL:{gq:'FY26 3Q', gRevE:'$8.7B', gEpsE:'$1.32'},
+ SHOP:{gq:'FY26 3Q', gRevE:'$3.7B', gEpsE:'$0.47'},
+ MELI:{gq:'FY26 3Q', gRevE:'$10.6B', gEpsE:'$9.39'},
+ PDD:{gq:'FY26 3Q', gRevE:'$17.1B', gEpsE:'$2.43'},
+ ARM:{gq:'FY27 2Q', gRevE:'$1.4B', gEpsE:'$0.42'},
+ MPWR:{gq:'FY26 3Q', gRevE:'$980M', gEpsE:'$5.61'},
+ SNDK:{gq:'FY27 1Q', gRevE:'$10.7B', gEpsE:'$46.01'},
+ LITE:{gq:'FY27 1Q', gRevE:'$1.2B', gEpsE:'$3.61'},
+ ALAB:{gq:'FY26 3Q', gRevE:'$551M', gEpsE:'$1.12'},
+ NBIS:{gq:'FY26 3Q', gRevE:'$904M', gEpsE:'-$1.34'},
+ CRWV:{gq:'FY26 3Q', gRevE:'$3.4B', gEpsE:'-$1.36'},
+ INTU:{gq:'FY27 1Q', gRevE:'$4.31B', gEpsE:'$2.85'},
+ APP:{gq:'FY26 3Q', gRevE:'$2.1B', gEpsE:'$3.75'},
+ MSTR:{gq:'FY26 3Q', gRevE:'$128M', gEpsE:'$13.31'},
+ DASH:{gq:'FY26 3Q', gRevE:'$4.55B', gEpsE:'$0.82'},
+ ADP:{gq:'FY27 1Q', gRevE:'$5.48B', gEpsE:'$2.77'},
+ PAYX:{gq:'FY27 1Q', gRevE:'$1.63B', gEpsE:'$1.32'},
+ CTAS:{gq:'FY27 1Q', gRevE:'$2.98B', gEpsE:'$1.35'},
+ PEP:{gq:'FY26 3Q', gRevE:'$25.0B', gEpsE:'$2.30'},
+ MDLZ:{gq:'FY26 3Q', gRevE:'$9.99B', gEpsE:'$0.72'},
+ MNST:{gq:'FY26 3Q', gRevE:'$2.49B', gEpsE:'$0.30'},
+ KDP:{gq:'FY26 3Q', gRevE:'$7.33B', gEpsE:'$0.63'},
+ KHC:{gq:'FY26 3Q', gRevE:'$6.07B', gEpsE:'$0.43'},
+ SBUX:{gq:'FY26 4Q', gRevE:'$9.2B', gEpsE:'$0.71'},
+ ORLY:{gq:'FY26 3Q', gRevE:'$5.0B', gEpsE:'$0.92'},
+ WBD:{gq:'FY26 3Q', gRevE:'$8.8B', gEpsE:'$0.01'},
+ BKNG:{gq:'FY26 3Q', gRevE:'$9.7B', gEpsE:'$4.48'},
+ AMGN:{gq:'FY26 3Q', gRevE:'$10.0B', gEpsE:'$5.76'},
+ GILD:{gq:'FY26 3Q', gRevE:'$7.8B', gEpsE:'$2.14'},
+ VRTX:{gq:'FY26 3Q', gRevE:'$3.4B', gEpsE:'$4.80'},
+ REGN:{gq:'FY26 3Q', gRevE:'$4.5B', gEpsE:'$15.60'},
+ ISRG:{gq:'FY26 3Q', gRevE:'$2.9B', gEpsE:'$2.49'},
+ IDXX:{gq:'FY26 3Q', gRevE:'$1.2B', gEpsE:'$3.72'},
+ DXCM:{gq:'FY26 3Q', gRevE:'$1.3B', gEpsE:'$0.67'},
+ ALNY:{gq:'FY26 3Q', gRevE:'$1.4B', gEpsE:'$1.77'},
+ GEHC:{gq:'FY26 3Q', gRevE:'$5.4B', gEpsE:'$1.20'},
+ HON:{gq:'FY26 3Q', gRevE:'$5.0B', gEpsE:'$2.15'},
+ CSX:{gq:'FY26 3Q', gRevE:'$3.9B', gEpsE:'$0.54'},
+ ODFL:{gq:'FY26 3Q', gRevE:'$1.5B', gEpsE:'$1.54'},
+ FAST:{gq:'FY26 3Q', gRevE:'$2.4B', gEpsE:'$0.33'},
+ PCAR:{gq:'FY26 3Q', gRevE:'$7.5B', gEpsE:'$1.54'},
+ CPRT:{gq:'FY26 4Q', gRevE:'$1.1B', gEpsE:'$0.39'},
+ ROP:{gq:'FY26 3Q', gRevE:'$2.2B', gEpsE:'$5.78'},
+ AXON:{gq:'FY26 3Q', gRevE:'$935M', gEpsE:'$1.70'},
+ CEG:{gq:'FY26 3Q', gRevE:'$9.2B', gEpsE:'$3.68'},
+ AEP:{gq:'FY26 3Q', gRevE:'$6.5B', gEpsE:'$2.01'},
+ EXC:{gq:'FY26 3Q', gRevE:'$6.8B', gEpsE:'$0.86'},
+ XEL:{gq:'FY26 3Q', gRevE:'$4.3B', gEpsE:'$1.38'},
+ FANG:{gq:'FY26 3Q', gRevE:'$4.4B', gEpsE:'$4.82'},
+ FER:{gq:'FY26 3Q', gRevE:'€2.6B', gEpsE:'€0.28'},
+ TRI:{gq:'FY26 3Q', gRevE:'$1.9B', gEpsE:'$0.92'}
+};
+DB.companies.forEach(c => { const g = GEXP[c.ticker]; if (g && c.qr && !c.qr.gRev && !c.qr.gEps) Object.assign(c.qr, g); });
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
 const C = DB.companies;
@@ -5018,12 +5079,12 @@ function qrCard(c){
     ${thead}
     ${cmp('분기매출', r.rev, r.revE, r.revD)}
     ${r.eps?cmp(`분기EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}`, r.eps, r.epsE, r.epsD):''}
-    ${(r.gRev||r.gEps||r.gNote)?`<div style="border-top:1px solid #222;margin:13px 0 4px"></div>
-    <div class="tiny" style="font-weight:800;color:#c9a544">다음 분기 회사 가이던스${r.gq?` (${r.gq.replace(/^FY(\d+) (\dQ)$/,'FY$1.$2')})`:''}</div>
-    ${r.gRev?grow(gl+'매출', r.gRev, r.gRevE, r.gRevD, r.gRevN||r.gNote):''}
-    ${r.gEps?grow(`${gl}EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}`, r.gEps, r.gEpsE, r.gEpsD, r.gEpsN):''}
+    ${(r.gRev||r.gEps||r.gNote||r.gRevE||r.gEpsE)?`<div style="border-top:1px solid #222;margin:13px 0 4px"></div>
+    <div class="tiny" style="font-weight:800;color:#c9a544">${(r.gRev||r.gEps)?'다음 분기 회사 가이던스':'다음 분기 월가 예상'}${r.gq?` (${r.gq.replace(/^FY(\d+) (\dQ)$/,'FY$1.$2')})`:''}</div>
+    ${(r.gRev||r.gRevE)?grow(gl+'매출'+(r.gRev?' <span style="font-size:9px;color:#5f86b8;font-weight:800">SEC공시</span>':''), r.gRev||'', r.gRevE, r.gRevD, r.gRev?(r.gRevN||r.gNote):''):''}
+    ${(r.gEps||r.gEpsE)?grow(`${gl}EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}${r.gEps?' <span style="font-size:9px;color:#5f86b8;font-weight:800">SEC공시</span>':''}`, r.gEps||'', r.gEpsE, r.gEpsD, r.gEps?r.gEpsN:''):''}
     ${r.gNote && ((!r.gRev && !r.gEps) || !/높게|낮게/.test(r.gNote))?`<div class="tiny" style="margin-top:6px;color:#8f8f8f">${r.gNote}</div>`:''}`:''}
-    <p class="tiny" style="margin-top:10px">예상치는 발표 직전 월가 컨센서스(애널리스트 평균 예상) 기준 근사치 · 실적 반영 때마다 갱신됩니다.</p>
+    <p class="tiny" style="margin-top:10px">예상치는 발표 직전 월가 컨센서스(애널리스트 평균 예상) 기준 근사치, 다음 분기 예상치는 최근 조사 시점 기준 · 실적 반영 때마다 갱신됩니다.</p>
   </div>`;
 }
 function secOverview(c){
