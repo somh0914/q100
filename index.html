@@ -178,7 +178,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
-    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.03-X</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.03-Y</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -299,10 +299,10 @@ companies: [
     {t:'생태계 확장', d:'클라우드 → AI → 보안 → 개발도구로 확장'}
   ],
   segments:[{n:'생산성·비즈니스',p:43},{n:'인텔리전트 클라우드',p:37},{n:'퍼스널 컴퓨팅',p:20}],
-  fin:{ years:['FY21','FY22','FY23','FY24','FY25'],
-    rev:[168.1,198.3,211.9,245.1,281.7], op:[69.9,83.4,88.5,109.4,128.5],
-    ni:[61.3,72.7,72.4,88.1,101.8], fcf:[56.1,65.1,59.5,74.1,71.6],
-    eps:[8.05,9.65,9.68,11.80,13.64] },
+  fin:{ years:['FY21','FY22','FY23','FY24','FY25','FY26'],
+    rev:[168.1,198.3,211.9,245.1,281.7,331.8], op:[69.9,83.4,88.5,109.4,128.5,155.2],
+    ni:[61.3,72.7,72.4,88.1,101.8,133.8], fcf:[56.1,65.1,59.5,74.1,71.6,67.0],
+    eps:[8.05,9.65,9.68,11.80,13.64,17.95] },
   finNote:'회계연도 6월 종료 (FY25 = 2024.7~2025.6)',
   key:{rev:'$281.7B', revG:'+15%', opm:'46%', fcf:'$71.6B', extraK:'현금', extraV:'$95B'},
   score:{biz:96, growth:88, profit:95, cash:93, moat:97, fin:98, val:62, total:91},
@@ -1315,7 +1315,7 @@ DB.companies.push(
     {t:'서버 침투', d:'데이터센터 CPU의 Arm 전환 가속'}
   ],
   segments:[{n:'로열티',p:55},{n:'라이선스',p:45}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[2.70,2.68,3.23,4.01,4.90], op:[0.63,-0.11,0.11,0.66,1.10], ni:[0.55,0.52,0.31,0.79,1.20], fcf:[0.40,0.45,0.71,0.90,1.20], eps:[0.54,0.51,0.30,0.75,1.10]},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[2.70,2.68,3.23,4.01,4.9], op:[0.63,-0.11,0.11,0.66,0.91], ni:[0.55,0.52,0.31,0.79,0.9], fcf:[0.40,0.45,0.71,0.90,0.98], eps:[0.54,0.51,0.30,0.75,0.85]},
   finNote:'회계연도 3월 종료 · FY24 이익엔 상장 관련 주식보상 급증 반영',
   key:{rev:'$4B', revG:'+24%', opm:'16%', fcf:'$0.9B', extraK:'연간 출하 칩', extraV:'300억 개'},
   score:{biz:88, growth:86, profit:80, cash:85, moat:94, fin:92, val:25, total:80},
@@ -1525,7 +1525,7 @@ DB.companies.push(
     {t:'배당 유지', d:'다운사이클에도 배당 방어'}
   ],
   segments:[{n:'MCU',p:52},{n:'아날로그·기타',p:48}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[6.8,8.4,7.6,4.4,5.4], op:[2.0,3.1,2.9,0.3,1.0], ni:[1.3,2.2,1.9,0.05,0.60], fcf:[1.6,2.9,2.6,0.9,1.1], eps:[2.30,3.95,3.48,0.10,1.10]},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[6.8,8.4,7.6,4.4,4.7], op:[2.0,3.1,2.9,0.3,0.53], ni:[1.3,2.2,1.9,0.05,0.12], fcf:[1.6,2.9,2.6,0.9,0.87], eps:[2.30,3.95,3.48,0.10,0.22]},
   finNote:'회계연도 3월 종료 · 극심한 재고 사이클 통과 후 회복 중',
   key:{rev:'$4.4B', revG:'-42%', opm:'7%', fcf:'$0.9B', extraK:'FY26 회복', extraV:'진행 중'},
   score:{biz:74, growth:58, profit:70, cash:78, moat:80, fin:72, val:65, total:70},
@@ -1703,7 +1703,7 @@ DB.companies.push(
     {t:'기술 전환', d:'3D 구조 심화일수록 식각 수요 증가'}
   ],
   segments:[{n:'장비 판매',p:60},{n:'서비스·업그레이드',p:40}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[14.6,17.2,17.4,14.9,18.1], op:[4.4,5.3,5.2,4.3,5.8], ni:[3.9,4.6,4.5,3.8,5.3], fcf:[3.6,4.6,5.1,4.3,5.0], eps:[2.72,3.32,3.35,2.90,4.15]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[14.6,17.2,17.4,14.9,18.1,23.2], op:[4.4,5.3,5.2,4.3,5.8,8.2], ni:[3.9,4.6,4.5,3.8,5.3,7.3], fcf:[3.6,4.6,5.1,4.3,5.0,4.9], eps:[2.72,3.32,3.35,2.90,4.15,5.76]},
   finNote:'회계연도 6월 종료 · 주당 지표는 액면분할 반영',
   key:{rev:'$18.1B', revG:'+22%', opm:'32%', fcf:'$5B', extraK:'메모리 노출', extraV:'업계 최대'},
   score:{biz:87, growth:82, profit:89, cash:88, moat:88, fin:93, val:55, total:83},
@@ -1738,7 +1738,7 @@ DB.companies.push(
     {t:'고마진 구조', d:'장비사 중 최고 수준 마진'}
   ],
   segments:[{n:'검사·계측',p:77},{n:'서비스·기타',p:23}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[6.9,9.2,10.5,9.8,12.2], op:[2.5,3.7,4.4,3.7,5.0], ni:[2.1,3.3,3.4,2.8,4.1], fcf:[2.1,3.0,3.3,2.9,3.9], eps:[1.34,2.19,2.42,2.04,3.03]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[6.9,9.2,10.5,9.8,12.2,13.6], op:[2.5,3.7,4.4,3.7,5.0,5.7], ni:[2.1,3.3,3.4,2.8,4.1,4.8], fcf:[2.1,3.0,3.3,2.9,3.9,3.8], eps:[1.34,2.19,2.42,2.04,3.03,3.66]},
   finNote:'회계연도 6월 종료',
   key:{rev:'$12.2B', revG:'+24%', opm:'41%', fcf:'$3.9B', extraK:'영업이익률', extraV:'장비사 1위'},
   score:{biz:90, growth:80, profit:94, cash:90, moat:92, fin:92, val:55, total:85},
@@ -1773,7 +1773,7 @@ DB.companies.push(
     {t:'사이클 이익', d:'가격이 오르면 이익이 폭발하는 구조'}
   ],
   segments:[{n:'클라우드·기업',p:45},{n:'소비자·클라이언트',p:55}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[8.7,6.1,6.7,7.4,11.0], op:[-0.2,-1.7,0.1,0.1,3.0], ni:[-0.3,-1.9,0.0,-0.1,2.5], fcf:[-0.3,-1.0,0.2,0.3,2.0], eps:[-2.10,-13.10,0.00,-0.70,17.00]},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[8.7,6.1,6.7,7.4,20.25], op:[-0.2,-1.7,0.1,0.1,12.4], ni:[-0.3,-1.9,0.0,-0.1,11.4], fcf:[-0.3,-1.0,0.2,0.3,11.5], eps:[-2.10,-13.10,0.00,-0.70,73.76]},
   finNote:'회계연도 6월 종료 · 2025.2 분사 — 과거는 카브아웃 근사치',
   key:{rev:'$7.4B', revG:'+10%', opm:'1%', fcf:'$0.3B', extraK:'낸드 가격', extraV:'급등 중'},
   score:{biz:70, growth:88, profit:62, cash:60, moat:70, fin:75, val:58, total:70},
@@ -1808,7 +1808,7 @@ DB.companies.push(
     {t:'공급 규율', d:'증설 자제 → 가격·마진 사상 최고'}
   ],
   segments:[{n:'대용량 (클라우드)',p:80},{n:'레거시·기타',p:20}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[10.7,11.7,7.4,6.6,9.1], op:[1.6,1.7,-0.5,0.3,1.9], ni:[1.3,1.6,-0.5,0.3,1.5], fcf:[1.3,1.4,-0.2,0.7,1.6], eps:[5.66,7.36,-2.60,1.58,6.90]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[10.7,11.7,7.4,6.6,9.1,12.2], op:[1.6,1.7,-0.5,0.3,1.9,4.2], ni:[1.3,1.6,-0.5,0.3,1.5,3.2], fcf:[1.3,1.4,-0.2,0.7,1.6,3.1], eps:[5.66,7.36,-2.60,1.58,6.90,13.9]},
   finNote:'회계연도 6월 종료 · FY26 실적 급증 중',
   key:{rev:'$9.1B', revG:'+39%', opm:'21%', fcf:'$1.6B', extraK:'HAMR', extraV:'양산 선두'},
   score:{biz:75, growth:85, profit:75, cash:78, moat:78, fin:70, val:60, total:74},
@@ -1843,7 +1843,7 @@ DB.companies.push(
     {t:'현금 환원 개시', d:'호황 이익으로 배당·자사주'}
   ],
   segments:[{n:'클라우드',p:85},{n:'클라이언트·소비자',p:15}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[18.8,12.3,13.0,9.5,12.5], op:[2.4,-1.3,0.0,2.2,3.5], ni:[1.5,-1.7,-0.8,1.6,2.8], fcf:[1.0,-1.2,-0.6,1.4,2.5], eps:[4.75,-5.50,-2.50,4.40,7.80]},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[18.8,12.3,13.0,9.5,12.9], op:[2.4,-1.3,0.0,2.2,4.6], ni:[1.5,-1.7,-0.8,1.6,9.3], fcf:[1.0,-1.2,-0.6,1.4,3.5], eps:[4.75,-5.50,-2.50,4.40,24.28]},
   finNote:'회계연도 6월 종료 · FY25까지는 낸드 포함, 이후 HDD 단독 근사치',
   key:{rev:'$9.5B', revG:'HDD 급성장', opm:'23%', fcf:'$1.4B', extraK:'복점 구조', extraV:'STX와 양분'},
   score:{biz:74, growth:82, profit:74, cash:76, moat:76, fin:72, val:62, total:72},
@@ -2406,7 +2406,7 @@ DB.companies.push(
     {t:'50년 배당 성장', d:'배당왕 — 주주환원의 전설'}
   ],
   segments:[{n:'고용주 서비스',p:70},{n:'PEO (인사 아웃소싱)',p:30}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[15.0,16.5,18.0,19.2,20.6], op:[3.3,3.7,4.5,4.8,5.2], ni:[2.6,3.0,3.4,3.8,4.1], fcf:[2.9,2.5,3.8,2.8,4.2], eps:[6.07,7.00,8.21,9.10,10.00]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[15.0,16.5,18.0,19.2,20.6,22.0], op:[3.3,3.7,4.5,4.8,5.2,5.8], ni:[2.6,3.0,3.4,3.8,4.1,4.4], fcf:[2.9,2.5,3.8,2.8,4.2,5.2], eps:[6.07,7.00,8.21,9.10,10.00,10.94]},
   finNote:'회계연도 6월 종료',
   key:{rev:'$20.6B', revG:'+7%', opm:'25%', fcf:'$4.2B', extraK:'배당 인상', extraV:'50년 연속'},
   score:{biz:88, growth:70, profit:87, cash:90, moat:92, fin:96, val:58, total:83},
@@ -2441,7 +2441,7 @@ DB.companies.push(
     {t:'고배당 환원', d:'배당수익률 상위 소프트웨어주'}
   ],
   segments:[{n:'매니지먼트 솔루션',p:75},{n:'PEO·보험',p:25}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[4.1,4.6,5.0,5.3,5.9], op:[1.5,1.9,2.1,2.2,2.4], ni:[1.1,1.4,1.6,1.7,1.8], fcf:[1.3,1.4,1.7,1.8,1.9], eps:[3.03,3.84,4.30,4.58,4.95]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[4.1,4.6,5.0,5.3,5.9,6.5], op:[1.5,1.9,2.1,2.2,2.4,2.6], ni:[1.1,1.4,1.6,1.7,1.8,1.8], fcf:[1.3,1.4,1.7,1.8,1.9,2.3], eps:[3.03,3.84,4.30,4.58,4.95,4.89]},
   finNote:'회계연도 5월 종료 · FY25 Paycor 인수 반영',
   key:{rev:'$5.9B', revG:'+11%', opm:'41%', fcf:'$1.9B', extraK:'배당수익률', extraV:'~3%'},
   score:{biz:84, growth:66, profit:90, cash:90, moat:86, fin:92, val:60, total:80},
@@ -2476,7 +2476,7 @@ DB.companies.push(
     {t:'가격 인상', d:'인플레이션 전가력 탁월'}
   ],
   segments:[{n:'유니폼 대여·시설',p:78},{n:'응급안전·기타',p:22}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[7.1,8.0,8.8,9.6,10.3], op:[1.4,1.7,1.9,2.2,2.4], ni:[1.1,1.2,1.3,1.6,1.7], fcf:[1.0,1.3,1.4,1.6,1.7], eps:[2.73,3.07,3.33,3.90,4.20]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[7.1,8.0,8.8,9.6,10.3,11.3], op:[1.4,1.7,1.9,2.2,2.4,2.6], ni:[1.1,1.2,1.3,1.6,1.7,2.0], fcf:[1.0,1.3,1.4,1.6,1.7,1.9], eps:[2.73,3.07,3.33,3.90,4.20,4.91]},
   finNote:'회계연도 5월 종료 · 주당 지표는 액면분할 반영',
   key:{rev:'$10.3B', revG:'+8%', opm:'23%', fcf:'$1.7B', extraK:'연속 성장', extraV:'50년+'},
   score:{biz:87, growth:72, profit:86, cash:88, moat:90, fin:94, val:45, total:81},
@@ -2829,7 +2829,7 @@ DB.companies.push(
     {t:'GTA 6 슈퍼사이클', d:'2026.11 출시 — 게임 역사상 최대 이벤트'}
   ],
   segments:[{n:'콘솔·PC 게임',p:75},{n:'모바일 (징가)',p:25}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[3.5,5.35,5.35,5.63,5.90], op:[0.47,-1.10,-3.60,-4.40,-0.30], ni:[0.42,-1.12,-3.74,-4.48,-0.50], fcf:[0.26,-0.20,-0.16,-0.45,0.30], eps:[3.58,-8.94,-21.91,-25.58,-2.50]},
+  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[3.5,5.35,5.35,5.63,6.7], op:[0.47,-1.10,-3.60,-4.40,-0.08], ni:[0.42,-1.12,-3.74,-4.48,-0.3], fcf:[0.26,-0.20,-0.16,-0.45,0.43], eps:[3.58,-8.94,-21.91,-25.58,-1.62]},
   finNote:'회계연도 3월 종료 · 손실은 징가 인수 무형자산 상각·손상 영향',
   key:{rev:'$5.6B', revG:'+5%', opm:'적자(상각)', fcf:'-$0.45B', extraK:'GTA 6', extraV:'2026.11'},
   score:{biz:76, growth:80, profit:50, cash:55, moat:86, fin:65, val:40, total:68},
@@ -4613,6 +4613,11 @@ const NEXTFY = {
  FER:{y:'2026', rev:'€10.1B', revG:'+5.1%', eps:'€1.01', epsG:'+7.2%'},
  TRI:{y:'2026', rev:'$8.1B', revG:'+8.5%', eps:'$4.44', epsG:'+11.4%'}
 };
+ NEXTFY.SNDK={y:'FY27', rev:'$49.0B', revG:'+142%', eps:'$214.10', epsG:'+202%'};
+ NEXTFY.WDC={y:'FY27', rev:'$19.2B', revG:'+49%', eps:'$20.09', epsG:'+97%'};
+ NEXTFY.ARM={y:'FY27', rev:'$6.1B', revG:'+23%', eps:'$2.23', epsG:'+26%'};
+ NEXTFY.MCHP={y:'FY27', rev:'$6.4B', revG:'+36%', eps:'$3.65', epsG:'+122%'};
+ NEXTFY.TTWO={y:'FY27', rev:'$8.5B', revG:'+28%', eps:'$6.87', epsG:'+68%'};
 DB.companies.forEach(c => { const n = NEXTFY[c.ticker]; if (n) c.nfy = n; });
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
@@ -5067,7 +5072,8 @@ function buildDetail(c){
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
   /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
   const nfy=c.nfy||null;
-  const fcY = nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : '');
+  const fyLab=y=>String(y).replace(/^20(\d\d)$/,'FY$1');
+  const fcY = fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
   const revFc = nfy&&nfy.rev? [nfy.rev, nfy.revG!=null?nfy.revG:''] : (estY? [fB(revEst), revG2] : null);
   const epsFc = nfy&&nfy.eps? [nfy.eps, nfy.epsG!=null?nfy.epsG:''] : (estY? [dEps(epsEst), epsG2] : null);
   /* 주가 — 시가총액 카드 안에 통합 표시 (live.json이 매일 채움) */
@@ -5106,8 +5112,8 @@ function buildDetail(c){
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
     <div class="grid3" style="margin-top:15px">
       <div class="stat"><div class="k">시가총액</div>${vFit(krw(c.capB,true))}<div class="krw" style="white-space:nowrap">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb;white-space:nowrap">QQQ비중 ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}${priceCell}</div>
-      <div class="stat"><div class="k">연매출</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${actY} 확정</div>${vFit(krwS(fB(revAct),true))}<div class="krw" style="white-space:nowrap">${fB(revAct)}</div>${revFc?estLine(fcY,revFc[0],revFc[1]):''}</div>
-      <div class="stat"><div class="k">연EPS</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${actY} 확정</div>${vFit(krwEps(epsAct))}<div class="krw" style="white-space:nowrap">${dEps(epsAct)}</div>${epsFc?estLine(fcY,epsFc[0],epsFc[1]):''}</div>
+      <div class="stat"><div class="k">연매출</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${fyLab(actY)} 확정</div>${vFit(krwS(fB(revAct),true))}<div class="krw" style="white-space:nowrap">${fB(revAct)}</div>${revFc?estLine(fcY,revFc[0],revFc[1]):''}</div>
+      <div class="stat"><div class="k">연EPS</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${fyLab(actY)} 확정</div>${vFit(krwEps(epsAct))}<div class="krw" style="white-space:nowrap">${dEps(epsAct)}</div>${epsFc?estLine(fcY,epsFc[0],epsFc[1]):''}</div>
     </div>
   </div>
   <div class="tabbar">${DTABS.map(([t,k,e])=>`<span class="tab dtab ${t==='ov'?'on':''}" data-t="${t}" onclick="showDTab('${t}')">${k}<small>${e}</small></span>`).join('')}</div>
