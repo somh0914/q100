@@ -10,6 +10,7 @@ Q100 데이터 자동 업데이트 스크립트 (GitHub Actions에서 매일 실
 데이터 출처: Yahoo Finance (1순위) → Stooq (2순위). 외부 키 불필요.
 """
 import json, time, sys, os, datetime, urllib.request, urllib.parse, urllib.error
+from zoneinfo import ZoneInfo
 
 TICKERS = [
  "NVDA","AAPL","GOOGL","MSFT","AMZN","MU","AMD","AVGO","META","TSLA",
@@ -32,9 +33,17 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 INVESCO_URL = ("https://www.invesco.com/us/financial-products/etfs/holdings/"
                "main/sitedetail/ajax?audienceType=Investor&action=download&ticker=QQQ")
 
+# 쿠키를 유지하는 공용 커넥션 — 야후가 쿠키 없는 요청을 차단(429)할 때가 있어
+# 시작할 때 한 번 쿠키를 받아두고 모든 요청에 함께 보낸다.
+_opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
+try:
+    _opener.open(urllib.request.Request("https://fc.yahoo.com", headers=UA), timeout=15)
+except Exception:
+    pass  # 응답이 404여도 쿠키는 심어짐
+
 def http_get(url, timeout=20):
     req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with _opener.open(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
 
 def from_yahoo(sym):
@@ -68,18 +77,38 @@ def from_stooq(sym):
                 pass
     return out
 
+def latest_trading_day_et():
+    """미국 동부시간 기준 '가장 최근에 장이 끝난 거래일'.
+    장마감(16:10 ET) 전이면 전일로, 주말이면 금요일로 물러난다."""
+    now = datetime.datetime.now(ZoneInfo("America/New_York"))
+    d = now.date()
+    if (now.hour, now.minute) < (16, 10):
+        d -= datetime.timedelta(days=1)
+    while d.weekday() >= 5:
+        d -= datetime.timedelta(days=1)
+    return d
+
 def get_history(yahoo_sym, stooq_sym):
-    # 최소 15거래일 — 신규 상장사(상장 몇 달)도 수집 가능하도록
+    # 최소 15거래일 — 신규 상장사(상장 몇 달)도 수집 가능하도록.
+    # 소스가 하루 늦은 데이터를 주면(예: 야후 차단→스투크 지연) 다른 소스와 비교해
+    # 더 최신 종가를 가진 쪽을 쓴다 — '어제 종가' 대신 '오늘 종가'를 보장하기 위함.
+    want = latest_trading_day_et()
+    best = None
     for fn, sym in ((from_yahoo, yahoo_sym), (from_stooq, stooq_sym)):
         for attempt in (1, 2):
             try:
                 h = fn(sym)
                 if len(h) >= 15:
-                    return h
+                    h = sorted(h)
+                    if best is None or h[-1][0] > best[-1][0]:
+                        best = h
+                    break
             except Exception:
                 pass
             time.sleep(1.5)
-    return None
+        if best is not None and best[-1][0] >= want:
+            return best   # 최신 거래일 종가 확보 → 두 번째 소스 조회 불필요
+    return best
 
 def close_on_or_before(hist, d):
     best = None
