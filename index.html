@@ -178,7 +178,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
-    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.03-W</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.03-X</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -1738,7 +1738,7 @@ DB.companies.push(
     {t:'고마진 구조', d:'장비사 중 최고 수준 마진'}
   ],
   segments:[{n:'검사·계측',p:77},{n:'서비스·기타',p:23}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[6.9,9.2,10.5,9.8,12.2], op:[2.5,3.7,4.4,3.7,5.0], ni:[2.1,3.3,3.4,2.8,4.1], fcf:[2.1,3.0,3.3,2.9,3.9], eps:[13.40,21.90,24.20,20.40,30.30]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[6.9,9.2,10.5,9.8,12.2], op:[2.5,3.7,4.4,3.7,5.0], ni:[2.1,3.3,3.4,2.8,4.1], fcf:[2.1,3.0,3.3,2.9,3.9], eps:[1.34,2.19,2.42,2.04,3.03]},
   finNote:'회계연도 6월 종료',
   key:{rev:'$12.2B', revG:'+24%', opm:'41%', fcf:'$3.9B', extraK:'영업이익률', extraV:'장비사 1위'},
   score:{biz:90, growth:80, profit:94, cash:90, moat:92, fin:92, val:55, total:85},
@@ -2584,7 +2584,7 @@ DB.companies.push(
     {t:'자사주 매입', d:'무차입 현금으로 꾸준한 환원'}
   ],
   segments:[{n:'몬스터 에너지',p:92},{n:'전략 브랜드·기타',p:8}],
-  fin:{years:['2021','2022','2023','2024','2025'], rev:[5.5,6.3,7.1,7.5,8.1], op:[1.80,1.58,1.95,2.00,2.30], ni:[1.38,1.19,1.63,1.51,1.80], fcf:[1.1,0.7,1.7,1.7,1.9], eps:[1.30,1.12,1.54,1.49,1.85]},
+  fin:{years:['2021','2022','2023','2024','2025'], rev:[5.5,6.3,7.1,7.5,8.1], op:[1.80,1.58,1.95,2.00,2.30], ni:[1.38,1.19,1.63,1.51,1.80], fcf:[1.1,0.7,1.7,1.7,1.9], eps:[0.65,0.56,0.77,0.75,0.93]},
   finNote:'12월 결산 · 2025년은 근사치',
   key:{rev:'$8.1B', revG:'+8%', opm:'28%', fcf:'$1.9B', extraK:'점유율', extraV:'세계 2강'},
   score:{biz:82, growth:72, profit:86, cash:88, moat:85, fin:97, val:52, total:79},
@@ -2899,7 +2899,7 @@ DB.companies.push(
     {t:'현금 환원', d:'막대한 FCF로 자사주 소각'}
   ],
   segments:[{n:'숙박 중개',p:85},{n:'항공·기타',p:15}],
-  fin:{years:['2021','2022','2023','2024','2025'], rev:[11.0,17.1,21.4,23.7,26.1], op:[2.0,5.1,5.8,7.6,8.6], ni:[1.2,3.1,4.3,5.9,6.6], fcf:[2.8,6.2,7.0,7.9,8.8], eps:[28.20,76.40,117.40,171.80,200.00]},
+  fin:{years:['2021','2022','2023','2024','2025'], rev:[11.0,17.1,21.4,23.7,26.1], op:[2.0,5.1,5.8,7.6,8.6], ni:[1.2,3.1,4.3,5.9,6.6], fcf:[2.8,6.2,7.0,7.9,8.8], eps:[1.13,3.06,4.70,6.87,8.00]},
   finNote:'12월 결산 · 2025년은 근사치',
   key:{rev:'$26.1B', revG:'+10%', opm:'33%', fcf:'$8.8B', extraK:'연간 예약액', extraV:'$180B+'},
   score:{biz:90, growth:78, profit:92, cash:94, moat:88, fin:90, val:60, total:85},
@@ -4380,64 +4380,64 @@ DB.companies.forEach(c => { if (QR[c.ticker]) c.qr = QR[c.ticker]; });
 /* 나머지 기업 (2026.09.02 일괄 조사 — 실적 반영 사이클마다 갱신) */
 Object.assign(QR, {
  PDD:{q:'FY26 2Q', d:'8월 24일', rev:'$15.7B', revE:'$15.9B', revD:'-1.3%', eps:'$2.70', epsE:'$2.57', epsD:'+5.3%', basis:'조정', verdict:'mixed'},
- AAPL:{q:'FY26 3Q', d:'7월 30일', rev:'$109.4B', revE:'$108.9B', revD:'+0.5%', eps:'$2.02', epsE:'$1.89', epsD:'+6.9%', basis:'GAAP', verdict:'beat', gq:'FY26 4Q', gRev:'+9~11% YoY'},
+ AAPL:{q:'FY26 3Q', d:'7월 30일', rev:'$109.4B', revE:'$108.9B', revD:'+0.5%', eps:'$2.02', epsE:'$1.89', epsD:'+6.9%', basis:'GAAP', verdict:'beat', gq:'FY26 4Q', gRev:'+9~11% YoY', gRevE:'$113.4B', gEpsE:'$1.98'},
  GOOGL:{q:'FY26 2Q', d:'7월 22일', rev:'$119.8B', revE:'$116.5B', revD:'+2.8%', eps:'$9.11', epsE:'$2.88', epsD:'+216.3%', basis:'GAAP', verdict:'beat'},
- MSFT:{q:'FY26 4Q', d:'7월 29일', rev:'$90.0B', revE:'$87.6B', revD:'+2.7%', eps:'$4.74', epsE:'$4.24', epsD:'+11.8%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$89.85~90.95B'},
- AMZN:{q:'FY26 2Q', d:'7월 30일', rev:'$200.6B', revE:'$196.9B', revD:'+1.9%', eps:'$5.75', epsE:'$1.83', epsD:'+214.2%', basis:'GAAP', verdict:'beat', gq:'2026 3Q', gRev:'$197~202B'},
- META:{q:'FY26 2Q', d:'7월 29일', rev:'$60.8B', revE:'$60.2B', revD:'+1.0%', eps:'$6.18', epsE:'$7.22', epsD:'-14.4%', basis:'GAAP', verdict:'mixed', gq:'2026 3Q', gRev:'$61.0~64.0B'},
+ MSFT:{q:'FY26 4Q', d:'7월 29일', rev:'$90.0B', revE:'$87.6B', revD:'+2.7%', eps:'$4.74', epsE:'$4.24', epsD:'+11.8%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$89.85~90.95B', gRevE:'$90.6B', gRevD:'-0.2%', gEpsE:'$4.71'},
+ AMZN:{q:'FY26 2Q', d:'7월 30일', rev:'$200.6B', revE:'$196.9B', revD:'+1.9%', eps:'$5.75', epsE:'$1.83', epsD:'+214.2%', basis:'GAAP', verdict:'beat', gq:'2026 3Q', gRev:'$197~202B', gRevE:'$204.6B', gRevD:'-2.5%', gEpsE:'$1.90'},
+ META:{q:'FY26 2Q', d:'7월 29일', rev:'$60.8B', revE:'$60.2B', revD:'+1.0%', eps:'$6.18', epsE:'$7.22', epsD:'-14.4%', basis:'GAAP', verdict:'mixed', gq:'2026 3Q', gRev:'$61.0~64.0B', gRevE:'$63.3B', gRevD:'-1.3%', gEpsE:'$6.72'},
  TSLA:{q:'FY26 2Q', d:'7월 22일', rev:'$28.2B', revE:'$25.6B', revD:'+10.5%', eps:'$0.33', epsE:'$0.49', epsD:'-32.7%', basis:'조정', verdict:'mixed'},
- NFLX:{q:'FY26 2Q', d:'7월 16일', rev:'$12.6B', revE:'$12.6B', revD:'-0.1%', eps:'$0.80', epsE:'$0.79', epsD:'+1.3%', basis:'GAAP', verdict:'mixed', gq:'2026 3Q', gRev:'$12.86B'},
+ NFLX:{q:'FY26 2Q', d:'7월 16일', rev:'$12.6B', revE:'$12.6B', revD:'-0.1%', eps:'$0.80', epsE:'$0.79', epsD:'+1.3%', basis:'GAAP', verdict:'mixed', gq:'2026 3Q', gRev:'$12.86B', gRevE:'$12.9B', gRevD:'-0.3%', gEpsE:'$0.82'},
  AVGO:{q:'FY26 3Q', d:'9월 2일', rev:'$29.6B', revE:'$29.3B', revD:'+1.2%', eps:'$3.32', epsE:'$3.21', epsD:'+3.4%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$34.8B', gRevE:'$35.0B', gRevD:'-0.7%', gEpsE:'$3.84', gNote:'EPS 가이던스는 미제공(매출·마진 중심) — EPS는 월가 예상만 표시'},
- AMD:{q:'FY26 2Q', d:'8월 4일', rev:'$11.5B', revE:'$11.3B', revD:'+2.6%', eps:'$1.66', epsE:'$1.60', epsD:'+3.8%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$13.0B±0.3B'},
- MU:{q:'FY26 3Q', d:'6월 24일', rev:'$41.5B', revE:'$35.7B', revD:'+16.2%', eps:'$25.11', epsE:'$20.49', epsD:'+22.5%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$50.0B±1.0B', gEps:'$31.00±1.00'},
- INTC:{q:'FY26 2Q', d:'7월 23일', rev:'$16.1B', revE:'$14.3B', revD:'+12.6%', eps:'$0.42', epsE:'$0.21', epsD:'+100.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$15.8~16.8B', gEps:'$0.38'},
- TXN:{q:'FY26 2Q', d:'7월 22일', rev:'$5.46B', revE:'$5.24B', revD:'+4.2%', eps:'$2.14', epsE:'$1.94', epsD:'+10.3%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$5.65~6.15B'},
- QCOM:{q:'FY26 3Q', d:'7월 29일', rev:'$9.95B', revE:'$9.67B', revD:'+2.9%', eps:'$2.21', epsE:'$2.23', epsD:'-0.9%', basis:'조정', verdict:'mixed', gq:'FY26 4Q', gRev:'$9.7~10.5B', gEps:'$2.05~2.25'},
- ADI:{q:'FY26 3Q', d:'8월 19일', rev:'$4.02B', revE:'$3.91B', revD:'+2.8%', eps:'$3.45', epsE:'$3.34', epsD:'+3.3%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$4.3B±0.1B', gEps:'$3.86±0.15'},
- NXPI:{q:'FY26 2Q', d:'7월 28일', rev:'$3.50B', revE:'$3.47B', revD:'+0.8%', eps:'$3.61', epsE:'$3.54', epsD:'+2.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$3.65~3.85B', gEps:'$3.89~4.32'},
- MCHP:{q:'FY27 1Q', d:'8월 6일', rev:'$1.49B', revE:'$1.45B', revD:'+2.6%', eps:'$0.76', epsE:'$0.70', epsD:'+8.6%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$1.59~1.62B', gEps:'$0.91~0.95'},
+ AMD:{q:'FY26 2Q', d:'8월 4일', rev:'$11.5B', revE:'$11.3B', revD:'+2.6%', eps:'$1.66', epsE:'$1.60', epsD:'+3.8%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$13.0B±0.3B', gRevE:'$13.0B', gRevD:'+0.0%', gEpsE:'$1.93'},
+ MU:{q:'FY26 3Q', d:'6월 24일', rev:'$41.5B', revE:'$35.7B', revD:'+16.2%', eps:'$25.11', epsE:'$20.49', epsD:'+22.5%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$50.0B±1.0B', gEps:'$31.00±1.00', gRevE:'$50.8B', gRevD:'-1.6%', gEpsE:'$31.26', gEpsD:'-0.8%'},
+ INTC:{q:'FY26 2Q', d:'7월 23일', rev:'$16.1B', revE:'$14.3B', revD:'+12.6%', eps:'$0.42', epsE:'$0.21', epsD:'+100.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$15.8~16.8B', gEps:'$0.38', gRevE:'$15.0B', gRevD:'+8.7%', gEpsE:'$0.14', gEpsD:'+171.4%'},
+ TXN:{q:'FY26 2Q', d:'7월 22일', rev:'$5.46B', revE:'$5.24B', revD:'+4.2%', eps:'$2.14', epsE:'$1.94', epsD:'+10.3%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$5.65~6.15B', gRevE:'$5.5B', gRevD:'+7.3%', gEpsE:'$2.11'},
+ QCOM:{q:'FY26 3Q', d:'7월 29일', rev:'$9.95B', revE:'$9.67B', revD:'+2.9%', eps:'$2.21', epsE:'$2.23', epsD:'-0.9%', basis:'조정', verdict:'mixed', gq:'FY26 4Q', gRev:'$9.7~10.5B', gEps:'$2.05~2.25', gRevE:'$10.2B', gRevD:'-1.0%', gEpsE:'$2.02', gEpsD:'+6.4%'},
+ ADI:{q:'FY26 3Q', d:'8월 19일', rev:'$4.02B', revE:'$3.91B', revD:'+2.8%', eps:'$3.45', epsE:'$3.34', epsD:'+3.3%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$4.3B±0.1B', gEps:'$3.86±0.15', gRevE:'$4.3B', gRevD:'+0.0%', gEpsE:'$3.85', gEpsD:'+0.3%'},
+ NXPI:{q:'FY26 2Q', d:'7월 28일', rev:'$3.50B', revE:'$3.47B', revD:'+0.8%', eps:'$3.61', epsE:'$3.54', epsD:'+2.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$3.65~3.85B', gEps:'$3.89~4.32', gRevE:'$3.7B', gRevD:'+1.4%', gEpsE:'$4.11', gEpsD:'-0.1%'},
+ MCHP:{q:'FY27 1Q', d:'8월 6일', rev:'$1.49B', revE:'$1.45B', revD:'+2.6%', eps:'$0.76', epsE:'$0.70', epsD:'+8.6%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$1.59~1.62B', gEps:'$0.91~0.95', gRevE:'$1.5B', gRevD:'+7.0%', gEpsE:'$0.76', gEpsD:'+22.4%'},
  MPWR:{q:'FY26 2Q', d:'7월 30일', rev:'$981M', revE:'$904M', revD:'+8.5%', eps:'$6.50', epsE:'$5.88', epsD:'+10.5%', basis:'조정', verdict:'beat'},
- TER:{q:'FY26 2Q', d:'7월 28일', rev:'$1.33B', revE:'$1.22B', revD:'+9.4%', eps:'$2.47', epsE:'$2.04', epsD:'+21.1%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$1.20~1.30B', gEps:'$1.85~2.15'},
+ TER:{q:'FY26 2Q', d:'7월 28일', rev:'$1.33B', revE:'$1.22B', revD:'+9.4%', eps:'$2.47', epsE:'$2.04', epsD:'+21.1%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$1.20~1.30B', gEps:'$1.85~2.15', gRevE:'$1.0B', gRevD:'+25.0%', gEpsE:'$1.65', gEpsD:'+21.2%'},
  ARM:{q:'FY27 1Q', d:'7월 29일', rev:'$1.29B', revE:'$1.27B', revD:'+1.7%', eps:'$0.45', epsE:'$0.40', epsD:'+12.5%', basis:'조정', verdict:'beat'},
- ASML:{q:'FY26 2Q', d:'7월 15일', rev:'$10.8B', revE:'$10.3B', revD:'+5.4%', eps:'$8.81', epsE:'$7.98', epsD:'+10.4%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'€11.0~12.0B'},
- AMAT:{q:'FY26 3Q', d:'8월 13일', rev:'$9.12B', revE:'$8.99B', revD:'+1.4%', eps:'$3.50', epsE:'$3.40', epsD:'+2.9%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$10.25B±0.5B', gEps:'$3.82~4.22'},
- LRCX:{q:'FY26 4Q', d:'7월 29일', rev:'$6.72B', revE:'$6.67B', revD:'+0.7%', eps:'$1.82', epsE:'$1.69', epsD:'+7.7%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$8.1B±0.4B', gEps:'$2.15±0.15'},
- KLAC:{q:'FY26 4Q', d:'7월 28일', rev:'$3.66B', revE:'$3.60B', revD:'+1.7%', eps:'$1.05', epsE:'$1.00', epsD:'+5.0%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.0B±0.2B', gEps:'$1.16±0.10'},
+ ASML:{q:'FY26 2Q', d:'7월 15일', rev:'$10.8B', revE:'$10.3B', revD:'+5.4%', eps:'$8.81', epsE:'$7.98', epsD:'+10.4%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'€11.0~12.0B', gRevE:'$11.4B', gRevD:'+0.9%', gEpsE:'$10.30'},
+ AMAT:{q:'FY26 3Q', d:'8월 13일', rev:'$9.12B', revE:'$8.99B', revD:'+1.4%', eps:'$3.50', epsE:'$3.40', epsD:'+2.9%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$10.25B±0.5B', gEps:'$3.82~4.22', gRevE:'$9.5B', gRevD:'+7.9%', gEpsE:'$3.65', gEpsD:'+10.1%'},
+ LRCX:{q:'FY26 4Q', d:'7월 29일', rev:'$6.72B', revE:'$6.67B', revD:'+0.7%', eps:'$1.82', epsE:'$1.69', epsD:'+7.7%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$8.1B±0.4B', gEps:'$2.15±0.15', gRevE:'$8.1B', gRevD:'+0.0%', gEpsE:'$2.17', gEpsD:'-0.9%'},
+ KLAC:{q:'FY26 4Q', d:'7월 28일', rev:'$3.66B', revE:'$3.60B', revD:'+1.7%', eps:'$1.05', epsE:'$1.00', epsD:'+5.0%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.0B±0.2B', gEps:'$1.16±0.10', gRevE:'$3.9B', gRevD:'+2.6%', gEpsE:'$1.18', gEpsD:'-1.7%'},
  SNDK:{q:'FY26 4Q', d:'8월 5일', rev:'$8.97B', revE:'$8.30B', revD:'+8.0%', eps:'$39.25', epsE:'$34.24', epsD:'+14.6%', basis:'조정', verdict:'beat'},
- STX:{q:'FY26 4Q', d:'7월 28일', rev:'$3.63B', revE:'$3.49B', revD:'+4.0%', eps:'$5.71', epsE:'$5.09', epsD:'+12.2%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.1B', gEps:'$7.30'},
- WDC:{q:'FY26 4Q', d:'8월 5일', rev:'$3.75B', revE:'$3.69B', revD:'+1.6%', eps:'$3.56', epsE:'$3.29', epsD:'+8.2%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.0~4.2B', gEps:'$3.85~4.15'},
+ STX:{q:'FY26 4Q', d:'7월 28일', rev:'$3.63B', revE:'$3.49B', revD:'+4.0%', eps:'$5.71', epsE:'$5.09', epsD:'+12.2%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.1B', gEps:'$7.30', gRevE:'$4.1B', gRevD:'+0.0%', gEpsE:'$7.25', gEpsD:'+0.7%'},
+ WDC:{q:'FY26 4Q', d:'8월 5일', rev:'$3.75B', revE:'$3.69B', revD:'+1.6%', eps:'$3.56', epsE:'$3.29', epsD:'+8.2%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.0~4.2B', gEps:'$3.85~4.15', gRevE:'$4.1B', gRevD:'+0.0%', gEpsE:'$4.06', gEpsD:'-1.5%'},
  LITE:{q:'FY26 4Q', d:'8월 11일', rev:'$1.01B', revE:'$988M', revD:'+1.8%', eps:'$3.23', epsE:'$2.99', epsD:'+8.0%', basis:'조정', verdict:'beat'},
  ALAB:{q:'FY26 2Q', d:'8월 4일', rev:'$392M', revE:'$360M', revD:'+8.9%', eps:'$0.80', epsE:'$0.69', epsD:'+15.9%', basis:'조정', verdict:'beat'},
  NBIS:{q:'FY26 2Q', d:'8월 12일', rev:'$582M', revE:'$573M', revD:'+1.7%', eps:'-$0.68', epsE:'-$0.67', epsD:'-1.5%', basis:'GAAP', verdict:'mixed'},
  CRWV:{q:'FY26 2Q', d:'8월 11일', rev:'$2.58B', revE:'$2.54B', revD:'+1.5%', eps:'-$1.03', epsE:'-$1.13', epsD:'+8.9%', basis:'조정', verdict:'beat'},
- PLTR:{q:'FY26 2Q', d:'8월 3일', rev:'$1.94B', revE:'$1.80B', revD:'+7.6%', eps:'$0.41', epsE:'$0.35', epsD:'+18.5%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$2.16B'},
+ PLTR:{q:'FY26 2Q', d:'8월 3일', rev:'$1.94B', revE:'$1.80B', revD:'+7.6%', eps:'$0.41', epsE:'$0.35', epsD:'+18.5%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$2.16B', gRevE:'$2.2B', gRevD:'-1.8%', gEpsE:'$0.40'},
  APP:{q:'FY26 2Q', d:'8월 5일', rev:'$1.92B', revE:'$1.93B', revD:'-0.8%', eps:'$3.76', epsE:'$3.72', epsD:'+1.1%', basis:'조정', verdict:'mixed'},
  SHOP:{q:'FY26 2Q', d:'8월 5일', rev:'$3.58B', revE:'$3.43B', revD:'+4.4%', eps:'$0.42', epsE:'$0.39', epsD:'+7.7%', basis:'조정', verdict:'beat'},
- DDOG:{q:'FY26 2Q', d:'8월 6일', rev:'$1.12B', revE:'$1.08B', revD:'+3.9%', eps:'$0.65', epsE:'$0.58', epsD:'+12.1%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$1.135~1.145B', gEps:'$0.63~0.65'},
- CDNS:{q:'FY26 2Q', d:'7월 27일', rev:'$1.58B', revE:'$1.58B', revD:'+0.4%', eps:'$2.11', epsE:'$2.06', epsD:'+2.4%', basis:'조정', verdict:'beat', gq:'2026 3Q', gEps:'$2.01~2.07'},
- CSCO:{q:'FY26 4Q', d:'8월 12일', rev:'$17.3B', revE:'$16.9B', revD:'+2.4%', eps:'$1.22', epsE:'$1.17', epsD:'+4.3%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$18.0~18.2B', gEps:'$1.32~1.34'},
+ DDOG:{q:'FY26 2Q', d:'8월 6일', rev:'$1.12B', revE:'$1.08B', revD:'+3.9%', eps:'$0.65', epsE:'$0.58', epsD:'+12.1%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$1.135~1.145B', gEps:'$0.63~0.65', gRevE:'$1.1B', gRevD:'+3.6%', gEpsE:'$0.64', gEpsD:'+0.0%'},
+ CDNS:{q:'FY26 2Q', d:'7월 27일', rev:'$1.58B', revE:'$1.58B', revD:'+0.4%', eps:'$2.11', epsE:'$2.06', epsD:'+2.4%', basis:'조정', verdict:'beat', gq:'2026 3Q', gEps:'$2.01~2.07', gRevE:'$1.6B', gEpsE:'$1.96', gEpsD:'+4.1%'},
+ CSCO:{q:'FY26 4Q', d:'8월 12일', rev:'$17.3B', revE:'$16.9B', revD:'+2.4%', eps:'$1.22', epsE:'$1.17', epsD:'+4.3%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$18.0~18.2B', gEps:'$1.32~1.34', gRevE:'$16.7B', gRevD:'+8.4%', gEpsE:'$0.90', gEpsD:'+47.8%'},
  INTU:{q:'FY26 4Q', d:'8월 25일', rev:'$4.35B', revE:'$4.27B', revD:'+1.9%', eps:'$4.03', epsE:'$3.59', epsD:'+12.3%', basis:'조정', verdict:'beat'},
- FTNT:{q:'FY26 2Q', d:'7월 29일', rev:'$2.05B', revE:'$1.89B', revD:'+8.5%', eps:'$0.90', epsE:'$0.75', epsD:'+20.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$2.01~2.10B', gEps:'$0.83~0.87'},
- ADBE:{q:'FY26 2Q', d:'6월 11일', rev:'$6.62B', revE:'$6.46B', revD:'+2.5%', eps:'$5.96', epsE:'$5.83', epsD:'+2.2%', basis:'조정', verdict:'beat', gq:'FY26 3Q', gRev:'$6.67~6.72B', gEps:'$6.05~6.10'},
+ FTNT:{q:'FY26 2Q', d:'7월 29일', rev:'$2.05B', revE:'$1.89B', revD:'+8.5%', eps:'$0.90', epsE:'$0.75', epsD:'+20.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$2.01~2.10B', gEps:'$0.83~0.87', gRevE:'$2.1B', gRevD:'-2.1%', gEpsE:'$0.85', gEpsD:'+0.0%'},
+ ADBE:{q:'FY26 2Q', d:'6월 11일', rev:'$6.62B', revE:'$6.46B', revD:'+2.5%', eps:'$5.96', epsE:'$5.83', epsD:'+2.2%', basis:'조정', verdict:'beat', gq:'FY26 3Q', gRev:'$6.67~6.72B', gEps:'$6.05~6.10', gRevE:'$6.7B', gRevD:'-0.1%', gEpsE:'$5.83', gEpsD:'+4.2%'},
  ADP:{q:'FY26 4Q', d:'7월 29일', rev:'$5.47B', revE:'$5.42B', revD:'+0.9%', eps:'$2.64', epsE:'$2.59', epsD:'+1.9%', basis:'조정', verdict:'beat'},
  PAYX:{q:'FY26 4Q', d:'6월 24일', rev:'$1.61B', revE:'$1.61B', revD:'+0.2%', eps:'$1.32', epsE:'$1.31', epsD:'+0.6%', basis:'조정', verdict:'beat'},
  CTAS:{q:'FY26 4Q', d:'7월 15일', rev:'$2.91B', revE:'$2.88B', revD:'+1.0%', eps:'$1.29', epsE:'$1.24', epsD:'+4.0%', basis:'GAAP', verdict:'beat'},
  DASH:{q:'FY26 2Q', d:'8월 5일', rev:'$4.45B', revE:'$4.34B', revD:'+2.5%', eps:'$0.46', epsE:'$0.47', epsD:'-2.1%', basis:'GAAP', verdict:'mixed'},
- ABNB:{q:'FY26 2Q', d:'8월 6일', rev:'$3.61B', revE:'$3.58B', revD:'+0.8%', eps:'$1.37', epsE:'$1.20', epsD:'+14.2%', basis:'GAAP', verdict:'beat', gq:'2026 3Q', gRev:'$4.69~4.77B'},
+ ABNB:{q:'FY26 2Q', d:'8월 6일', rev:'$3.61B', revE:'$3.58B', revD:'+0.8%', eps:'$1.37', epsE:'$1.20', epsD:'+14.2%', basis:'GAAP', verdict:'beat', gq:'2026 3Q', gRev:'$4.69~4.77B', gRevE:'$4.7B', gRevD:'+0.6%', gEpsE:'$2.85'},
  BKNG:{q:'FY26 2Q', d:'8월 4일', rev:'$7.35B', revE:'$7.19B', revD:'+2.3%', eps:'$2.54', epsE:'$2.45', epsD:'+3.7%', basis:'조정', verdict:'beat'},
- MAR:{q:'FY26 2Q', d:'8월 3일', rev:'$7.07B', revE:'$7.26B', revD:'-2.6%', eps:'$3.19', epsE:'$3.06', epsD:'+4.2%', basis:'조정', verdict:'mixed', gq:'2026 3Q', gEps:'$2.74~2.82'},
+ MAR:{q:'FY26 2Q', d:'8월 3일', rev:'$7.07B', revE:'$7.26B', revD:'-2.6%', eps:'$3.19', epsE:'$3.06', epsD:'+4.2%', basis:'조정', verdict:'mixed', gq:'2026 3Q', gEps:'$2.74~2.82', gRevE:'$6.9B', gEpsE:'$2.82', gEpsD:'-1.4%'},
  MELI:{q:'FY26 2Q', d:'8월 5일', rev:'$10.2B', revE:'$9.66B', revD:'+5.3%', eps:'$9.19', epsE:'$8.75', epsD:'+5.0%', basis:'GAAP', verdict:'beat'},
  COST:{q:'FY26 3Q', d:'5월 28일', rev:'$70.5B', revE:'$69.5B', revD:'+1.5%', eps:'$4.93', epsE:'$4.91', epsD:'+0.4%', basis:'GAAP', verdict:'beat'},
- WMT:{q:'FY27 2Q', d:'8월 20일', rev:'$187.9B', revE:'$186.8B', revD:'+0.6%', eps:'$0.81', epsE:'$0.74', epsD:'+9.5%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'+3.0~3.75%', gEps:'$0.62~0.64'},
+ WMT:{q:'FY27 2Q', d:'8월 20일', rev:'$187.9B', revE:'$186.8B', revD:'+0.6%', eps:'$0.81', epsE:'$0.74', epsD:'+9.5%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'+3.0~3.75%', gEps:'$0.62~0.64', gRevE:'$188.2B', gEpsE:'$0.68', gEpsD:'-7.4%'},
  PEP:{q:'FY26 2Q', d:'7월 9일', rev:'$24.2B', revE:'$24.0B', revD:'+1.0%', eps:'$2.20', epsE:'$2.21', epsD:'-0.5%', basis:'조정', verdict:'mixed'},
  KDP:{q:'FY26 2Q', d:'8월 6일', rev:'$7.31B', revE:'$7.26B', revD:'+0.7%', eps:'$0.57', epsE:'$0.54', epsD:'+5.6%', basis:'조정', verdict:'beat'},
  KHC:{q:'FY26 2Q', d:'8월 5일', rev:'$6.26B', revE:'$6.11B', revD:'+2.5%', eps:'$0.56', epsE:'$0.53', epsD:'+5.7%', basis:'조정', verdict:'beat'},
  MDLZ:{q:'FY26 2Q', d:'7월 28일', rev:'$9.35B', revE:'$9.21B', revD:'+1.5%', eps:'$0.73', epsE:'$0.68', epsD:'+7.4%', basis:'조정', verdict:'beat'},
  MNST:{q:'FY26 2Q', d:'8월 6일', rev:'$2.54B', revE:'$2.42B', revD:'+5.0%', eps:'$0.60', epsE:'$0.58', epsD:'+3.4%', basis:'조정', verdict:'beat'},
  SBUX:{q:'FY26 3Q', d:'7월 29일', rev:'$9.32B', revE:'$9.44B', revD:'-1.2%', eps:'$0.85', epsE:'$0.66', epsD:'+28.8%', basis:'조정', verdict:'mixed'},
- ROST:{q:'FY26 2Q', d:'8월 20일', rev:'$6.27B', revE:'$6.18B', revD:'+1.5%', eps:'$2.66', epsE:'$1.94', epsD:'+37.1%', basis:'GAAP', verdict:'beat', gq:'FY26 3Q', gEps:'$1.75~1.83'},
+ ROST:{q:'FY26 2Q', d:'8월 20일', rev:'$6.27B', revE:'$6.18B', revD:'+1.5%', eps:'$2.66', epsE:'$1.94', epsD:'+37.1%', basis:'GAAP', verdict:'beat', gq:'FY26 3Q', gEps:'$1.75~1.83', gRevE:'$6.0B', gEpsE:'$1.75', gEpsD:'+2.3%'},
  ORLY:{q:'FY26 2Q', d:'7월 29일', rev:'$4.89B', revE:'$4.85B', revD:'+0.8%', eps:'$0.86', epsE:'$0.85', epsD:'+1.2%', basis:'GAAP', verdict:'beat'},
- TTWO:{q:'FY27 1Q', d:'8월 6일', rev:'$1.39B', revE:'$1.36B', revD:'+2.3%', eps:'$0.36', epsE:'$0.31', epsD:'+16.1%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$1.62~1.67B'},
+ TTWO:{q:'FY27 1Q', d:'8월 6일', rev:'$1.39B', revE:'$1.36B', revD:'+2.3%', eps:'$0.36', epsE:'$0.31', epsD:'+16.1%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$1.62~1.67B', gRevE:'$1.6B', gRevD:'+2.8%', gEpsE:'$0.97'},
  AMGN:{q:'FY26 2Q', d:'8월 4일', rev:'$10.1B', revE:'$9.43B', revD:'+7.1%', eps:'$6.29', epsE:'$5.60', epsD:'+12.3%', basis:'조정', verdict:'beat'},
  GILD:{q:'FY26 2Q', d:'8월 4일', rev:'$7.80B', revE:'$7.36B', revD:'+5.9%', eps:'-$6.75', epsE:'-$7.07', epsD:'+4.5%', basis:'GAAP', verdict:'beat'},
  VRTX:{q:'FY26 2Q', d:'8월 3일', rev:'$3.33B', revE:'$3.23B', revD:'+3.1%', eps:'$4.73', epsE:'$4.79', epsD:'-1.3%', basis:'조정', verdict:'mixed'},
@@ -4451,7 +4451,7 @@ Object.assign(QR, {
  CMCSA:{q:'FY26 2Q', d:'7월 23일', rev:'$29.9B', revE:'$29.2B', revD:'+2.6%', eps:'$1.04', epsE:'$0.97', epsD:'+7.2%', basis:'조정', verdict:'beat'},
  TMUS:{q:'FY26 2Q', d:'7월 23일', rev:'$22.8B', revE:'$22.7B', revD:'+0.2%', eps:'$3.13', epsE:'$2.49', epsD:'+25.7%', basis:'GAAP', verdict:'beat'},
  HON:{q:'FY26 2Q', d:'7월 23일', rev:'$5.20B', revE:'$5.02B', revD:'+3.6%', eps:'$1.95', epsE:'$1.82', epsD:'+7.1%', basis:'조정', verdict:'beat'},
- LIN:{q:'FY26 2Q', d:'7월 31일', rev:'$9.29B', revE:'$8.96B', revD:'+3.6%', eps:'$4.50', epsE:'$4.49', epsD:'+0.2%', basis:'조정', verdict:'beat', gq:'2026 3Q', gEps:'$4.45~4.55'},
+ LIN:{q:'FY26 2Q', d:'7월 31일', rev:'$9.29B', revE:'$8.96B', revD:'+3.6%', eps:'$4.50', epsE:'$4.49', epsD:'+0.2%', basis:'조정', verdict:'beat', gq:'2026 3Q', gEps:'$4.45~4.55', gRevE:'$7.9B', gEpsE:'$3.92', gEpsD:'+14.8%'},
  CSX:{q:'FY26 2Q', d:'7월 22일', rev:'$3.94B', revE:'$3.84B', revD:'+2.6%', eps:'$0.54', epsE:'$0.51', epsD:'+5.9%', basis:'GAAP', verdict:'beat'},
  ODFL:{q:'FY26 2Q', d:'7월 29일', rev:'$1.55B', revE:'$1.54B', revD:'+0.8%', eps:'$1.68', epsE:'$1.52', epsD:'+10.5%', basis:'GAAP', verdict:'beat'},
  FAST:{q:'FY26 2Q', d:'7월 14일', rev:'$2.39B', revE:'$2.34B', revD:'+2.1%', eps:'$0.33', epsE:'$0.33', epsD:'+0.0%', basis:'GAAP', verdict:'mixed'},
@@ -4461,7 +4461,7 @@ Object.assign(QR, {
  AXON:{q:'FY26 2Q', d:'8월 5일', rev:'$904M', revE:'$876M', revD:'+3.2%', eps:'$1.88', epsE:'$1.83', epsD:'+2.7%', basis:'조정', verdict:'beat'},
  TRI:{q:'FY26 2Q', d:'8월 5일', rev:'$1.95B', revE:'$1.92B', revD:'+1.8%', eps:'$0.99', epsE:'$0.96', epsD:'+3.3%', basis:'조정', verdict:'beat'},
  FER:{q:'FY26 2Q', d:'7월 28일', rev:'$2.60B', revE:'$2.52B', revD:'+3.2%', eps:'$0.21', epsE:'$0.25', epsD:'-16.0%', basis:'GAAP', verdict:'mixed'},
- BKR:{q:'FY26 2Q', d:'7월 26일', rev:'$6.74B', revE:'$6.49B', revD:'+3.9%', eps:'$0.64', epsE:'$0.51', epsD:'+25.5%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$6.57~7.17B'},
+ BKR:{q:'FY26 2Q', d:'7월 26일', rev:'$6.74B', revE:'$6.49B', revD:'+3.9%', eps:'$0.64', epsE:'$0.51', epsD:'+25.5%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$6.57~7.17B', gRevE:'$6.9B', gRevD:'-0.4%', gEpsE:'$0.65'},
  FANG:{q:'FY26 2Q', d:'8월 3일', rev:'$5.56B', revE:'$4.90B', revD:'+13.5%', eps:'$6.48', epsE:'$5.98', epsD:'+8.4%', basis:'조정', verdict:'beat'},
  AEP:{q:'FY26 2Q', d:'7월 30일', rev:'$5.45B', revE:'$5.27B', revD:'+3.5%', eps:'$1.36', epsE:'$1.49', epsD:'-8.7%', basis:'조정', verdict:'mixed'},
  EXC:{q:'FY26 2Q', d:'7월 30일', rev:'$5.97B', revE:'$5.66B', revD:'+5.5%', eps:'$0.43', epsE:'$0.43', epsD:'+0.0%', basis:'조정', verdict:'mixed'},
@@ -4469,7 +4469,7 @@ Object.assign(QR, {
  CEG:{q:'FY26 2Q', d:'8월 6일', rev:'$7.50B', revE:'$7.46B', revD:'+0.5%', eps:'$2.55', epsE:'$2.36', epsD:'+8.1%', basis:'조정', verdict:'beat'},
  PYPL:{q:'FY26 2Q', d:'7월 28일', rev:'$8.68B', revE:'$8.47B', revD:'+2.5%', eps:'$1.38', epsE:'$1.28', epsD:'+7.8%', basis:'조정', verdict:'beat'},
  MSTR:{q:'FY26 2Q', d:'7월 30일', rev:'$122M', revE:'$125M', revD:'-1.7%', eps:'-$24.45', epsE:'-$2.19', epsD:'-1016%', basis:'GAAP', verdict:'miss'},
- RKLB:{q:'FY26 2Q', d:'8월 10일', rev:'$234M', revE:'$232M', revD:'+1.1%', eps:'-$0.03', epsE:'-$0.03', epsD:'+0.0%', basis:'조정', verdict:'mixed', gq:'2026 3Q', gRev:'$258M'}
+ RKLB:{q:'FY26 2Q', d:'8월 10일', rev:'$234M', revE:'$232M', revD:'+1.1%', eps:'-$0.03', epsE:'-$0.03', epsD:'+0.0%', basis:'조정', verdict:'mixed', gq:'2026 3Q', gRev:'$258M', gRevE:'$254M', gRevD:'+1.6%', gEpsE:'-$0.07'}
 });
 DB.companies.forEach(c => { if (QR[c.ticker] && !c.qr) c.qr = QR[c.ticker]; });
 
@@ -4534,6 +4534,86 @@ const GEXP = {
  TRI:{gq:'FY26 3Q', gRevE:'$1.9B', gEpsE:'$0.92'}
 };
 DB.companies.forEach(c => { const g = GEXP[c.ticker]; if (g && c.qr && !c.qr.gRev && !c.qr.gEps) Object.assign(c.qr, g); });
+
+/* 진행 중 회계연도 연간 월가 컨센서스 (2026.09.03 stockanalysis 조사 — 실적 반영 때마다 갱신) */
+const NEXTFY = {
+ MSFT:{y:'FY27', rev:'$391.1B', revG:'+17.9%', eps:'$19.75', epsG:'+14.3%'},
+ AAPL:{y:'FY26', rev:'$477.7B', revG:'+14.8%', eps:'$8.82', epsG:'+18.3%'},
+ AMZN:{y:'2026', rev:'$828.3B', revG:'+15.5%', eps:'$12.55', epsG:'+75.0%'},
+ META:{y:'2026', rev:'$254.2B', revG:'+26.5%', eps:'$31.16', epsG:'+5.0%'},
+ COST:{y:'FY26', rev:'$301.6B', revG:'+9.6%', eps:'$20.58', epsG:'+13.0%'},
+ ADBE:{y:'FY26', rev:'$26.5B', revG:'+11.7%', eps:'$24.41', epsG:'+16.6%'},
+ CDNS:{y:'2026', rev:'$6.3B', revG:'+19.3%', eps:'$8.14', epsG:'+14.0%'},
+ GOOGL:{y:'2026', rev:'$498.0B', revG:'+23.6%', eps:'$20.60', epsG:'+90.5%'},
+ TSLA:{y:'2026', rev:'$106.0B', revG:'+11.8%', eps:'$1.77', epsG:'+6.8%'},
+ NFLX:{y:'2026', rev:'$51.2B', revG:'+13.4%', eps:'$3.59', epsG:'+41.9%'},
+ PLTR:{y:'2026', rev:'$8.2B', revG:'+83.0%', eps:'$1.60', epsG:'+113.7%'},
+ INTC:{y:'2026', rev:'$63.0B', revG:'+19.2%', eps:'$1.51', epsG:'+260.2%'},
+ TMUS:{y:'2026', rev:'$94.4B', revG:'+6.9%', eps:'$12.18', epsG:'+14.3%'},
+ CMCSA:{y:'2026', rev:'$120.6B', revG:'-2.5%', eps:'$3.52', epsG:'-18.4%'},
+ PYPL:{y:'2026', rev:'$34.7B', revG:'+4.7%', eps:'$5.39', epsG:'+1.5%'},
+ SHOP:{y:'2026', rev:'$15.2B', revG:'+31.8%', eps:'$1.91', epsG:'+33.3%'},
+ MELI:{y:'2026', rev:'$41.7B', revG:'+44.3%', eps:'$39.07', epsG:'-0.8%'},
+ MU:{y:'FY26', rev:'$129.7B', revG:'+247%', eps:'$73.40', epsG:'+785%'},
+ AMD:{y:'2026', rev:'$50.8B', revG:'+46.7%', eps:'$7.57', epsG:'+81.5%'},
+ TXN:{y:'2026', rev:'$21.9B', revG:'+23.9%', eps:'$8.49', epsG:'+51.8%'},
+ QCOM:{y:'FY26', rev:'$43.0B', revG:'-3.0%', eps:'$10.52', epsG:'-12.5%'},
+ NXPI:{y:'2026', rev:'$14.2B', revG:'+16.1%', eps:'$15.06', epsG:'+27.5%'},
+ MPWR:{y:'2026', rev:'$4.1B', revG:'+47.8%', eps:'$27.43', epsG:'+54.4%'},
+ TER:{y:'2026', rev:'$5.1B', revG:'+61.2%', eps:'$9.09', epsG:'+129.6%'},
+ ASML:{y:'2026', rev:'$42.8B', revG:'+31.1%', eps:'$38.19', epsG:'+54.6%'},
+ LRCX:{y:'FY27', rev:'$34.8B', revG:'+49.6%', eps:'$9.46', epsG:'+62.5%'},
+ KLAC:{y:'FY27', rev:'$18.1B', revG:'+33.3%', eps:'$5.45', epsG:'+44.9%'},
+ STX:{y:'FY27', rev:'$18.8B', revG:'+54.0%', eps:'$35.78', epsG:'+129.7%'},
+ ALAB:{y:'2026', rev:'$1.9B', revG:'+123.9%', eps:'$4.03', epsG:'+119.1%'},
+ RKLB:{y:'2026', rev:'$953M', revG:'+58.4%', eps:'-$0.05'},
+ FTNT:{y:'2026', rev:'$8.1B', revG:'+19.4%', eps:'$3.45', epsG:'+25.0%'},
+ DDOG:{y:'2026', rev:'$4.5B', revG:'+30.5%', eps:'$2.53', epsG:'+23.3%'},
+ APP:{y:'2026', rev:'$8.1B', revG:'+48.3%', eps:'$16.81', epsG:'+57.9%'},
+ MSTR:{y:'2026', rev:'$502M', revG:'+5.2%', eps:'-$17.44'},
+ DASH:{y:'2026', rev:'$17.8B', revG:'+29.9%', eps:'$5.79', epsG:'+13.7%'},
+ ADP:{y:'FY27', rev:'$23.2B', revG:'+5.8%', eps:'$12.26', epsG:'+10.2%'},
+ PAYX:{y:'FY27', rev:'$6.9B', revG:'+5.6%', eps:'$5.98', epsG:'+8.5%'},
+ CTAS:{y:'FY27', rev:'$12.2B', revG:'+8.4%', eps:'$5.49', epsG:'+11.2%'},
+ PEP:{y:'2026', rev:'$99.0B', revG:'+5.4%', eps:'$8.56', epsG:'+5.2%'},
+ MDLZ:{y:'2026', rev:'$40.1B', revG:'+4.1%', eps:'$3.05', epsG:'+4.4%'},
+ MNST:{y:'2026', rev:'$9.7B', revG:'+17.2%', eps:'$1.15', epsG:'+16.1%'},
+ KDP:{y:'2026', rev:'$26.3B', revG:'+58.4%', eps:'$2.29', epsG:'+11.9%'},
+ CCEP:{y:'2026', rev:'$21.6B', revG:'+3.3%', eps:'$4.49', epsG:'+4.8%'},
+ KHC:{y:'2026', rev:'$24.6B', revG:'-1.2%', eps:'$2.05', epsG:'-21.0%'},
+ SBUX:{y:'FY26', rev:'$38.0B', revG:'+2.2%', eps:'$2.59', epsG:'+21.6%'},
+ ORLY:{y:'2026', rev:'$19.1B', revG:'+7.5%', eps:'$3.28', epsG:'+10.4%'},
+ WBD:{y:'2026', rev:'$36.2B', revG:'-2.9%', eps:'-$1.08'},
+ BKNG:{y:'2026', rev:'$29.3B', revG:'+8.7%', eps:'$10.45', epsG:'+14.5%'},
+ ABNB:{y:'2026', rev:'$14.2B', revG:'+15.6%', eps:'$5.28', epsG:'+31.0%'},
+ MAR:{y:'2026', rev:'$27.8B', revG:'+6.2%', eps:'$11.72', epsG:'+16.9%'},
+ AMGN:{y:'2026', rev:'$38.9B', revG:'+6.0%', eps:'$23.04', epsG:'+5.5%'},
+ GILD:{y:'2026', rev:'$30.7B', revG:'+4%', eps:'-$0.43'},
+ VRTX:{y:'2026', rev:'$13.2B', revG:'+10%', eps:'$20.84', epsG:'+9%'},
+ REGN:{y:'2026', rev:'$16.1B', revG:'+7%', eps:'$51.34', epsG:'+11%'},
+ ISRG:{y:'2026', rev:'$11.8B', revG:'+17%', eps:'$10.79', epsG:'+21%'},
+ IDXX:{y:'2026', rev:'$4.7B', revG:'+10%', eps:'$14.83', epsG:'+13%'},
+ DXCM:{y:'2026', rev:'$5.2B', revG:'+12%', eps:'$2.66', epsG:'+27%'},
+ ALNY:{y:'2026', rev:'$5.5B', revG:'+48%', eps:'$8.92', epsG:'+76%'},
+ GEHC:{y:'2026', rev:'$21.7B', revG:'+5%', eps:'$4.93', epsG:'+7%'},
+ LIN:{y:'2026', rev:'$36.3B', revG:'+7%', eps:'$17.88', epsG:'+9%'},
+ CSX:{y:'2026', rev:'$15.2B', revG:'+8%', eps:'$2.01', epsG:'+25%'},
+ ODFL:{y:'2026', rev:'$5.9B', revG:'+8%', eps:'$5.82', epsG:'+20%'},
+ FAST:{y:'2026', rev:'$9.3B', revG:'+13%', eps:'$1.26', epsG:'+16%'},
+ PCAR:{y:'2026', rev:'$28.9B', revG:'+1.6%', eps:'$5.93', epsG:'+18.5%'},
+ CPRT:{y:'FY26', rev:'$4.6B', revG:'-0.1%', eps:'$1.58', epsG:'-0.5%'},
+ ROP:{y:'2026', rev:'$8.6B', revG:'+8.4%', eps:'$22.22', epsG:'+11.1%'},
+ AXON:{y:'2026', rev:'$3.7B', revG:'+33.4%', eps:'$7.71', epsG:'+12.6%'},
+ CEG:{y:'2026', rev:'$35.1B', revG:'+37.6%', eps:'$12.12', epsG:'+29.1%'},
+ AEP:{y:'2026', rev:'$23.6B', revG:'+7.7%', eps:'$6.38', epsG:'+6.8%'},
+ EXC:{y:'2026', rev:'$25.5B', revG:'+5.2%', eps:'$2.86', epsG:'+3.1%'},
+ XEL:{y:'2026', rev:'$15.6B', revG:'+6.6%', eps:'$4.11', epsG:'+8.3%'},
+ FANG:{y:'2026', rev:'$18.5B', revG:'+29.7%', eps:'$20.46', epsG:'+53.0%'},
+ BKR:{y:'2026', rev:'$29.1B', revG:'+4.9%', eps:'$2.63', epsG:'+1.1%'},
+ FER:{y:'2026', rev:'€10.1B', revG:'+5.1%', eps:'€1.01', epsG:'+7.2%'},
+ TRI:{y:'2026', rev:'$8.1B', revG:'+8.5%', eps:'$4.44', epsG:'+11.4%'}
+};
+DB.companies.forEach(c => { const n = NEXTFY[c.ticker]; if (n) c.nfy = n; });
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
 const C = DB.companies;
@@ -4974,9 +5054,22 @@ function buildDetail(c){
   const epsAct=fy.eps[actI], epsEst=estI>=0? fy.eps[estI] : null;
   const dPct=(a,b)=> (a>0&&isFinite(b))? Math.round((b/a-1)*100) : null;
   const revG2=dPct(revAct,revEst), epsG2=(epsAct>0&&epsEst>0)? Math.round((epsEst/epsAct-1)*100) : null;
-  const estLine=(valS,g)=> estY? `<div style="font-size:11px;font-weight:800;margin-top:2px;white-space:nowrap;color:#c9a544">전망 ${valS}${g!=null?` <span style="color:${g>=0?'#4ade80':'#f87171'}">${g>=0?'+':''}${g}%</span>`:''}</div>`:'';
+  const estLine=(y,valS,g)=>{ if(!valS) return '';
+    let gs=(g!=null&&g!=='')? String(g) : '';
+    const gm=gs.match(/^([+-]?)(\d+(?:\.\d+)?)(%?)$/);
+    if(gm) gs=(gm[1]||'+')+Math.round(parseFloat(gm[2]))+'%';
+    else if(gs && !/^[+-]/.test(gs)) gs='+'+gs;
+    if(gs && !/%$/.test(gs)) gs+='%';
+    const txt=`${y}전망 ${valS}${gs?' '+gs:''}`;
+    const fz=txt.length>=20?9.5:(txt.length>=16?10.5:11);
+    return `<div style="font-size:${fz}px;font-weight:800;margin-top:2px;white-space:nowrap;color:#c9a544">${y}전망 ${valS}${gs?` <span style="color:${gs.startsWith('-')?'#f87171':'#4ade80'}">${gs}</span>`:''}</div>`; };
   const dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
+  /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
+  const nfy=c.nfy||null;
+  const fcY = nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : '');
+  const revFc = nfy&&nfy.rev? [nfy.rev, nfy.revG!=null?nfy.revG:''] : (estY? [fB(revEst), revG2] : null);
+  const epsFc = nfy&&nfy.eps? [nfy.eps, nfy.epsG!=null?nfy.epsG:''] : (estY? [dEps(epsEst), epsG2] : null);
   /* 주가 — 시가총액 카드 안에 통합 표시 (live.json이 매일 채움) */
   const krwP=v=>{const w=v*FX; return w>=1e8? (w/1e8).toFixed(1)+'억원' : w>=1e4? (w/1e4).toFixed(1)+'만원' : Math.round(w).toLocaleString()+'원';};
   const priceCell=(isFinite(c.price)&&c.price>0)?`<div style="border-top:1px solid #242424;margin:6px 2px 5px"></div>
@@ -5013,8 +5106,8 @@ function buildDetail(c){
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
     <div class="grid3" style="margin-top:15px">
       <div class="stat"><div class="k">시가총액</div>${vFit(krw(c.capB,true))}<div class="krw" style="white-space:nowrap">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb;white-space:nowrap">QQQ비중 ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}${priceCell}</div>
-      <div class="stat"><div class="k">연매출</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${actY} 확정</div>${vFit(krwS(fB(revAct),true))}<div class="krw" style="white-space:nowrap">${fB(revAct)}</div>${estLine(estY? fB(revEst):'', revG2)}${qLine}</div>
-      <div class="stat"><div class="k">연EPS</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${actY} 확정</div>${vFit(krwEps(epsAct))}<div class="krw" style="white-space:nowrap">${dEps(epsAct)}</div>${estLine(estY? dEps(epsEst):'', epsG2)}${qLine}</div>
+      <div class="stat"><div class="k">연매출</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${actY} 확정</div>${vFit(krwS(fB(revAct),true))}<div class="krw" style="white-space:nowrap">${fB(revAct)}</div>${revFc?estLine(fcY,revFc[0],revFc[1]):''}</div>
+      <div class="stat"><div class="k">연EPS</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${actY} 확정</div>${vFit(krwEps(epsAct))}<div class="krw" style="white-space:nowrap">${dEps(epsAct)}</div>${epsFc?estLine(fcY,epsFc[0],epsFc[1]):''}</div>
     </div>
   </div>
   <div class="tabbar">${DTABS.map(([t,k,e])=>`<span class="tab dtab ${t==='ov'?'on':''}" data-t="${t}" onclick="showDTab('${t}')">${k}<small>${e}</small></span>`).join('')}</div>
