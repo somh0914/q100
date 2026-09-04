@@ -210,6 +210,9 @@ def main():
             if r1y is not None:
                 ent["y1"] = round(r1y, 1)
             ent["p"] = round(last_c, 2)   # 최신 종가 (앱의 주가 표시줄용)
+            hs = sorted(h)
+            if len(hs) >= 2 and hs[-2][1]:      # 전일 대비 등락률
+                ent["dc"] = round((last_c / hs[-2][1] - 1) * 100, 2)
             ref = close_on_or_before(sorted(h), REF_DATE)
             if ref:  # 시가총액 환산 배율 (내장 기준일 대비 주가 변화)
                 ent["m"] = round(last_c / ref, 4)
