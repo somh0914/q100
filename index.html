@@ -178,7 +178,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
-    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.04-Z</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.04-AA</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -4972,8 +4972,7 @@ function renderHome(){
   <div class="sec-t">이런 기업은 어때요</div>
   <div class="grid3">${rec.map(c=>`<div class="stat" style="cursor:pointer;padding:14px 6px" onclick="openCompany('${c.id}')">
     <div style="display:flex;justify-content:center">${avatar(c,40,13)}</div>
-    <div class="tiny" style="margin-top:8px;font-weight:700;color:#bbb">${c.name}</div></div>`).join('')}</div>
-  <div class="disc">${DB.meta.note}</div>`;
+    <div class="tiny" style="margin-top:8px;font-weight:700;color:#bbb">${c.name}</div></div>`).join('')}</div>`;
 }
 
 /* ---------- COMPANIES ---------- */
@@ -5131,7 +5130,6 @@ function buildDetail(c){
   <div class="dsec" data-t="ri">${secRisks(c)}</div>
   <div class="dsec" data-t="va">${secVal(c)}</div>
   <div class="dsec" data-t="ct">${secContent(c)}</div>
-  <div class="disc">${DB.meta.note}</div>
   <div class="fabrow">
     ${pv?`<button class="fab side" onclick="openCompany('${pv.id}',true)">‹ ${krName(pv)}</button>`:'<button class="fab side ph"></button>'}
     <button class="fab mid" onclick="back()">뒤로</button>
@@ -5372,7 +5370,6 @@ function renderCompare(){
           <div class="hbar"><i style="width:${Math.max(Math.abs(vals[i])/mx*100,2).toFixed(1)}%;background:${c.color}"></i></div>
           <div class="metric-val" style="width:74px">${m.fmt(vals[i])}</div></div>`).join('')}</div>`;
     }).join('')}
-  ${sel.length>=2?`<div class="disc">${DB.meta.note}</div>`:''}
   <button class="backfab" onclick="back()">‹ 뒤로</button>`;
   updateCmpBar();
 }
@@ -5437,8 +5434,7 @@ function renderQQQ(){
       <div class="metric-val" style="color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
   })()}
     <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 실제 QQQ 연초 대비 수익률(${fPct(qqqYtdStats().usd,1)})을 나눠 배분한 근사치입니다. ${C.length}개 기여도를 전부 더하면 QQQ 수익률과 같아집니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
-  <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>
-  <div class="disc">${DB.meta.note}</div>`;
+  <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>`;
 }
 function contribRows(){
   const raw=C.filter(c=>c.ret&&isFinite(c.ret.ytd)).map(c=>({c, r:c.qqq*c.ret.ytd/100}));
@@ -5514,7 +5510,7 @@ function renderMy(){
   <div class="sec-t">용어 사전 <small>LEARN</small></div>
   ${DB.glossary.map(g=>`<details><summary>${g.t} <span class="tiny" style="font-weight:600">${g.s}</span></summary>
     <div class="dbody">${g.d}<br><br><b style="color:#ddd">Q100 사례</b> — ${g.ex}</div></details>`).join('')}
-  <div class="disc"><b style="color:#999">Q100 프로토타입 v0.2 · ${C.length}개 기업 수록</b><br>${DB.meta.note}<br>Q100은 주식 거래 앱이 아닙니다. 목표는 "기업을 이해하는 가장 쉬운 투자 앱"입니다.</div>`;
+  <div class="disc"><b style="color:#999">Q100 프로토타입 v0.2 · ${C.length}개 기업 수록</b><br>재무 수치는 각 사 공시 기준이며, 회계연도는 기업마다 다릅니다. 주가·시가총액·수익률은 매일 자동 갱신되는 근사치입니다. 투자 판단의 근거로 사용할 수 없습니다.<br>Q100은 주식 거래 앱이 아닙니다. 목표는 "기업을 이해하는 가장 쉬운 투자 앱"입니다.</div>`;
 }
 
 /* ---------- init ---------- */
