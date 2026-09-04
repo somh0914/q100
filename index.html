@@ -177,7 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
 <div id="top-anchor" style="position:absolute;top:0;left:0;width:1px;height:1px"></div>
 
 <div id="splash">
-  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AV</p>
+  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AW</p>
   <p id="js-warn" style="margin-top:26px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">화면이 계속 이 상태라면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
 </div>
 
@@ -5294,41 +5294,40 @@ function prodGrid(c){
 }
 function qrCard(c){
   const r=c.qr; if(!r) return '';
-  const gcols='grid-template-columns:minmax(66px,auto) 1fr 1fr minmax(72px,auto)';
-  const thead=`<div style="display:grid;${gcols};gap:6px;align-items:baseline">
-      <span></span>
-      <span style="font-size:10.5px;color:#8f8f8f;font-weight:800;text-align:right">실제 발표</span>
-      <span style="font-size:10.5px;color:#8f8f8f;font-weight:800;text-align:right">월가 예상</span>
-      <span></span></div>`;
-  const cmp=(l,a,e,d)=>{ const ds=String(d||'').trim(); const flat=/^[+-]?0(\.0+)?%$/.test(ds); const neg=!flat && ds.startsWith('-'); const col=flat?'#e8e8e8':(neg?'#f87171':'#4ade80'); const dcol=flat?'#8f8f8f':col; const dtxt=flat?'부합':`${d} ${neg?'하회':'상회'}`;
-    return `<div style="display:grid;${gcols};gap:6px;align-items:baseline;margin-top:10px">
-      <span style="font-size:12.5px;color:#aaa;font-weight:700">${l}</span>
-      <b style="font-size:15px;text-align:right;font-variant-numeric:tabular-nums;color:${col}">${a}</b>
-      <span style="font-size:13.5px;text-align:right;font-variant-numeric:tabular-nums;color:#999;font-weight:700">${e}</span>
-      <b style="font-size:12.5px;text-align:right;white-space:nowrap;color:${dcol}">${dtxt}</b>
-    </div>`; };
+  const gcols='grid-template-columns:minmax(62px,max-content) minmax(0,1fr) minmax(0,1fr) minmax(64px,max-content)';
+  const lab=t=>`<span style="font-size:12.5px;color:#aaa;font-weight:700;white-space:nowrap">${t}</span>`;
+  const full=(h,st)=>`<div style="grid-column:1/-1;${st||''}">${h}</div>`;
+  const fzOf=v=>{ const n=String(v).replace(/<[^>]*>/g,'').length; return n>=12?12:(n>=10?13:15); };
+  const cmp=(l,a,e,d)=>{ const ds=String(d||'').trim(); const flat=/^[+-]?0(\.0+)?%$/.test(ds); const neg=!flat && ds.startsWith('-');
+    const col=flat?'#e8e8e8':(neg?'#f87171':'#4ade80'); const dcol=flat?'#8f8f8f':col; const dtxt=ds?(flat?'부합':`${d} ${neg?'하회':'상회'}`):'';
+    return lab(l)
+      +`<b style="font-size:${fzOf(a)}px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:${col}">${a||''}</b>`
+      +`<span style="font-size:13.5px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:#999;font-weight:700">${e||''}</span>`
+      +`<b style="font-size:12.5px;text-align:right;white-space:nowrap;color:${dcol}">${dtxt}</b>`; };
   const gl = /Q/.test(r.gq||'')? '분기' : '';
-  const grow=(l,v,e,d,n)=> { const ds=String(d||'').trim(); const flat=ds && /^[+-]?0(\.0+)?%$/.test(ds); const neg=!flat && ds.startsWith('-');
+  const grow=(l,v,e,d,n)=>{ const ds=String(d||'').trim(); const flat=ds && /^[+-]?0(\.0+)?%$/.test(ds); const neg=!flat && ds.startsWith('-');
     const dirN=!ds && n ? (/높게/.test(n)?'높게':/낮게/.test(n)?'낮게':'') : '';
     const rc= flat? '#8f8f8f' : ds? (neg?'#f87171':'#4ade80') : dirN==='높게'? '#4ade80' : dirN==='낮게'? '#f87171' : '#8f8f8f';
     const right= flat? '부합' : ds? `${d} ${neg?'낮게':'높게'}` : dirN? `예상보다 ${dirN}` : '';
-    return `<div style="display:grid;${gcols};gap:6px;align-items:baseline;margin-top:9px">
-      <span style="font-size:12.5px;color:#aaa;font-weight:700;white-space:nowrap">${l}</span>
-      <b style="font-size:${String(v).replace(/<[^>]*>/g,'').length>=11?12.5:14.5}px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:#e2c063">${v}</b>
-      <span style="font-size:13.5px;text-align:right;font-variant-numeric:tabular-nums;color:#999;font-weight:700">${e||''}</span>
-      <b style="font-size:12.5px;text-align:right;white-space:nowrap;color:${rc}">${right}</b>
-    </div>`; };
+    return lab(l)
+      +`<b style="font-size:${fzOf(v)}px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:#e2c063">${v||''}</b>`
+      +`<span style="font-size:13.5px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:#999;font-weight:700">${e||''}</span>`
+      +`<b style="font-size:12.5px;text-align:right;white-space:nowrap;color:${rc}">${right}</b>`; };
+  const hasG = !!(r.gRev||r.gEps||r.gRevE||r.gEpsE);
   return `<div class="sec-t">최근 실적 발표 <small style="font-size:13.5px;font-weight:800;color:#e8e8e8">${(r.q||'').replace(' ','.')} · ${r.d} 발표</small></div>
   <div class="card">
-    ${thead}
-    ${cmp('분기매출', r.rev, r.revE, r.revD)}
-    ${r.eps?cmp(`분기EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}`, r.eps, r.epsE, r.epsD):''}
-    ${(r.gRev||r.gEps||r.gNote||r.gRevE||r.gEpsE)?`<div style="border-top:1px solid #222;margin:13px 0 4px"></div>
-    <div class="tiny" style="font-weight:800;color:#c9a544">${(r.gRev||r.gEps)?'다음 분기 회사 가이던스':'다음 분기 월가 예상'}${r.gq?` (${r.gq.replace(/^FY(\d+) (\dQ)$/,'FY$1.$2')})`:''}</div>
-    ${(r.gRev||r.gRevE)?grow(gl+'매출'+(r.gRev?' <span style="font-size:9px;color:#5f86b8;font-weight:800">SEC공시</span>':''), r.gRev||'', r.gRevE, r.gRevD, r.gRev?(r.gRevN||r.gNote):''):''}
-    ${(r.gEps||r.gEpsE)?grow(`${gl}EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}${r.gEps?' <span style="font-size:9px;color:#5f86b8;font-weight:800">SEC공시</span>':''}`, r.gEps||'', r.gEpsE, r.gEpsD, r.gEps?r.gEpsN:''):''}
-    ${r.gNote && ((!r.gRev && !r.gEps) || !/높게|낮게/.test(r.gNote))?`<div class="tiny" style="margin-top:6px;color:#8f8f8f">${r.gNote}</div>`:''}`:''}
-    <p class="tiny" style="margin-top:10px">예상치는 발표 직전 월가 컨센서스(애널리스트 평균 예상) 기준 근사치, 다음 분기 예상치는 최근 조사 시점 기준 · 실적 반영 때마다 갱신됩니다.</p>
+    <div style="display:grid;${gcols};column-gap:8px;row-gap:9px;align-items:baseline">
+      <span></span>
+      <span style="font-size:10.5px;color:#8f8f8f;font-weight:800;text-align:right">실제 발표</span>
+      <span style="font-size:10.5px;color:#8f8f8f;font-weight:800;text-align:right">월가 예상</span>
+      <span></span>
+      ${cmp('분기매출', r.rev, r.revE, r.revD)}
+      ${r.eps?cmp(`분기EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}`, r.eps, r.epsE, r.epsD):''}
+      ${hasG?`${full('<div style="border-top:1px solid #222"></div>','margin-top:4px')}
+      ${full(`${(r.gRev||r.gEps)?'다음 분기 회사 가이던스':'다음 분기 월가 예상'}${r.gq?` (${r.gq.replace(/^FY(\d+) (\dQ)$/,'FY$1.$2')})`:''}`,'font-size:11.5px;font-weight:800;color:#c9a544')}
+      ${(r.gRev||r.gRevE)?grow(gl+'매출', r.gRev||'', r.gRevE, r.gRevD, r.gRev?(r.gRevN||r.gNote):''):''}
+      ${(r.gEps||r.gEpsE)?grow(`${gl}EPS${r.basis?` <span style="font-size:10px;color:#777">${r.basis}</span>`:''}`, r.gEps||'', r.gEpsE, r.gEpsD, r.gEps?r.gEpsN:''):''}`:''}
+    </div>
   </div>`;
 }
 function secOverview(c){
