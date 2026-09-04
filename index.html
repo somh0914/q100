@@ -177,7 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
 <div id="top-anchor" style="position:absolute;top:0;left:0;width:1px;height:1px"></div>
 
 <div id="splash">
-  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AU</p>
+  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AV</p>
   <p id="js-warn" style="margin-top:26px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">화면이 계속 이 상태라면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
 </div>
 
@@ -5035,7 +5035,7 @@ function renderHome(){
     <div class="stat"><div class="k">영업이익률</div><div class="v">${t.key.opm}</div></div>
     <div class="stat"><div class="k">QQQ 비중</div><div class="v">${t.qqq}%</div></div>
   </div>
-  <div class="sec-t">QQQ 지금 <small>비중 기준 ${DB.meta.weightsQ||DB.meta.weightsAsOf}</small></div>
+  <div class="sec-t">QQQ 지금</div>
   ${(()=>{const m=qqqYtdStats();
     const cell=(k,v,sub)=>`<div class="stat" style="padding:12px 4px"><div class="k">${k}</div><div class="v" style="font-size:18.5px;color:${v>=0?'#4ade80':'#f87171'}">${v>=0?'+':''}${v.toFixed(1)}%</div><div class="tiny" style="margin-top:3px">${sub}</div></div>`;
     return `<div class="card" style="padding:14px 16px;margin-bottom:10px">
@@ -5046,7 +5046,6 @@ function renderHome(){
       ${cell('원·달러 환율', m.fx, DB.meta.fxYE.toLocaleString()+'원 → '+DB.meta.fx.toLocaleString()+'원')}
       ${cell('QQQ · 원화 기준', m.krw, '환율 반영 체감 수익률')}
     </div>
-    <p class="tiny" style="margin-top:9px">QQQ·나스닥100·환율 모두 ${DB.meta.ytdAsOf} 종가 기준입니다.</p>
   </div>`;})()}
   <div class="card" onclick="nav('qqq')" style="cursor:pointer">
     <div class="row sb"><b style="font-size:15px">Top 10 집중도</b><b class="big" style="font-size:21px">${DB.top10.toFixed(0)}%</b></div>
@@ -5186,9 +5185,9 @@ function buildDetail(c){
   const fyRow=(lab,val,gold)=>{ const t=lab+' '+String(val);
     /* 한글 1자는 영문 약 2배 폭 — 가중 길이로 글자크기 결정 */
     const w=[...t].reduce((n,ch)=>n+(/[가-힣]/.test(ch)?2:1),0);
-    const fz=w>=20?8.6:(w>=17?9.3:(w>=15?9.9:10.8));
+    const fz=w>=21?10.2:(w>=18?11:(w>=16?11.6:12.4));
     return `<div style="font-size:${fz}px;font-weight:800;white-space:nowrap;margin-top:3px"><span style="color:${gold?'#9c8340':'#6a6a6a'};font-weight:700">${lab}</span> <b style="color:${gold?'#c9a544':'#e8e8e8'};font-variant-numeric:tabular-nums">${val}</b></div>`; };
-  const growRow=g=> g? `<div style="font-size:${g.t.length>=9?9.5:10.8}px;font-weight:800;white-space:nowrap;color:${g.up?'#4ade80':'#f87171'}">${g.t}</div>`:'';
+  const growRow=g=> g? `<div style="font-size:${g.t.length>=9?11:12.4}px;font-weight:800;white-space:nowrap;color:${g.up?'#4ade80':'#f87171'}">${g.t}</div>`:'';
   const dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
   /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
@@ -5217,9 +5216,9 @@ function buildDetail(c){
         <span class="k">주가</span>
         <b style="font-size:17px;font-weight:900;font-variant-numeric:tabular-nums">$${c.price>=1000?Math.round(c.price).toLocaleString():c.price}</b>
         ${isFinite(c.chg)?`<b style="font-size:12.5px;font-variant-numeric:tabular-nums;color:${c.chg>=0?'#4ade80':'#f87171'}">${sgn(c.chg,2)}</b>`:''}
-      </span>
-      <span style="display:flex;align-items:baseline;gap:7px">
         ${pDate?`<span style="font-size:10.5px;color:#6f6f6f;font-variant-numeric:tabular-nums">${pDate}</span>`:''}
+      </span>
+      <span style="display:flex;align-items:baseline;gap:5px">
         ${c.ret&&isFinite(c.ret.ytd)?`<b style="font-size:12.5px;font-variant-numeric:tabular-nums;color:${c.ret.ytd>=0?'#4ade80':'#f87171'}">${sgn(c.ret.ytd)}</b><span style="font-size:10px;color:#8f8f8f">연초대비</span>`:''}
       </span>
     </div>`:'';
