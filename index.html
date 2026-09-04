@@ -177,7 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
 <div id="top-anchor" style="position:absolute;top:0;left:0;width:1px;height:1px"></div>
 
 <div id="splash">
-  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AR</p>
+  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AU</p>
   <p id="js-warn" style="margin-top:26px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">화면이 계속 이 상태라면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
 </div>
 
@@ -4617,6 +4617,111 @@ const NEXTFY = {
  NEXTFY.MCHP={y:'FY27', rev:'$6.4B', revG:'+36%', eps:'$3.65', epsG:'+122%'};
  NEXTFY.TTWO={y:'FY27', rev:'$8.5B', revG:'+28%', eps:'$6.87', epsG:'+68%'};
 DB.companies.forEach(c => { const n = NEXTFY[c.ticker]; if (n) c.nfy = n; });
+
+/* 연EPS 확정·전망을 같은 기준으로 (2026.09.04 stockanalysis 일괄 조사)
+   a=확정 연EPS, f=다음 회계연도 컨센서스, b=기준(조정/GAAP) — 4Q 발표 때마다 갱신 */
+const EPSB = {
+ NVDA:{y:'FY26', a:4.77, f:9.29, b:'조정'},
+ MSFT:{y:'FY26', a:17.28, f:19.75, b:'조정'},
+ AAPL:{y:'FY25', a:7.46, f:8.82, b:'GAAP'},
+ AMZN:{y:'2025', a:7.17, f:12.55, b:'GAAP'},
+ AVGO:{y:'FY25', a:6.82, f:11.6, b:'조정'},
+ META:{y:'2025', a:29.68, f:31.16, b:'조정'},
+ COST:{y:'FY25', a:18.21, f:20.57, b:'GAAP'},
+ ADBE:{y:'FY25', a:20.94, f:24.41, b:'조정'},
+ ADSK:{y:'FY26', a:10.43, f:12.6, b:'조정'},
+ CDNS:{y:'2025', a:7.14, f:8.14, b:'조정'},
+ GOOGL:{y:'2025', a:10.81, f:20.6, b:'GAAP'},
+ TSLA:{y:'2025', a:1.66, f:1.77, b:'조정'},
+ NFLX:{y:'2025', a:2.53, f:3.59, b:'GAAP'},
+ PLTR:{y:'2025', a:0.75, f:1.6, b:'조정'},
+ WMT:{y:'FY26', a:2.64, f:2.89, b:'조정'},
+ INTC:{y:'2025', a:0.42, f:1.51, b:'조정'},
+ CSCO:{y:'FY26', a:4.33, f:5.15, b:'조정'},
+ TMUS:{y:'2025', a:10.66, f:12.18, b:'조정'},
+ CMCSA:{y:'2025', a:4.31, f:3.52, b:'조정'},
+ PYPL:{y:'2025', a:5.31, f:5.39, b:'GAAP'},
+ SHOP:{y:'2025', a:1.43, f:1.91, b:'조정'},
+ MELI:{y:'2025', a:39.4, f:39.07, b:'GAAP'},
+ PDD:{y:'2025', a:72.38, f:69.15, b:'조정'},
+ MU:{y:'FY25', a:8.29, f:73.4, b:'조정'},
+ AMD:{y:'2025', a:4.17, f:7.57, b:'조정'},
+ ARM:{y:'FY26', a:1.77, f:2.23, b:'조정'},
+ TXN:{y:'2025', a:5.59, f:8.49, b:'조정'},
+ QCOM:{y:'FY25', a:12.03, f:10.52, b:'조정'},
+ ADI:{y:'FY25', a:7.79, f:12.84, b:'조정'},
+ NXPI:{y:'2025', a:11.81, f:15.06, b:'조정'},
+ MRVL:{y:'FY26', a:2.84, f:4.2, b:'조정'},
+ MCHP:{y:'FY26', a:1.64, f:3.65, b:'조정'},
+ MPWR:{y:'2025', a:17.77, f:27.43, b:'조정'},
+ TER:{y:'2025', a:3.96, f:9.09, b:'조정'},
+ ASML:{y:'2025', a:24.71, f:38.19, b:'GAAP'},
+ AMAT:{y:'FY25', a:9.42, f:12.79, b:'조정'},
+ LRCX:{y:'FY26', a:5.82, f:9.46, b:'GAAP'},
+ KLAC:{y:'FY26', a:3.76, f:5.45, b:'조정'},
+ SNDK:{y:'FY26', a:70.88, f:214.1, b:'조정'},
+ STX:{y:'FY26', a:15.58, f:35.78, b:'조정'},
+ WDC:{y:'FY26', a:10.22, f:20.09, b:'조정'},
+ LITE:{y:'FY26', a:8.67, f:21.63, b:'조정'},
+ ALAB:{y:'2025', a:1.84, f:4.03, b:'조정'},
+ CRWV:{y:'2025', a:-1.39, f:-3.93, b:'조정'},
+ RKLB:{y:'2025', a:-0.18, f:-0.05, b:'조정'},
+ SNPS:{y:'FY25', a:12.91, f:15.15, b:'조정'},
+ INTU:{y:'FY26', a:24.27, f:24.14, b:'조정'},
+ CRWD:{y:'FY26', a:0.93, f:1.26, b:'조정'},
+ FTNT:{y:'2025', a:2.76, f:3.45, b:'조정'},
+ DDOG:{y:'2025', a:2.05, f:2.53, b:'조정'},
+ WDAY:{y:'FY26', a:9.23, f:11.06, b:'조정'},
+ APP:{y:'2025', a:10.64, f:16.81, b:'조정'},
+ DASH:{y:'2025', a:5.1, f:5.79, b:'조정'},
+ ADP:{y:'FY26', a:11.12, f:12.26, b:'GAAP'},
+ PAYX:{y:'FY26', a:5.51, f:5.98, b:'조정'},
+ CTAS:{y:'FY26', a:4.94, f:5.49, b:'GAAP'},
+ PEP:{y:'2025', a:8.14, f:8.56, b:'조정'},
+ MDLZ:{y:'2025', a:2.92, f:3.05, b:'조정'},
+ MNST:{y:'2025', a:1.0, f:1.15, b:'조정'},
+ KDP:{y:'2025', a:2.05, f:2.29, b:'조정'},
+ CCEP:{y:'2025', a:4.29, f:4.49, b:'GAAP'},
+ KHC:{y:'2025', a:2.6, f:2.05, b:'조정'},
+ SBUX:{y:'FY25', a:2.13, f:2.59, b:'조정'},
+ ROST:{y:'FY25', a:6.61, f:8.36, b:'GAAP'},
+ ORLY:{y:'2025', a:2.97, f:3.28, b:'GAAP'},
+ TTWO:{y:'FY26', a:4.1, f:6.87, b:'조정'},
+ WBD:{y:'2025', a:0.29, f:-1.08, b:'GAAP'},
+ BKNG:{y:'2025', a:9.12, f:10.45, b:'조정'},
+ ABNB:{y:'2025', a:4.03, f:5.28, b:'GAAP'},
+ MAR:{y:'2025', a:10.02, f:11.72, b:'조정'},
+ AMGN:{y:'2025', a:21.84, f:23.04, b:'조정'},
+ GILD:{y:'2025', a:8.15, f:-0.43, b:'조정'},
+ VRTX:{y:'2025', a:18.4, f:16.66, b:'조정'},
+ REGN:{y:'2025', a:44.31, f:53.55, b:'조정'},
+ ISRG:{y:'2025', a:8.93, f:10.79, b:'조정'},
+ IDXX:{y:'2025', a:13.08, f:14.83, b:'GAAP'},
+ DXCM:{y:'2025', a:2.09, f:2.66, b:'GAAP'},
+ ALNY:{y:'2025', a:5.08, f:8.92, b:'조정'},
+ GEHC:{y:'2025', a:4.59, f:4.93, b:'GAAP'},
+ HON:{y:'2025', a:19.56, f:8.31, b:'조정'},
+ LIN:{y:'2025', a:16.46, f:17.88, b:'조정'},
+ CSX:{y:'2025', a:1.61, f:2.01, b:'조정'},
+ ODFL:{y:'2025', a:4.84, f:5.82, b:'GAAP'},
+ FAST:{y:'2025', a:1.09, f:1.26, b:'GAAP'},
+ PCAR:{y:'2025', a:5.01, f:5.93, b:'조정'},
+ CPRT:{y:'FY25', a:1.59, f:1.58, b:'GAAP'},
+ ROP:{y:'2025', a:20.0, f:22.22, b:'조정'},
+ AXON:{y:'2025', a:6.85, f:7.71, b:'조정'},
+ CEG:{y:'2025', a:9.39, f:12.12, b:'조정'},
+ AEP:{y:'2025', a:5.97, f:6.38, b:'조정'},
+ EXC:{y:'2025', a:2.77, f:2.86, b:'GAAP'},
+ XEL:{y:'2025', a:3.8, f:4.11, b:'조정'},
+ FANG:{y:'2025', a:13.37, f:20.46, b:'조정'},
+ BKR:{y:'2025', a:2.6, f:2.63, b:'GAAP'},
+ FER:{y:'2025', a:0.95, f:1.01, b:'조정'},
+ TRI:{y:'2025', a:3.98, f:4.44, b:'조정'},
+ PANW:{y:'FY26', a:0.4, f:0.9, b:'GAAP'},
+ NBIS:{y:'2025', a:0.33, f:-2.05, b:'GAAP'},
+ MSTR:{y:'2025', a:-15.23, f:-17.44, b:'GAAP'}
+};
+DB.companies.forEach(c => { const e = EPSB[c.ticker]; if (e) c.epsb = e; });
 /* ============ Q100 APP LOGIC ============ */
 const $ = q => document.querySelector(q);
 const C = DB.companies;
@@ -5079,7 +5184,9 @@ function buildDetail(c){
     return p>=0? {t:'적자확대 +'+Math.round(p)+'%', up:false}
                : {t:'적자축소 -'+Math.round(Math.abs(p))+'%', up:true}; };
   const fyRow=(lab,val,gold)=>{ const t=lab+' '+String(val);
-    const fz=t.length>=17?9:(t.length>=14?9.8:10.8);
+    /* 한글 1자는 영문 약 2배 폭 — 가중 길이로 글자크기 결정 */
+    const w=[...t].reduce((n,ch)=>n+(/[가-힣]/.test(ch)?2:1),0);
+    const fz=w>=20?8.6:(w>=17?9.3:(w>=15?9.9:10.8));
     return `<div style="font-size:${fz}px;font-weight:800;white-space:nowrap;margin-top:3px"><span style="color:${gold?'#9c8340':'#6a6a6a'};font-weight:700">${lab}</span> <b style="color:${gold?'#c9a544':'#e8e8e8'};font-variant-numeric:tabular-nums">${val}</b></div>`; };
   const growRow=g=> g? `<div style="font-size:${g.t.length>=9?9.5:10.8}px;font-weight:800;white-space:nowrap;color:${g.up?'#4ade80':'#f87171'}">${g.t}</div>`:'';
   const dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
@@ -5087,10 +5194,18 @@ function buildDetail(c){
   /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
   const nfy=c.nfy||null;
   const fyLab=y=>String(y).replace(/^20(\d\d)$/,'FY$1');
+  const nextFY=y=>{ const t=String(y); const m=t.match(/^(FY)?(\d{2,4})$/); if(!m) return t;
+    const n=+m[2]+1; return m[1]? 'FY'+n : String(n); };
   const fcY = fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
   /* 증감%는 화면에 보이는 확정값과 전망값으로 직접 계산 (표시와 항상 일치) */
   const revFc = nfy&&nfy.rev? [nfy.rev, growOf(revAct, nfy.rev)] : (estY? [fB(revEst), growOf(revAct, revEst)] : null);
-  const epsFc = nfy&&nfy.eps? [nfy.eps, growOf(epsAct, nfy.eps)] : (estY? [dEps(epsEst), growOf(epsAct, epsEst)] : null);
+  /* 연EPS는 확정·전망을 같은 기준(조정 또는 GAAP)으로 맞춘 짝을 우선 사용 */
+  const ebx=c.epsb||null;
+  const epsA = ebx? ebx.a : epsAct;                       // 확정 (기준 통일)
+  const epsY = ebx? fyLab(ebx.y) : fyLab(actY);
+  const epsFc = ebx? [dEps(ebx.f), growOf(ebx.a, ebx.f)]
+    : (nfy&&nfy.eps? [nfy.eps, growOf(epsAct, nfy.eps)] : (estY? [dEps(epsEst), growOf(epsAct, epsEst)] : null));
+  const ebTag = ebx? ` <span style="font-size:8.5px;color:#6f6f6f;font-weight:700">${ebx.b}</span>` : '';
   /* 주가 — 카드 3개 위에 가로 한 줄 카드로 (live.json이 매일 채움) */
   const pDate=(()=>{ const u=String((DB.meta&&(DB.meta.retAsOf||DB.meta.asOf))||'');
     const m=u.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
@@ -5143,9 +5258,9 @@ function buildDetail(c){
       <div class="stat"><div class="k">연매출</div>${vFit(krwS(fB(revAct),true))}
         ${fyRow(fyLab(actY)+' 확정', fB(revAct))}
         ${revFc?fyRow(fcY+' 전망', revFc[0], 1)+growRow(revFc[1]):''}</div>
-      <div class="stat"><div class="k">연EPS</div>${vFit(krwEps(epsAct))}
-        ${fyRow(fyLab(actY)+' 확정', dEps(epsAct))}
-        ${epsFc?fyRow(fcY+' 전망', epsFc[0], 1)+growRow(epsFc[1]):''}</div>
+      <div class="stat"><div class="k">연EPS${ebTag}${c.fyDue?` <span style="font-size:8.5px;color:#c9a544;font-weight:800">갱신예정</span>`:''}</div>${vFit(krwEps(epsA))}
+        ${fyRow(epsY+' 확정', dEps(epsA))}
+        ${epsFc?fyRow((ebx?fyLab(nextFY(ebx.y)):fcY)+' 전망', epsFc[0], 1)+growRow(epsFc[1]):''}</div>
     </div>
   </div>
   <div class="tabbar">${DTABS.map(([t,k,e])=>`<span class="tab dtab ${t==='ov'?'on':''}" data-t="${t}" onclick="showDTab('${t}')">${k}<small>${e}</small></span>`).join('')}</div>
@@ -5590,6 +5705,15 @@ nav('home');
         DB.recentEarnings=fr.slice(0,6).map(x=>x.id);
         DB.earnLabel='최근 3주 · 공시 기준';
       }
+    }
+    /* 회계연도 마감(4Q) 발표 감지 → 연간 확정/전망이 아직 옛 연도면 갱신 예정 표시 */
+    if(L.fyq4 && typeof L.fyq4==='object'){
+      C.forEach(c=>{
+        const q=L.fyq4[c.ticker]; if(!q||!q.fy) return;
+        const have=String((c.epsb&&c.epsb.y)||'').match(/(\d{2,4})/);
+        const haveY=have? (have[1].length===2? 2000+ +have[1] : +have[1]) : 0;
+        if(haveY && haveY < q.fy) c.fyDue = q.fy;   // 확정 연도가 한 해 뒤처짐
+      });
     }
     if(L.next && typeof L.next==='object'){
       C.forEach(c=>{
