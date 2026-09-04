@@ -177,7 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
 <div id="top-anchor" style="position:absolute;top:0;left:0;width:1px;height:1px"></div>
 
 <div id="splash">
-  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AP</p>
+  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AQ</p>
   <p id="js-warn" style="margin-top:26px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">화면이 계속 이 상태라면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
 </div>
 
@@ -855,7 +855,7 @@ DB.companies.push(
     {t:'광고·요금 인상', d:'광고 요금제와 가격 인상으로 매출 극대화'}
   ],
   segments:[{n:'스트리밍 구독',p:93},{n:'광고',p:7}],
-  fin:{years:['2021','2022','2023','2024','2025'], rev:[29.7,31.6,33.7,39.0,44.9], op:[6.2,5.6,7.0,10.4,13.0], ni:[5.1,4.5,5.4,8.7,10.8], fcf:[-0.2,1.6,6.9,6.9,8.5], eps:[11.24,9.95,12.03,19.83,24.50]},
+  fin:{years:['2021','2022','2023','2024','2025'], rev:[29.7,31.6,33.7,39.0,44.9], op:[6.2,5.6,7.0,10.4,13.0], ni:[5.1,4.5,5.4,8.7,10.8], fcf:[-0.2,1.6,6.9,6.9,8.5], eps:[1.12,1.00,1.20,1.98,2.45]},
   finNote:'12월 결산 · 2025년은 근사치',
   key:{rev:'$44.9B', revG:'+15%', opm:'29%', fcf:'$8.5B', extraK:'가입 가구', extraV:'3억+'},
   score:{biz:90, growth:85, profit:88, cash:84, moat:88, fin:92, val:58, total:86},
@@ -5062,28 +5062,41 @@ function buildDetail(c){
   const epsAct=fy.eps[actI], epsEst=estI>=0? fy.eps[estI] : null;
   const dPct=(a,b)=> (a>0&&isFinite(b))? Math.round((b/a-1)*100) : null;
   const revG2=dPct(revAct,revEst), epsG2=(epsAct>0&&epsEst>0)? Math.round((epsEst/epsAct-1)*100) : null;
+  /* 문자열 금액 → 숫자 ($129.7B→129.7, $953M→0.953, -$0.43→-0.43) */
+  const pMoney=v=>{ if(v==null) return NaN; if(typeof v==='number') return v;
+    const t=String(v).replace(/[,\s]/g,''); const neg=/^-|^[$€£]-/.test(t);
+    const m=t.match(/(\d+(?:\.\d+)?)\s*([BMTbmt])?/); if(!m) return NaN;
+    let n=parseFloat(m[1]); const u=(m[2]||'').toUpperCase();
+    if(u==='T') n*=1000; else if(u==='M') n/=1000;
+    return neg? -n : n; };
+  /* 확정 → 전망 증감. 적자·흑자 전환도 표시 */
+  const growOf=(a,b)=>{ a=pMoney(a); b=pMoney(b);
+    if(!isFinite(a)||!isFinite(b)||a===0) return null;
+    if(a>0&&b>0){ const p=(b/a-1)*100; return {t:(p>=0?'+':'-')+Math.round(Math.abs(p))+'%', up:p>=0}; }
+    if(a<0&&b>0) return {t:'흑자전환', up:true};
+    if(a>0&&b<0) return {t:'적자전환', up:false};
+    const p=(Math.abs(b)/Math.abs(a)-1)*100;
+    return p>=0? {t:'적자확대 +'+Math.round(p)+'%', up:false}
+               : {t:'적자축소 -'+Math.round(Math.abs(p))+'%', up:true}; };
   const estLine=(y,valS,g)=>{ if(!valS) return '';
-    let gs=(g!=null&&g!=='')? String(g) : '';
-    const gm=gs.match(/^([+-]?)(\d+(?:\.\d+)?)(%?)$/);
-    if(gm) gs=(gm[1]||'+')+Math.round(parseFloat(gm[2]))+'%';
-    else if(gs && !/^[+-]/.test(gs)) gs='+'+gs;
-    if(gs && !/%$/.test(gs)) gs+='%';
     const t1=`${y}전망 ${valS}`;
     const fz=t1.length>=17?9.5:(t1.length>=14?10.5:11);
+    const gz=g&&g.t.length>=9?9.5:fz;
     return `<div style="font-size:${fz}px;font-weight:800;margin-top:2px;white-space:nowrap;color:#c9a544">${t1}</div>`+
-      (gs?`<div style="font-size:${fz}px;font-weight:800;white-space:nowrap;color:${gs.startsWith('-')?'#f87171':'#4ade80'}">${gs}</div>`:''); };
+      (g?`<div style="font-size:${gz}px;font-weight:800;white-space:nowrap;color:${g.up?'#4ade80':'#f87171'}">${g.t}</div>`:''); };
   const dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
   /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
   const nfy=c.nfy||null;
   const fyLab=y=>String(y).replace(/^20(\d\d)$/,'FY$1');
   const fcY = fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
-  const revFc = nfy&&nfy.rev? [nfy.rev, nfy.revG!=null?nfy.revG:''] : (estY? [fB(revEst), revG2] : null);
-  const epsFc = nfy&&nfy.eps? [nfy.eps, nfy.epsG!=null?nfy.epsG:''] : (estY? [dEps(epsEst), epsG2] : null);
+  /* 증감%는 화면에 보이는 확정값과 전망값으로 직접 계산 (표시와 항상 일치) */
+  const revFc = nfy&&nfy.rev? [nfy.rev, growOf(revAct, nfy.rev)] : (estY? [fB(revEst), growOf(revAct, revEst)] : null);
+  const epsFc = nfy&&nfy.eps? [nfy.eps, growOf(epsAct, nfy.eps)] : (estY? [dEps(epsEst), growOf(epsAct, epsEst)] : null);
   /* 주가 — 카드 3개 위에 가로 한 줄 카드로 (live.json이 매일 채움) */
   const pDate=(()=>{ const u=String((DB.meta&&(DB.meta.retAsOf||DB.meta.asOf))||'');
     const m=u.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-    return m? m[1]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[3]).slice(-2) : ''; })();
+    return m? ('0'+m[2]).slice(-2)+'-'+('0'+m[3]).slice(-2) : ''; })();
   const sgn=(v,dg)=>(v>=0?'▲':'▼')+fPct(Math.abs(v), dg==null?1:dg).replace('+','');
   const priceBar=(isFinite(c.price)&&c.price>0)?`
     <div class="card" style="margin-top:15px;padding:10px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px;white-space:nowrap;overflow:hidden">
