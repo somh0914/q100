@@ -6,6 +6,8 @@
 <meta name="color-scheme" content="dark">
 <title>Q100 — QQQ 기업해부</title>
 <meta name="theme-color" content="#050505">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -178,7 +180,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
       <span class="chip" onclick="enterApp('earnings')">최근 실적 발표 기업</span>
     </div>
     <p class="tiny" style="margin-top:34px">프로토타입 v0.2 · 나스닥100 전 종목 수록 · 데이터는 근사치</p>
-    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.04-AA</p>
+    <p class="tiny" style="margin-top:6px;opacity:.55" id="build-tag">빌드 2026.09.04-AB</p>
     <p id="js-warn" style="margin-top:18px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">버튼이 눌리지 않는다면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
   </div>
 </div>
@@ -5582,5 +5584,32 @@ document.getElementById('splash').classList.add('hide');
       if(r[id]) r[id]();
     }
   }).catch(()=>{});
+})();
+
+/* ---------- 새 버전 자동 감지 (홈화면 아이콘의 캐시 때문에 옛 버전이 계속 열리는 문제) ----------
+   앞부분 70KB만 Range로 받아 서버의 빌드 태그를 확인 → 다르면 상단 배너로 새로고침 안내 */
+(function(){
+  const tagEl = document.getElementById('build-tag');
+  const mine = tagEl ? (tagEl.textContent||'').trim() : '';
+  if(!mine) return;
+  const base = location.href.split('#')[0].split('?')[0];
+  const show = srv => {
+    if(document.getElementById('newver-bar')) return;
+    const b=document.createElement('div');
+    b.id='newver-bar';
+    b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9999;background:#1f4c7a;color:#fff;padding:10px 14px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 14px rgba(0,0,0,.5)';
+    b.innerHTML='<span>새 버전이 있습니다 ('+srv.replace('빌드 ','')+')</span>'+
+      '<span style="display:flex;gap:8px"><button id="nv-go" style="background:#fff;color:#0b2540;border:0;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:900">새로고침</button>'+
+      '<button id="nv-x" style="background:transparent;color:#cfe0f5;border:0;font-size:16px;font-weight:900;padding:0 4px">×</button></span>';
+    document.body.appendChild(b);
+    document.getElementById('nv-go').onclick=()=>{ location.replace(base+'?v='+Date.now()); };
+    document.getElementById('nv-x').onclick=()=>b.remove();
+  };
+  setTimeout(()=>{
+    fetch(base+'?v='+Date.now(), {cache:'no-store', headers:{'Range':'bytes=0-70000'}})
+      .then(r=>r.text())
+      .then(t=>{ const m=t.match(/빌드\s*[0-9.]+-[A-Z]+/); if(m && m[0].trim()!==mine) show(m[0].trim()); })
+      .catch(()=>{});
+  }, 2500);
 })();
 </script></body></html>
