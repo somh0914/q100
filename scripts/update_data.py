@@ -157,6 +157,23 @@ def yahoo_quotes(symbols):
     return out
 
 
+
+# 각 기업의 회계연도 종료월 (없으면 12월). 4Q(연간) 실적 발표를 가려내는 데 사용
+FYEND = {"AAPL": 9, "ADBE": 11, "ADI": 11, "ADP": 6, "ADSK": 1, "AMAT": 10, "ARM": 3, "AVGO": 10, "COST": 8, "CPRT": 7, "CRWD": 1, "CSCO": 7, "CTAS": 5, "INTU": 7, "KLAC": 6, "LITE": 6, "LRCX": 6, "MCHP": 3, "MRVL": 1, "MSFT": 6, "MU": 8, "NVDA": 1, "PANW": 7, "PAYX": 5, "QCOM": 9, "ROST": 1, "SBUX": 9, "SNDK": 6, "SNPS": 10, "STX": 6, "TTWO": 3, "WDAY": 1, "WDC": 6, "WMT": 1}
+
+def is_fy_close(ticker, rep_date):
+    """그 발표가 '회계연도 마지막 분기(연간 확정)' 발표인지 판정.
+    회계연도 종료 후 10~80일 사이에 나온 발표면 4Q로 본다."""
+    m = FYEND.get(ticker, 12)
+    for back in (0, 1):
+        y = rep_date.year - back
+        end = datetime.date(y + (1 if m == 12 else 0), 1, 1) - datetime.timedelta(days=1) \
+              if m == 12 else datetime.date(y, m + 1, 1) - datetime.timedelta(days=1)
+        gap = (rep_date - end).days
+        if 10 <= gap <= 80:
+            return end.year if m >= 6 else end.year   # 확정된 회계연도
+    return None
+
 def main():
     live = {}
     if os.path.exists("live.json"):
@@ -291,6 +308,21 @@ def main():
             elif gap <= 0 and t not in new_next:
                 new_next[t] = d  # 아직 미래인 예정일은 유지 (야후 일시 누락 대비)
         live["next"] = new_next
+        # 회계연도 마지막 분기(=연간 실적 확정) 발표를 따로 표시 → 앱의 연간 확정/전망 갱신 신호
+        fyq4 = live.get("fyq4") or {}
+        old_fyq4 = (datetime.date.today() - datetime.timedelta(days=120)).isoformat()
+        fyq4 = {k: v for k, v in fyq4.items() if isinstance(v, dict) and v.get("d", "") >= old_fyq4}
+        for t, info in live["fresh"].items():
+            try:
+                rd = datetime.date.fromisoformat(info.get("d", ""))
+            except Exception:
+                continue
+            closed = is_fy_close(t, rd)
+            if closed and fyq4.get(t, {}).get("d", "") < info["d"]:
+                fyq4[t] = {"d": info["d"], "fy": closed}
+        live["fyq4"] = fyq4
+        if fyq4:
+            print("연간 실적 확정(4Q) 발표:", ", ".join(f"{k}(FY{str(v['fy'])[2:]})" for k, v in fyq4.items()))
         print(f"시가총액 {capn}개 갱신 · 새 실적 발표 감지 {ern}건 (현재 배지 {len(live['fresh'])}개) · 다음 발표 예정일 {len(new_next)}개 확보")
     except Exception as e:
         print("야후 일괄 조회 실패 (기존 값 유지):", repr(e))
