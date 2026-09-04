@@ -177,7 +177,7 @@ details .dbody{padding:0 15px 14px;font-size:14px;color:#bbb;line-height:1.65}
 <div id="top-anchor" style="position:absolute;top:0;left:0;width:1px;height:1px"></div>
 
 <div id="splash">
-  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AO</p>
+  <p class="tiny" id="build-tag" style="display:none">빌드 2026.09.04-AP</p>
   <p id="js-warn" style="margin-top:26px;font-size:13.5px;line-height:1.7;color:#fbbf24;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:12px 14px;max-width:320px">화면이 계속 이 상태라면 지금은 <b>미리보기 모드</b>(실행 제한)입니다.<br>공유 링크 또는 Chrome·Safari 브라우저에서 열면 정상 작동합니다.</p>
 </div>
 
@@ -5068,9 +5068,10 @@ function buildDetail(c){
     if(gm) gs=(gm[1]||'+')+Math.round(parseFloat(gm[2]))+'%';
     else if(gs && !/^[+-]/.test(gs)) gs='+'+gs;
     if(gs && !/%$/.test(gs)) gs+='%';
-    const txt=`${y}전망 ${valS}${gs?' '+gs:''}`;
-    const fz=txt.length>=20?9.5:(txt.length>=16?10.5:11);
-    return `<div style="font-size:${fz}px;font-weight:800;margin-top:2px;white-space:nowrap;color:#c9a544">${y}전망 ${valS}${gs?` <span style="color:${gs.startsWith('-')?'#f87171':'#4ade80'}">${gs}</span>`:''}</div>`; };
+    const t1=`${y}전망 ${valS}`;
+    const fz=t1.length>=17?9.5:(t1.length>=14?10.5:11);
+    return `<div style="font-size:${fz}px;font-weight:800;margin-top:2px;white-space:nowrap;color:#c9a544">${t1}</div>`+
+      (gs?`<div style="font-size:${fz}px;font-weight:800;white-space:nowrap;color:${gs.startsWith('-')?'#f87171':'#4ade80'}">${gs}</div>`:''); };
   const dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
   /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
@@ -5079,11 +5080,23 @@ function buildDetail(c){
   const fcY = fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
   const revFc = nfy&&nfy.rev? [nfy.rev, nfy.revG!=null?nfy.revG:''] : (estY? [fB(revEst), revG2] : null);
   const epsFc = nfy&&nfy.eps? [nfy.eps, nfy.epsG!=null?nfy.epsG:''] : (estY? [dEps(epsEst), epsG2] : null);
-  /* 주가 — 시가총액 카드 안에 통합 표시 (live.json이 매일 채움) */
-  const krwP=v=>{const w=v*FX; return w>=1e8? (w/1e8).toFixed(1)+'억원' : w>=1e4? (w/1e4).toFixed(1)+'만원' : Math.round(w).toLocaleString()+'원';};
-  const priceCell=(isFinite(c.price)&&c.price>0)?`<div style="border-top:1px solid #242424;margin:6px 2px 5px"></div>
-      <div style="white-space:nowrap"><span class="k">주가 </span><b style="font-size:15px;font-weight:900;font-variant-numeric:tabular-nums">$${c.price>=1000?Math.round(c.price).toLocaleString():c.price}</b></div>
-      ${c.ret&&isFinite(c.ret.ytd)?`<div class="s" style="white-space:nowrap;color:${c.ret.ytd>=0?'#4ade80':'#f87171'}">${c.ret.ytd>=0?'▲':'▼'}${fPct(Math.abs(c.ret.ytd),1).replace('+','')} <span style="font-size:9.5px;color:#8f8f8f">연초대비</span></div>`:''}`:'';
+  /* 주가 — 카드 3개 위에 가로 한 줄 카드로 (live.json이 매일 채움) */
+  const pDate=(()=>{ const u=String((DB.meta&&(DB.meta.retAsOf||DB.meta.asOf))||'');
+    const m=u.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+    return m? m[1]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[3]).slice(-2) : ''; })();
+  const sgn=(v,dg)=>(v>=0?'▲':'▼')+fPct(Math.abs(v), dg==null?1:dg).replace('+','');
+  const priceBar=(isFinite(c.price)&&c.price>0)?`
+    <div class="card" style="margin-top:15px;padding:10px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px;white-space:nowrap;overflow:hidden">
+      <span style="display:flex;align-items:baseline;gap:7px">
+        <span class="k">주가</span>
+        <b style="font-size:17px;font-weight:900;font-variant-numeric:tabular-nums">$${c.price>=1000?Math.round(c.price).toLocaleString():c.price}</b>
+        ${isFinite(c.chg)?`<b style="font-size:12.5px;font-variant-numeric:tabular-nums;color:${c.chg>=0?'#4ade80':'#f87171'}">${sgn(c.chg,2)}</b>`:''}
+      </span>
+      <span style="display:flex;align-items:baseline;gap:7px">
+        ${pDate?`<span style="font-size:10.5px;color:#6f6f6f;font-variant-numeric:tabular-nums">${pDate}</span>`:''}
+        ${c.ret&&isFinite(c.ret.ytd)?`<b style="font-size:12.5px;font-variant-numeric:tabular-nums;color:${c.ret.ytd>=0?'#4ade80':'#f87171'}">${sgn(c.ret.ytd)}</b><span style="font-size:10px;color:#8f8f8f">연초대비</span>`:''}
+      </span>
+    </div>`:'';
   /* 다음 발표 분기 = 반영된 최신 분기 + 1 (4Q면 다음 회계연도 1Q) */
   const nq=(()=>{ const m=c.lastQ&&c.lastQ.match(/^FY(\d+)\s(\d)Q$/); if(!m) return '';
     let y=+m[1], q=+m[2]+1; if(q>4){ q=1; y++; } return `FY${y}.${q}Q`; })();
@@ -5113,8 +5126,9 @@ function buildDetail(c){
       ${c.nextEarn?`<span class="chip sm" style="background:#0a1c33;border-color:#1f4c7a;color:#7fb2ff;font-weight:800">🔔 ${nq?nq+' ':''}실적발표예정일 ${c.nextEarn}<span style="color:#5f86b8;font-weight:700"> ${c.fyEnd||12}월말 법인</span></span>`:''}
     </div>
     <p style="font-size:15px;color:#d4d4d4;line-height:1.65;margin-top:12px;font-weight:600">${c.oneLiner}</p>
-    <div class="grid3" style="margin-top:15px">
-      <div class="stat"><div class="k">시가총액</div>${vFit(krw(c.capB,true))}<div class="krw" style="white-space:nowrap">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb;white-space:nowrap">QQQ비중 ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}${priceCell}</div>
+    ${priceBar}
+    <div class="grid3" style="margin-top:10px">
+      <div class="stat"><div class="k">시가총액</div>${vFit(krw(c.capB,true))}<div class="krw" style="white-space:nowrap">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb;white-space:nowrap">QQQ비중 ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}</div>
       <div class="stat"><div class="k">연매출</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${fyLab(actY)} 확정</div>${vFit(krwS(fB(revAct),true))}<div class="krw" style="white-space:nowrap">${fB(revAct)}</div>${revFc?estLine(fcY,revFc[0],revFc[1]):''}</div>
       <div class="stat"><div class="k">연EPS</div><div class="k" style="color:#6a6a6a;font-size:10.5px">${fyLab(actY)} 확정</div>${vFit(krwEps(epsAct))}<div class="krw" style="white-space:nowrap">${dEps(epsAct)}</div>${epsFc?estLine(fcY,epsFc[0],epsFc[1]):''}</div>
     </div>
@@ -5540,6 +5554,7 @@ nav('home');
       }
       if(isFinite(r.w) && r.w>0) c.qqq=Math.round(r.w*100)/100;
       if(isFinite(r.p) && r.p>0) c.price=r.p;   // 최신 종가 (주가 표시줄)
+      if(isFinite(r.dc)) c.chg=r.dc;            // 전일 대비 등락률
       if(isFinite(r.cap) && r.cap>0){
         c.capB = r.cap>=100? Math.round(r.cap) : Math.round(r.cap*10)/10;
       } else if(isFinite(r.m) && r.m>0 && isFinite(c.capB)){
