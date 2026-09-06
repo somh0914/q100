@@ -8,6 +8,7 @@ Q100 데이터 자동 업데이트 스크립트 (GitHub Actions에서 매일 실
 - 새 실적 발표 감지 + 각 기업의 "다음 실적 발표 예정일"도 수집합니다 (🔔 표시용).
 - 앱(index.html)은 열릴 때 live.json을 읽어 최신값으로 화면을 갱신합니다.
 데이터 출처: Yahoo Finance (1순위) → Stooq (2순위). 외부 키 불필요.
+- QQQ 편입 비중은 분기별 인베스코 CSV로 수동 반영 (매일 자동 수집 안 함).
 """
 import json, time, sys, os, datetime, urllib.request, urllib.parse, urllib.error
 from zoneinfo import ZoneInfo
@@ -30,8 +31,6 @@ TICKERS = [
 YE_DATE = datetime.date(datetime.date.today().year - 1, 12, 31)
 REF_DATE = datetime.date(2026, 8, 7)           # 앱에 내장된 시가총액의 기준일
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-INVESCO_URL = ("https://www.invesco.com/us/financial-products/etfs/holdings/"
-               "main/sitedetail/ajax?audienceType=Investor&action=download&ticker=QQQ")
 
 # 쿠키를 유지하는 공용 커넥션 — 야후가 쿠키 없는 요청을 차단(429)할 때가 있어
 # 시작할 때 한 번 쿠키를 받아두고 모든 요청에 함께 보낸다.
@@ -182,6 +181,16 @@ def main():
         except Exception:
             live = {}
     live.setdefault("ret", {})
+    # 시세 역행 방지용 스냅샷 — 이번 수집이 기존보다 오래된 날짜면 되돌린다.
+    prev_updated = str(live.get("updated") or "")
+    prev_ret = json.loads(json.dumps(live.get("ret", {})))
+    prev_px = {k: live.get(k) for k in ("qqqNow", "qqqYE", "ndxNow", "ndxYE", "fx", "fxYE")}
+    # 예전 인베스코 자동 수집이 남긴 비중 값 제거 — 비중은 앱 내장 분기 표만 쓴다
+    for _t, _e in live["ret"].items():
+        if isinstance(_e, dict):
+            _e.pop("w", None)
+    live.pop("top", None)
+    live.pop("top10", None)
     # 이전 실행에서 명단에 섞여 들어온 ETF 티커 청소 (가짜 편출 알림 방지)
     if isinstance(live.get("members"), list):
         _bad = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
@@ -327,124 +336,71 @@ def main():
     except Exception as e:
         print("야후 일괄 조회 실패 (기존 값 유지):", repr(e))
 
-    # 4) QQQ 편입 비중 (인베스코 공식 보유내역 CSV)
+    # 4) 지수 편입·편출 감지 — 슬릭차트 구성종목 명단 (매일)
+    #    * QQQ 편입 "비중"은 여기서 갱신하지 않는다. 비중은 분기별(3·6·9·12월 셋째 금요일
+    #      리밸런싱 직후) 인베스코 공식 CSV를 받아 앱에 직접 반영하는 절차로 관리한다.
+    #      (인베스코 사이트는 GitHub 서버의 자동 요청을 봇으로 차단하므로 매일 시도해 봐야
+    #       실패만 반복된다 → 시도 자체를 제거)
     try:
-        import csv, io
-        inv_h = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
-                 "Accept": "text/csv,application/csv,text/plain,*/*",
-                 "Referer": "https://www.invesco.com/us/financial-products/etfs/product-detail?audienceType=Investor&ticker=QQQ"}
-        txt = None
-        for _ in range(2):
-            try:
-                req = urllib.request.Request(INVESCO_URL, headers=inv_h)
-                with urllib.request.urlopen(req, timeout=40) as r:
-                    body = r.read().decode("utf-8", "replace")
-                if "," in body and body.count("\n") > 50:
-                    txt = body; break
-            except Exception:
-                pass
-            time.sleep(3)
-        if txt is None:
-            raise RuntimeError("invesco_unreachable")
-        rows = list(csv.reader(io.StringIO(txt)))
-        head = None
-        for i, r in enumerate(rows):
-            if any("weight" in c.lower() for c in r) and any("ticker" in c.lower() for c in r):
-                head = i; break
-        if head is None:
-            raise RuntimeError("인베스코 응답이 CSV 형식이 아님 (봇 차단 페이지)")
-        cols = [c.strip().lower() for c in rows[head]]
-        ti = next(i for i, c in enumerate(cols) if "holding" in c and "ticker" in c)
-        wi = next(i for i, c in enumerate(cols) if "weight" in c)
-        raw = []
-        for r in rows[head + 1:]:
-            if len(r) <= max(ti, wi): continue
-            sym = r[ti].strip().upper()
-            try:
-                w = float(r[wi].replace("%", "").replace(",", "").strip())
-            except ValueError:
-                continue
-            if sym and w > 0:
-                raw.append((sym, w))
-        if len(raw) >= 80:
-            comb = {}
-            for sym, w in raw:
-                key = "GOOGL" if sym in ("GOOG", "GOOGL") else sym
-                comb[key] = comb.get(key, 0) + w
-            hit = 0
-            for t in TICKERS:
-                if t != "QQQ" and t in comb:
-                    live["ret"].setdefault(t, {})["w"] = round(comb[t], 2)
-                    hit += 1
-            raw.sort(key=lambda x: -x[1])
-            live["top"] = [{"t": s, "w": round(w, 2)} for s, w in raw[:15]]
-            live["top10"] = round(sum(w for _, w in raw[:10]), 1)
-            print(f"QQQ 비중 갱신: {hit}개 기업 (보유내역 {len(raw)}종목)")
-
-            # 5) 지수 편입·편출 감지 (보유내역이 충분히 완전할 때만)
-            if len(raw) >= 95:
-                cur = sorted(comb.keys())
-                prev = live.get("members")
-                today_s = datetime.date.today().isoformat()
-                if prev:
-                    added = [t for t in cur if t not in prev]
-                    removed = [t for t in prev if t not in cur]
-                    if added or removed:
-                        chg = live.setdefault("chg", {"added": [], "removed": []})
-                        for t in added:
-                            if not any(x["t"] == t for x in chg["added"]):
-                                chg["added"].append({"t": t, "d": today_s})
-                        for t in removed:
-                            if not any(x["t"] == t for x in chg["removed"]):
-                                chg["removed"].append({"t": t, "d": today_s})
-                        print(f"⚠️ 지수 변경 감지! 편입: {added} / 편출: {removed}")
-                # 120일 지난 변경 기록 정리
-                old = (datetime.date.today() - datetime.timedelta(days=120)).isoformat()
-                if "chg" in live:
-                    for k in ("added", "removed"):
-                        live["chg"][k] = [x for x in live["chg"][k] if x.get("d", "") >= old]
-                live["members"] = cur
+        import re
+        req = urllib.request.Request("https://www.slickcharts.com/nasdaq100",
+                                     headers={"User-Agent": UA["User-Agent"]})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            html = r.read().decode("utf-8", "replace")
+        NOT_STOCK = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
+        syms = []
+        for m in re.finditer(r'/symbol/([A-Z][A-Z0-9.\-]{0,6})', html):
+            s = m.group(1)
+            if s not in syms and s not in NOT_STOCK:
+                syms.append(s)
+        if 95 <= len(syms) <= 110:
+            cur = sorted(set("GOOGL" if s in ("GOOG", "GOOGL") else s for s in syms))
+            prev = live.get("members")
+            today_s = datetime.date.today().isoformat()
+            if prev:
+                added = [t for t in cur if t not in prev]
+                removed = [t for t in prev if t not in cur]
+                if added or removed:
+                    chg = live.setdefault("chg", {"added": [], "removed": []})
+                    for t in added:
+                        if not any(x["t"] == t for x in chg["added"]):
+                            chg["added"].append({"t": t, "d": today_s})
+                    for t in removed:
+                        if not any(x["t"] == t for x in chg["removed"]):
+                            chg["removed"].append({"t": t, "d": today_s})
+                    print(f"⚠️ 지수 변경 감지! 편입: {added} / 편출: {removed}")
+            # 120일 지난 변경 기록 정리
+            old = (datetime.date.today() - datetime.timedelta(days=120)).isoformat()
+            if "chg" in live:
+                for k in ("added", "removed"):
+                    live["chg"][k] = [x for x in live["chg"][k] if x.get("d", "") >= old]
+            live["members"] = cur
+            print(f"구성종목 명단 확보(슬릭차트): {len(cur)}개 티커")
         else:
-            print("QQQ 비중: 보유내역이 너무 적어 건너뜀 (기존 값 유지)")
+            print(f"구성종목 명단 수집 건너뜀 — 티커 수 비정상({len(syms)}개), 기존 명단 유지")
     except Exception as e:
-        print("QQQ 비중 수집 실패 (기존 값 유지):", repr(e))
-        # 예비 경로: 슬릭차트에서 구성종목 명단만 받아 편입·편출 감지 (비중은 갱신 안 함)
-        try:
-            import re
-            req = urllib.request.Request("https://www.slickcharts.com/nasdaq100",
-                                         headers={"User-Agent": UA["User-Agent"]})
-            with urllib.request.urlopen(req, timeout=30) as r:
-                html = r.read().decode("utf-8", "replace")
-            NOT_STOCK = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
-            syms = []
-            for m in re.finditer(r'/symbol/([A-Z][A-Z0-9.\-]{0,6})', html):
-                s = m.group(1)
-                if s not in syms and s not in NOT_STOCK:
-                    syms.append(s)
-            if 95 <= len(syms) <= 110:
-                comb2 = sorted(set("GOOGL" if s in ("GOOG", "GOOGL") else s for s in syms))
-                cur = comb2
-                prev = live.get("members")
-                today_s = datetime.date.today().isoformat()
-                if prev:
-                    added = [t for t in cur if t not in prev]
-                    removed = [t for t in prev if t not in cur]
-                    if added or removed:
-                        chg = live.setdefault("chg", {"added": [], "removed": []})
-                        for t in added:
-                            if not any(x["t"] == t for x in chg["added"]):
-                                chg["added"].append({"t": t, "d": today_s})
-                        for t in removed:
-                            if not any(x["t"] == t for x in chg["removed"]):
-                                chg["removed"].append({"t": t, "d": today_s})
-                        print(f"⚠️ 지수 변경 감지(예비 경로)! 편입: {added} / 편출: {removed}")
-                live["members"] = cur
-                print(f"구성종목 명단 확보(예비 경로 슬릭차트): {len(syms)}개 티커")
-        except Exception as e2:
-            print("예비 경로도 실패:", repr(e2))
+        print("구성종목 명단 수집 실패 (기존 명단 유지):", repr(e))
 
-    if latest_date:
-        live["updated"] = latest_date.strftime("%Y.%m.%d")
+    # ── 시세 역행 방지 ──────────────────────────────────────────────
+    # 백업 실행에서 야후가 막히면 Stooq(하루 지연) 값만 남아 이미 저장해 둔
+    # 최신 종가를 하루 묵은 값으로 덮어쓰는 사고가 난다. 이번 수집 기준일이
+    # 기존 저장분보다 과거면 주가·환율·지수는 기존 값을 그대로 지킨다.
+    # (시가총액·실적 발표일·구성종목은 최신 수집분을 그대로 반영)
+    new_updated = latest_date.strftime("%Y.%m.%d") if latest_date else ""
+    if prev_updated and new_updated and new_updated < prev_updated:
+        print(f"⚠️ 이번 수집 기준일({new_updated})이 기존 저장분({prev_updated})보다 과거 "
+              f"— 주가·환율·지수는 기존 최신값을 유지합니다 (시세 역행 방지)")
+        for t, old_e in prev_ret.items():
+            cur = live["ret"].setdefault(t, {})
+            for k in ("ytd", "y1", "m", "p", "dc"):
+                if k in old_e:
+                    cur[k] = old_e[k]
+        for k, v in prev_px.items():
+            if v is not None:
+                live[k] = v
+        live["updated"] = prev_updated
+    elif latest_date:
+        live["updated"] = new_updated
 
     print(f"성공 {ok}개 / 실패 {len(fail)}개")
     if fail:
