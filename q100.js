@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.06-AX';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.07-BB';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -4526,6 +4526,46 @@ const fPct = (v, d=0) => (v > 0 ? '+' : '') + v.toFixed(d) + '%';
 const mPct = (v, d=1) => v.toFixed(d) + '%';
 const last = a => a[a.length-1];
 const lastG = c => (last(c.fin.rev)/c.fin.rev[c.fin.rev.length-2]-1)*100;
+
+/* ---------- 연간 확정 → 전망 증감 (기업 카드의 연매출·연EPS와 랭킹이 같은 계산을 쓴다) ---------- */
+/* 문자열 금액 → 숫자 ($129.7B→129.7, $953M→0.953, -$0.43→-0.43) */
+const Q_money=v=>{ if(v==null) return NaN; if(typeof v==='number') return v;
+  const t=String(v).replace(/[,\s]/g,''); const neg=/^-|^[$€£]-/.test(t);
+  const m=t.match(/(\d+(?:\.\d+)?)\s*([BMTbmt])?/); if(!m) return NaN;
+  let n=parseFloat(m[1]); const u=(m[2]||'').toUpperCase();
+  if(u==='T') n*=1000; else if(u==='M') n/=1000;
+  return neg? -n : n; };
+/* 확정 → 전망 증감. 적자·흑자 전환도 표시 */
+const Q_grow=(a,b)=>{ a=Q_money(a); b=Q_money(b);
+  if(!isFinite(a)||!isFinite(b)||a===0) return null;
+  if(a>0&&b>0){ const p=(b/a-1)*100; return {t:(p>=0?'+':'-')+Math.round(Math.abs(p))+'%', up:p>=0, pct:p}; }
+  if(a<0&&b>0) return {t:'흑자전환', up:true, pct:NaN};
+  if(a>0&&b<0) return {t:'적자전환', up:false, pct:NaN};
+  const p=(Math.abs(b)/Math.abs(a)-1)*100;
+  return p>=0? {t:'적자확대 +'+Math.round(p)+'%', up:false, pct:NaN}
+             : {t:'적자축소 -'+Math.round(Math.abs(p))+'%', up:true, pct:NaN}; };
+const Q_fyLab=y=>String(y).replace(/^20(\d\d)$/,'FY$1');
+const Q_nextFY=y=>{ const t=String(y); const m=t.match(/^(FY)?(\d{2,4})$/); if(!m) return t;
+  const n=+m[2]+1; return m[1]? 'FY'+n : String(n); };
+const Q_dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
+/* fin 배열에서 확정 연도/전망(E) 연도 위치 */
+function fyIdx(c){ const fy=c.fin, nY=fy.years.length, eLast=/E$/.test(fy.years[nY-1]);
+  return { fy, actI: eLast? nY-2 : nY-1, estI: eLast? nY-1 : -1 }; }
+/* 연매출: {y:전망연도 라벨, act:확정값, fc:전망 표시값, g:증감} — 카드와 동일 */
+function fwdRev(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null;
+  const revAct=fy.rev[actI], estY=estI>=0? fy.years[estI] : null;
+  const y=Q_fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
+  if(nfy&&nfy.rev) return {y, act:revAct, fc:nfy.rev, g:Q_grow(revAct, nfy.rev)};
+  if(estY) return {y, act:revAct, fc:fB(fy.rev[estI]), g:Q_grow(revAct, fB(fy.rev[estI]))};
+  return {y, act:revAct, fc:null, g:null}; }
+/* 연EPS: 기준 통일 짝(epsb) 우선 → 연간 컨센서스 → E연도 — 카드와 동일 */
+function fwdEps(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null, ebx=c.epsb||null;
+  const epsAct=fy.eps[actI], estY=estI>=0? fy.years[estI] : null;
+  if(ebx) return {y:Q_fyLab(Q_nextFY(ebx.y)), act:ebx.a, fc:Q_dEps(ebx.f), g:Q_grow(ebx.a, ebx.f), basis:ebx.b};
+  const y=Q_fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
+  if(nfy&&nfy.eps) return {y, act:epsAct, fc:nfy.eps, g:Q_grow(epsAct, nfy.eps)};
+  if(estY) return {y, act:epsAct, fc:Q_dEps(fy.eps[estI]), g:Q_grow(epsAct, fy.eps[estI])};
+  return {y, act:epsAct, fc:null, g:null}; }
 const lastOpm = c => last(c.fin.op)/last(c.fin.rev)*100;
 const fcfM = c => last(c.fin.fcf)/last(c.fin.rev)*100;
 let FX = DB.meta.fx;
@@ -4737,24 +4777,20 @@ function enterApp(t){
 /* ---------- rankings ---------- */
 const RANKS = {
   price:{k:'주가수익률', get:c=> c.ret? c.ret[st.retBase] : NaN, fmt:v=>fPct(v, Math.abs(v)>=100?0:1),
-    desc:()=> st.retBase==='ytd'
-      ? '전년도 말(12/31) 종가 대비 현재 주가 등락률 · 연중 상장 기업은 상장일 종가 기준 (실제 데이터 · '+DB.meta.retAsOf+' 기준)'
-      : '1년 전 같은 시기 대비 주가 등락률 (실제 데이터 · '+DB.meta.retAsOf+' 기준)'},
-  growth:{k:'성장성', get:lastG, fmt:v=>fPct(v), desc:'최근 회계연도 매출 성장률 · 오른쪽 아래에 주당순이익(EPS) 증감도 표시'},
-  cash:{k:'현금창출', get:fcfM, fmt:v=>'FCF '+mPct(v,0), desc:'매출 중 실제 현금(FCF)으로 남는 비율 — 높을수록 현금창출력이 강함'},
+    desc:()=> DB.meta.retAsOf+' 기준'},
+  /* 성장성 = 기업 카드 연매출의 "FYxx 전망" 증감%와 같은 값 (확정 → 전망) */
+  growth:{k:'성장성', get:c=>{ const g=fwdRev(c).g; return g? g.pct : NaN; },
+    fmt:(v,c)=>{ const r=fwdRev(c); const t=r.g? r.g.t : fPct(v); const up=r.g? r.g.up : v>=0;
+      return '<span style="color:#e8e8e8">매출</span> <span style="color:'+(up?'#4ade80':'#f87171')+'">'+t+'</span>'; },
+    desc:'올해 확정 실적 → 내년 전망, 1년치 기준 증감률'},
+  cash:{k:'현금창출', get:fcfM, fmt:v=>'FCF '+mPct(v,0), desc:'매출 중 실제 현금(FCF)으로 남는 비율'},
   margin:{k:'영업이익률', get:lastOpm, fmt:v=>mPct(v,1), desc:'최근 연매출 중 본업 이익이 차지하는 비율'},
-  qqq:{k:'QQQ 비중', get:c=>c.qqq, fmt:v=>v+'%', desc:()=>'QQQ 안에서 차지하는 비중 · 인베스코 공식, 분기마다 리밸런싱 · '+(DB.meta.weightsQ||DB.meta.weightsAsOf)+' 기준'},
+  qqq:{k:'QQQ 비중', get:c=>c.qqq, fmt:v=>v+'%', desc:()=>'인베스코 공식 · '+(DB.meta.weightsQ||DB.meta.weightsAsOf)+' 기준'},
   moat:{k:'경제적 해자', get:c=>c.score.moat, fmt:v=>v+'점', desc:'경쟁자를 막는 방어력에 대한 Q100 내부 평가 점수 (100점 만점)'}
 };
 function epsBadge(c){
-  const e=c.fin.eps; if(!e) return '';
-  const a=e[e.length-2], b=e[e.length-1];
-  let t,col;
-  if(a>0 && b>0){ const g=(b/a-1)*100; t='EPS '+fPct(g,0); col=g>=0?'#4ade80':'#f87171'; }
-  else if(b>0){ t='EPS 흑자전환'; col='#4ade80'; }
-  else if(a>0){ t='EPS 적자전환'; col='#f87171'; }
-  else { t='EPS 적자'; col='#f87171'; }
-  return `<div style="font-size:11.5px;font-weight:700;color:${col};margin-top:1px">${t}</div>`;
+  const r=fwdEps(c); if(!r.g) return '';
+  return `<div style="font-size:11.5px;font-weight:700;margin-top:1px;white-space:nowrap"><span style="color:#c9c9c9">EPS</span> <span style="color:${r.g.up?'#4ade80':'#f87171'}">${r.g.t}</span></div>`;
 }
 function rankDesc(k){ const d=RANKS[k].desc; return typeof d==='function'? d() : d; }
 function qqqYtdStats(){
@@ -4779,9 +4815,9 @@ function rankList(key, n=5){
     const vc = key==='price' ? (v>=0?'#4ade80':'#f87171') : '#fff';
     return `<div class="list-row" onclick="openRank('${key}','${c.id}')">
     <span class="rank-n">${i+1}</span>${avatar(c,34,11)}
-    <div style="flex:1;min-width:0"><span class="tiny" style="font-weight:700;color:#c9c9c9">${c.name}</span>
+    <div style="flex:1;min-width:0"><span class="tiny" style="font-weight:700;color:#c9c9c9;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</span>
       <div class="hbar" style="margin-top:5px;height:5px"><i style="width:${Math.max(Math.abs(v)/max*100,3).toFixed(0)}%;background:${c.color}"></i></div></div>
-    <div style="text-align:right"><b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v)}</b>${key==='growth'? epsBadge(c):''}${key==='price'&&c.ret&&c.ret.ipo?`<div style="font-size:11px;font-weight:700;color:#7fb2ff;margin-top:1px">상장 후 (${c.ret.ipo.slice(5).replace('-','.')}~)</div>`:''}</div></div>`;
+    <div style="text-align:right;flex:none;white-space:nowrap"><b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v,c)}</b>${key==='growth'? epsBadge(c):''}${key==='price'&&c.ret&&c.ret.ipo?`<div style="font-size:11px;font-weight:700;color:#7fb2ff;margin-top:1px">상장 후 (${c.ret.ipo.slice(5).replace('-','.')}~)</div>`:''}</div></div>`;
   }).join('');
 }
 
@@ -4839,8 +4875,8 @@ function renderHome(){
   <div class="hscroll">${[today,...C.filter(c=>c.videos.length&&c.id!==today.id)].filter(c=>c.videos.length||c.id===today.id).slice(0,4).map(c=>videoCard(c)).join('')}</div>
   <div class="sec-t">기업 랭킹</div>
   <div class="seg" id="home-seg">${Object.entries(RANKS).map(([k,v])=>`<b class="${st.homeRank===k?'on':''}" onclick="st.homeRank='${k}';renderHome()">${v.k}</b>`).join('')}</div>
-  ${st.homeRank==='price'?`<div class="chiprow" style="margin-top:8px"><span class="chip ${st.retBase==='ytd'?'on':''}" onclick="st.retBase='ytd';renderHome()">전년도말 대비 (YTD)</span><span class="chip ${st.retBase==='y1'?'on':''}" onclick="st.retBase='y1';renderHome()">최근 1년 (근사)</span></div>`:''}
-  <p class="tiny" style="margin:8px 4px 0">${rankDesc(st.homeRank)}</p>
+  ${st.homeRank==='price'?`<div class="chiprow" style="margin-top:8px"><span class="chip ${st.retBase==='ytd'?'on':''}" onclick="st.retBase='ytd';renderHome()">전년도말 대비 (YTD)</span><span class="chip ${st.retBase==='y1'?'on':''}" onclick="st.retBase='y1';renderHome()">최근 1년</span></div>`:''}
+  ${rankDesc(st.homeRank)?`<p class="tiny" style="margin:8px 4px 0">${rankDesc(st.homeRank)}</p>`:''}
   <div class="card" style="margin-top:8px;padding:6px 16px">${rankList(st.homeRank, st.homeRankAll[st.homeRank]? C.length : 5)}</div>
   <button class="btn ghost blk" onclick="toggleHomeRank()">${st.homeRankAll[st.homeRank]? '접기 ↑' : '전체 '+C.length+'개 기업 더보기'}</button>
   <div class="sec-t">시리즈로 보기 <small>탐색 탭에서 전체 보기</small></div>
@@ -4946,22 +4982,7 @@ function buildDetail(c){
   const epsAct=fy.eps[actI], epsEst=estI>=0? fy.eps[estI] : null;
   const dPct=(a,b)=> (a>0&&isFinite(b))? Math.round((b/a-1)*100) : null;
   const revG2=dPct(revAct,revEst), epsG2=(epsAct>0&&epsEst>0)? Math.round((epsEst/epsAct-1)*100) : null;
-  /* 문자열 금액 → 숫자 ($129.7B→129.7, $953M→0.953, -$0.43→-0.43) */
-  const pMoney=v=>{ if(v==null) return NaN; if(typeof v==='number') return v;
-    const t=String(v).replace(/[,\s]/g,''); const neg=/^-|^[$€£]-/.test(t);
-    const m=t.match(/(\d+(?:\.\d+)?)\s*([BMTbmt])?/); if(!m) return NaN;
-    let n=parseFloat(m[1]); const u=(m[2]||'').toUpperCase();
-    if(u==='T') n*=1000; else if(u==='M') n/=1000;
-    return neg? -n : n; };
-  /* 확정 → 전망 증감. 적자·흑자 전환도 표시 */
-  const growOf=(a,b)=>{ a=pMoney(a); b=pMoney(b);
-    if(!isFinite(a)||!isFinite(b)||a===0) return null;
-    if(a>0&&b>0){ const p=(b/a-1)*100; return {t:(p>=0?'+':'-')+Math.round(Math.abs(p))+'%', up:p>=0}; }
-    if(a<0&&b>0) return {t:'흑자전환', up:true};
-    if(a>0&&b<0) return {t:'적자전환', up:false};
-    const p=(Math.abs(b)/Math.abs(a)-1)*100;
-    return p>=0? {t:'적자확대 +'+Math.round(p)+'%', up:false}
-               : {t:'적자축소 -'+Math.round(Math.abs(p))+'%', up:true}; };
+  const pMoney=Q_money, growOf=Q_grow;
   const fyRow=(lab,val,gold)=>{ const t=lab+' '+String(val);
     /* 한글 1자는 영문 약 2배 폭 — 가중 길이로 글자크기 결정 */
     const w=[...t].reduce((n,ch)=>n+(/[가-힣]/.test(ch)?2:1),0);
@@ -4972,9 +4993,7 @@ function buildDetail(c){
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
   /* 내년전망: 조사된 연간 컨센서스(c.nfy)가 있으면 우선, 없으면 fin의 E연도 사용 */
   const nfy=c.nfy||null;
-  const fyLab=y=>String(y).replace(/^20(\d\d)$/,'FY$1');
-  const nextFY=y=>{ const t=String(y); const m=t.match(/^(FY)?(\d{2,4})$/); if(!m) return t;
-    const n=+m[2]+1; return m[1]? 'FY'+n : String(n); };
+  const fyLab=Q_fyLab, nextFY=Q_nextFY;
   const fcY = fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
   /* 증감%는 화면에 보이는 확정값과 전망값으로 직접 계산 (표시와 항상 일치) */
   const revFc = nfy&&nfy.rev? [nfy.rev, growOf(revAct, nfy.rev)] : (estY? [fB(revEst), growOf(revAct, revEst)] : null);
@@ -5393,8 +5412,8 @@ function renderDiscover(){
   <div class="chiprow" style="flex-wrap:wrap">${['고성장','고수익성','고현금흐름','높은 반복매출','높은 경제적 해자','저밸류'].map(t=>`<span class="chip" onclick="st.trait='${t}';st.ind='전체';st.q='';nav('companies')">${t}</span>`).join('')}</div>
   <div class="sec-t">랭킹</div>
   <div class="seg" id="disc-seg">${Object.entries(RANKS).map(([k,v])=>`<b class="${st.rank===k?'on':''}" onclick="st.rank='${k}';renderDiscover()">${v.k}</b>`).join('')}</div>
-  ${st.rank==='price'?`<div class="chiprow" style="margin-top:8px"><span class="chip ${st.retBase==='ytd'?'on':''}" onclick="st.retBase='ytd';renderDiscover()">전년도말 대비 (YTD)</span><span class="chip ${st.retBase==='y1'?'on':''}" onclick="st.retBase='y1';renderDiscover()">최근 1년 (근사)</span></div>`:''}
-  <p class="tiny" style="margin:8px 4px 0">${rankDesc(st.rank)}</p>
+  ${st.rank==='price'?`<div class="chiprow" style="margin-top:8px"><span class="chip ${st.retBase==='ytd'?'on':''}" onclick="st.retBase='ytd';renderDiscover()">전년도말 대비 (YTD)</span><span class="chip ${st.retBase==='y1'?'on':''}" onclick="st.retBase='y1';renderDiscover()">최근 1년</span></div>`:''}
+  ${rankDesc(st.rank)?`<p class="tiny" style="margin:8px 4px 0">${rankDesc(st.rank)}</p>`:''}
   <div class="card" style="margin-top:8px;padding:6px 16px">${rankList(st.rank, st.rankAll[st.rank]? C.length : 10)}</div>
   <button class="btn ghost blk" onclick="toggleDiscRank()">${st.rankAll[st.rank]? '접기 ↑' : '전체 '+C.length+'개 기업 더보기'}</button>
   <div class="sec-t">실적 캘린더 <small>예상 일정</small></div>
