@@ -7,7 +7,8 @@ Q100 데이터 자동 업데이트 스크립트 (GitHub Actions에서 매일 실
   시가총액·상장 후 데이터만 수집합니다.
 - 새 실적 발표 감지 + 각 기업의 "다음 실적 발표 예정일"도 수집합니다 (🔔 표시용).
 - 앱(index.html)은 열릴 때 live.json을 읽어 최신값으로 화면을 갱신합니다.
-데이터 출처: Yahoo Finance (1순위) → Stooq (2순위). 외부 키 불필요.
+데이터 출처: 최신 종가·등락률·시가총액은 Yahoo 일괄 조회(요청 3번) → 이력(연초·1년 전 기준값)은
+  Yahoo 차트(1순위) → Stooq(2순위). 외부 키 불필요.
 - QQQ 편입 비중은 분기별 인베스코 CSV로 수동 반영 (매일 자동 수집 안 함).
 """
 import json, time, sys, os, datetime, urllib.request, urllib.parse, urllib.error
@@ -109,6 +110,30 @@ def get_history(yahoo_sym, stooq_sym):
             return best   # 최신 거래일 종가 확보 → 두 번째 소스 조회 불필요
     return best
 
+def quote_close(q):
+    """일괄 조회 결과에서 '확정된 최신 종가'를 뽑는다 → (날짜, 종가, 등락률%) 또는 None.
+    장중(REGULAR)이면 아직 종가가 아니므로 쓰지 않는다. 우리 실행 시각은 모두 장 마감 뒤라
+    보통 통과하지만, 수동 실행 등 장중에 돌 때를 대비한 안전장치."""
+    if not q or not q.get("px") or not q.get("t"):
+        return None
+    if str(q.get("state") or "").upper() == "REGULAR":
+        return None
+    d = datetime.datetime.fromtimestamp(q["t"], ZoneInfo("America/New_York")).date()
+    if d > latest_trading_day_et():
+        return None
+    return d, float(q["px"]), (float(q["chg"]) if q.get("chg") is not None else None)
+
+def merge_quote(h, qc):
+    """이력(h)의 마지막 날짜보다 일괄 조회 종가(qc)가 더 최신이면 이력 끝에 덧붙인다.
+    → 차트 API가 막히거나 보조 소스가 하루 늦어도 '오늘 종가'는 일괄 조회 한 번으로 확보."""
+    if not qc:
+        return h, False
+    d, c, _ = qc
+    h = sorted(h) if h else []
+    if h and h[-1][0] >= d:
+        return h, False
+    return h + [(d, c)], True
+
 def close_on_or_before(hist, d):
     best = None
     for hd, c in hist:
@@ -143,7 +168,9 @@ def yahoo_quotes(symbols):
         chunk = symbols[i:i + 40]
         url = ("https://query1.finance.yahoo.com/v7/finance/quote?symbols="
                + ",".join(chunk)
-               + "&fields=marketCap,earningsTimestamp,earningsTimestampEnd&crumb="
+               + "&fields=marketCap,earningsTimestamp,earningsTimestampEnd,"
+                 "regularMarketPrice,regularMarketChangePercent,regularMarketPreviousClose,"
+                 "regularMarketTime,marketState&crumb="
                + urllib.parse.quote(crumb))
         data = json.loads(opener.open(urllib.request.Request(url, headers=UA), timeout=25)
                           .read().decode("utf-8", "replace"))
@@ -151,7 +178,12 @@ def yahoo_quotes(symbols):
             sym = q.get("symbol", "").upper()
             if sym:
                 out[sym] = {"cap": q.get("marketCap"),
-                            "ets": q.get("earningsTimestamp")}
+                            "ets": q.get("earningsTimestamp"),
+                            "px": q.get("regularMarketPrice"),
+                            "chg": q.get("regularMarketChangePercent"),
+                            "pc": q.get("regularMarketPreviousClose"),
+                            "t": q.get("regularMarketTime"),
+                            "state": q.get("marketState")}
         time.sleep(0.5)
     return out
 
@@ -210,11 +242,36 @@ def main():
             fetch_list += extra
             print("구성종목 명단 기반 자동 추가 수집:", ", ".join(extra))
 
+    # 0.7) 야후 일괄 조회를 먼저 — 101개 종목의 최신 종가·등락률·시가총액을 요청 3번으로 확보.
+    #      (종목별 차트 요청은 횟수 제한에 자주 막히고 보조 소스는 하루 늦지만,
+    #       일괄 조회는 잘 통과되므로 '오늘 종가'는 여기서 가져오고 이력은 기준값 계산에만 쓴다)
+    quotes = {}
+    try:
+        quotes = yahoo_quotes(list(fetch_list))
+        qn = sum(1 for t in fetch_list if quote_close(quotes.get(t)))
+        print(f"일괄 조회: {len(quotes)}개 응답 · 확정 종가 {qn}개")
+    except Exception as e:
+        print("야후 일괄 조회 실패 — 종목별 이력만 사용:", repr(e))
+
     # 1) 전체 기업 + QQQ
     for t in fetch_list:
-        h = get_history(t, t.lower() + ".us")
+        h0 = get_history(t, t.lower() + ".us")
+        qc = quote_close(quotes.get(t))
+        h, used_q = merge_quote(h0, qc)
         if not h:
             fail.append(t); continue
+        if not h0:
+            # 이력은 두 소스 모두 실패했지만 일괄 조회 종가는 있음 → 주가·등락률만 갱신하고
+            # 연초대비·1년 수익률·환산배율은 기존 값을 유지 (상장 직후로 오인하지 않도록)
+            if t == "QQQ":
+                live["qqqNow"] = round(qc[1], 2); latest_date = qc[0]
+            else:
+                old = live["ret"].get(t, {})
+                old["p"] = round(qc[1], 2)
+                if qc[2] is not None: old["dc"] = round(qc[2], 2)
+                live["ret"][t] = old
+            ok += 1
+            continue
         ytd, r1y, last_c, last_d, ye = returns(h)
         if t == "QQQ":
             if ytd is None:
@@ -237,7 +294,9 @@ def main():
                 ent["y1"] = round(r1y, 1)
             ent["p"] = round(last_c, 2)   # 최신 종가 (앱의 주가 표시줄용)
             hs = sorted(h)
-            if len(hs) >= 2 and hs[-2][1]:      # 전일 대비 등락률
+            if used_q and qc[2] is not None:    # 전일 대비 등락률 — 일괄 조회의 공식 값 우선
+                ent["dc"] = round(qc[2], 2)
+            elif len(hs) >= 2 and hs[-2][1]:
                 ent["dc"] = round((last_c / hs[-2][1] - 1) * 100, 2)
             ref = close_on_or_before(sorted(h), REF_DATE)
             if ref:  # 시가총액 환산 배율 (내장 기준일 대비 주가 변화)
@@ -273,7 +332,8 @@ def main():
     # 3.5) 야후 일괄 조회 — 시가총액 갱신 + 새 실적 발표 감지 + 다음 발표 예정일 (같은 통로)
     #      * SEC는 GitHub 서버 접속을 차단(403)하여 야후의 실적 발표일 데이터로 대체
     try:
-        quotes = yahoo_quotes([t for t in fetch_list if t != "QQQ"])
+        if not quotes:
+            quotes = yahoo_quotes([t for t in fetch_list if t != "QQQ"])
         live.setdefault("fresh", {})
         cutoff = (datetime.date.today() - datetime.timedelta(days=45)).isoformat()
         for t in list(live["fresh"].keys()):
@@ -285,6 +345,8 @@ def main():
         now = datetime.datetime.now(datetime.timezone.utc)
         today_d = datetime.date.today()
         for t, q in quotes.items():
+            if t == "QQQ":
+                continue
             mc = q.get("cap")
             if mc and mc > 1e9:
                 live["ret"].setdefault(t, {})["cap"] = round(mc / 1e9, 1)
