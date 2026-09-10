@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.07-BC';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.10-BD';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -4898,7 +4898,7 @@ const INDS=['전체','AI','반도체','클라우드','소프트웨어','플랫�
 function renderCompanies(){
   $('#scr-companies').innerHTML = `
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 12px">기업 백과사전 <span class="tiny" style="font-weight:600">나스닥100 · ${C.length}개 기업 수록</span></h2>
-  <input id="q-in" class="search" placeholder="기업명, 티커, 특징 검색 (예: AI, 현금 많은 회사)" value="${st.q}" oninput="st.q=this.value;renderCGrid()">
+  <input id="q-in" class="search" style="font-size:16px" placeholder="기업명·티커·특징 검색 (예: AI)" value="${st.q}" oninput="st.q=this.value;renderCGrid()">
   <div class="chiprow" style="margin-top:10px">${INDS.map(i=>`<span class="chip ${st.ind===i?'on':''}" onclick="st.ind='${i}';renderCompanies()">${i}</span>`).join('')}</div>
   <div class="chiprow">${['고성장','고수익성','고현금흐름','높은 반복매출','높은 경제적 해자','저밸류'].map(t=>`<span class="chip ${st.trait===t?'on':''}" onclick="st.trait=st.trait==='${t}'?null:'${t}';renderCompanies()">${t}</span>`).join('')}</div>
   <div class="row sb" style="margin:6px 2px 10px"><span class="tiny" id="c-cnt"></span>
@@ -5395,7 +5395,7 @@ function openSeries(id){
 function renderDiscover(){
   $('#scr-discover').innerHTML=`
   <h2 style="font-size:22px;font-weight:900;margin:2px 2px 12px">탐색</h2>
-  <input class="search" placeholder="자연어로 검색해 보세요 (예: 현금 많은 회사)" onkeydown="if(event.key==='Enter'){goCompaniesQ(this.value)}">
+  <input class="search" style="font-size:16px" placeholder="자연어 검색 (예: 현금 많은 회사)" onkeydown="if(event.key==='Enter'){goCompaniesQ(this.value)}">
   <div class="chiprow" style="margin-top:10px">${[['AI 기업','AI'],['영업이익률 높은 회사','수익'],['현금 많은 회사','현금'],['구독매출 회사','구독'],['저평가된 회사','저평가'],['해자 깊은 회사','해자']].map(([l,q])=>`<span class="chip" onclick="goCompaniesQ('${q}')">${l}</span>`).join('')}</div>
   <div class="sec-t">시리즈 <small>묶어서 보면 산업이 보인다</small></div>
   ${DB.series.map(s=>`
