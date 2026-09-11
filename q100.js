@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.10-BD';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.11-BF';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -3313,9 +3313,9 @@ DB.companies.push(
     {t:'야드 부동산', d:'수십 년 모은 토지가 진입장벽'}
   ],
   segments:[{n:'서비스 수수료',p:85},{n:'차량 판매',p:15}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[2.7,3.5,3.9,4.2,4.6], op:[1.1,1.4,1.5,1.6,1.7], ni:[0.94,1.09,1.24,1.36,1.40], fcf:[0.8,1.0,1.2,1.0,1.1], eps:[0.97,1.13,1.28,1.40,1.45]},
-  finNote:'회계연도 7월 종료',
-  key:{rev:'$4.6B', revG:'+9%', opm:'37%', fcf:'$1.1B', extraK:'보관 야드', extraV:'250개+'},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[2.7,3.5,3.9,4.2,4.6,4.7], op:[1.1,1.4,1.5,1.6,1.7,1.6], ni:[0.94,1.09,1.24,1.36,1.40,1.48], fcf:[0.8,1.0,1.2,1.0,1.1,1.2], eps:[0.97,1.13,1.28,1.40,1.45,1.55]},
+  finNote:'회계연도 7월 종료 · FY26 확정',
+  key:{rev:'$4.7B', revG:'+1%', opm:'34%', fcf:'$1.2B', extraK:'보관 야드', extraV:'250개+'},
   score:{biz:88, growth:72, profit:90, cash:86, moat:92, fin:97, val:55, total:81},
   moat:[80,85,90,88,70,60,82],
   moatNote:'야드 부동산 + 보험사 관계 + 글로벌 입찰자 풀 — 3중 잠금의 복점 시장.',
@@ -4096,7 +4096,7 @@ KLAC:'FY26 4Q', LIN:'FY26 2Q', AMGN:'FY26 2Q', CRWD:'FY27 2Q', SNDK:'FY26 4Q',
 STX:'FY26 4Q', PEP:'FY26 2Q', TMUS:'FY26 2Q', ADI:'FY26 3Q', WDC:'FY26 4Q',
 SHOP:'FY26 2Q', QCOM:'FY26 3Q', GILD:'FY26 2Q', MRVL:'FY27 2Q', BKNG:'FY26 2Q',
 ASML:'FY26 2Q', ARM:'FY27 1Q', ISRG:'FY26 2Q', APP:'FY26 2Q', FTNT:'FY26 2Q',
-VRTX:'FY26 2Q', SBUX:'FY26 3Q', ADP:'FY26 4Q', ADBE:'FY26 2Q', MELI:'FY26 2Q',
+VRTX:'FY26 2Q', SBUX:'FY26 3Q', ADP:'FY26 4Q', ADBE:'FY26 3Q', MELI:'FY26 2Q',
 MAR:'FY26 2Q', CSX:'FY26 2Q', CEG:'FY26 2Q', CDNS:'FY26 2Q', DDOG:'FY26 2Q',
 MNST:'FY26 2Q', CMCSA:'FY26 2Q', INTU:'FY26 4Q', DASH:'FY26 2Q', ROST:'FY26 2Q',
 CTAS:'FY26 4Q', MDLZ:'FY26 2Q', REGN:'FY26 2Q', HON:'FY26 2Q', SNPS:'FY26 3Q',
@@ -4107,7 +4107,7 @@ NBIS:'FY26 2Q', AXON:'FY26 2Q', PYPL:'FY26 2Q', ADSK:'FY27 2Q', EXC:'FY26 2Q',
 XEL:'FY26 2Q', FER:'FY26 2Q', IDXX:'FY26 2Q', ODFL:'FY26 2Q', MCHP:'FY27 1Q',
 RKLB:'FY26 2Q', PAYX:'FY26 4Q', TTWO:'FY27 1Q', CRWV:'FY26 2Q', KDP:'FY26 2Q',
 ROP:'FY26 2Q', TRI:'FY26 2Q', WDAY:'FY27 2Q', MSTR:'FY26 2Q', DXCM:'FY26 2Q',
-GEHC:'FY26 2Q', KHC:'FY26 2Q', ALNY:'FY26 2Q', CPRT:'FY26 3Q',
+GEHC:'FY26 2Q', KHC:'FY26 2Q', ALNY:'FY26 2Q', CPRT:'FY26 4Q',
 SPCX:'FY26 2Q', HONA:'FY26 2Q'   /* 상장 후 첫 분기보고서(10-Q, 2026.8월 제출) 기준 */
 };
 DB.companies.forEach(c => { if (LASTQ[c.ticker]) c.lastQ = LASTQ[c.ticker]; });
@@ -4196,7 +4196,7 @@ Object.assign(QR, {
  CSCO:{q:'FY26 4Q', d:'8월 12일', rev:'$17.3B', revE:'$16.9B', revD:'+2.4%', eps:'$1.22', epsE:'$1.17', epsD:'+4.3%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$18.0~18.2B', gEps:'$1.32~1.34', gRevE:'$16.7B', gRevD:'+8.4%', gEpsE:'$0.90', gEpsD:'+47.8%'},
  INTU:{q:'FY26 4Q', d:'8월 25일', rev:'$4.35B', revE:'$4.27B', revD:'+1.9%', eps:'$4.03', epsE:'$3.59', epsD:'+12.3%', basis:'조정', verdict:'beat'},
  FTNT:{q:'FY26 2Q', d:'7월 29일', rev:'$2.05B', revE:'$1.89B', revD:'+8.5%', eps:'$0.90', epsE:'$0.75', epsD:'+20.0%', basis:'조정', verdict:'beat', gq:'2026 3Q', gRev:'$2.01~2.10B', gEps:'$0.83~0.87', gRevE:'$2.1B', gRevD:'-2.1%', gEpsE:'$0.85', gEpsD:'+0.0%'},
- ADBE:{q:'FY26 2Q', d:'6월 11일', rev:'$6.62B', revE:'$6.46B', revD:'+2.5%', eps:'$5.96', epsE:'$5.83', epsD:'+2.2%', basis:'조정', verdict:'beat', gq:'FY26 3Q', gRev:'$6.67~6.72B', gEps:'$6.05~6.10', gRevE:'$6.7B', gRevD:'-0.1%', gEpsE:'$5.83', gEpsD:'+4.2%'},
+ ADBE:{q:'FY26 3Q', d:'9월 10일', rev:'$6.76B', revE:'$6.69B', revD:'+1.0%', eps:'$6.13', epsE:'$6.07', epsD:'+1.0%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$6.80~6.85B', gEps:'$6.30~6.35', gRevE:'$6.85B', gRevD:'-0.4%', gEpsE:'$6.33', gEpsD:'0%'},
  ADP:{q:'FY26 4Q', d:'7월 29일', rev:'$5.47B', revE:'$5.42B', revD:'+0.9%', eps:'$2.64', epsE:'$2.59', epsD:'+1.9%', basis:'조정', verdict:'beat'},
  PAYX:{q:'FY26 4Q', d:'6월 24일', rev:'$1.61B', revE:'$1.61B', revD:'+0.2%', eps:'$1.32', epsE:'$1.31', epsD:'+0.6%', basis:'조정', verdict:'beat'},
  CTAS:{q:'FY26 4Q', d:'7월 15일', rev:'$2.91B', revE:'$2.88B', revD:'+1.0%', eps:'$1.29', epsE:'$1.24', epsD:'+4.0%', basis:'GAAP', verdict:'beat'},
@@ -4234,7 +4234,7 @@ Object.assign(QR, {
  ODFL:{q:'FY26 2Q', d:'7월 29일', rev:'$1.55B', revE:'$1.54B', revD:'+0.8%', eps:'$1.68', epsE:'$1.52', epsD:'+10.5%', basis:'GAAP', verdict:'beat'},
  FAST:{q:'FY26 2Q', d:'7월 14일', rev:'$2.39B', revE:'$2.34B', revD:'+2.1%', eps:'$0.33', epsE:'$0.33', epsD:'+0.0%', basis:'GAAP', verdict:'mixed'},
  PCAR:{q:'FY26 2Q', d:'7월 28일', rev:'$7.55B', revE:'$7.08B', revD:'+6.6%', eps:'$1.43', epsE:'$1.35', epsD:'+5.9%', basis:'GAAP', verdict:'beat'},
- CPRT:{q:'FY26 3Q', d:'5월 21일', rev:'$1.24B', revE:'$1.20B', revD:'+3.5%', eps:'$0.43', epsE:'$0.42', epsD:'+2.4%', basis:'GAAP', verdict:'beat'},
+ CPRT:{q:'FY26 4Q', d:'9월 10일', rev:'$1.15B', revE:'$1.14B', revD:'+1%', eps:'$0.35', epsE:'$0.38', epsD:'-8%', basis:'GAAP', verdict:'miss'},
  ROP:{q:'FY26 2Q', d:'7월 23일', rev:'$2.11B', revE:'$2.10B', revD:'+0.5%', eps:'$5.38', epsE:'$5.29', epsD:'+1.7%', basis:'조정', verdict:'beat'},
  AXON:{q:'FY26 2Q', d:'8월 5일', rev:'$904M', revE:'$876M', revD:'+3.2%', eps:'$1.88', epsE:'$1.83', epsD:'+2.7%', basis:'조정', verdict:'beat'},
  TRI:{q:'FY26 2Q', d:'8월 5일', rev:'$1.95B', revE:'$1.92B', revD:'+1.8%', eps:'$0.99', epsE:'$0.96', epsD:'+3.3%', basis:'조정', verdict:'beat'},
@@ -4300,7 +4300,7 @@ const GEXP = {
  ODFL:{gq:'FY26 3Q', gRevE:'$1.5B', gEpsE:'$1.54'},
  FAST:{gq:'FY26 3Q', gRevE:'$2.4B', gEpsE:'$0.33'},
  PCAR:{gq:'FY26 3Q', gRevE:'$7.5B', gEpsE:'$1.54'},
- CPRT:{gq:'FY26 4Q', gRevE:'$1.1B', gEpsE:'$0.39'},
+ CPRT:{gq:'FY27 1Q', gRevE:'$1.2B', gEpsE:'$0.38'},
  ROP:{gq:'FY26 3Q', gRevE:'$2.2B', gEpsE:'$5.78'},
  AXON:{gq:'FY26 3Q', gRevE:'$935M', gEpsE:'$1.70'},
  CEG:{gq:'FY26 3Q', gRevE:'$9.2B', gEpsE:'$3.68'},
@@ -4320,7 +4320,7 @@ const NEXTFY = {
  AMZN:{y:'2026', rev:'$828.3B', revG:'+15.5%', eps:'$12.55', epsG:'+75.0%'},
  META:{y:'2026', rev:'$254.2B', revG:'+26.5%', eps:'$31.16', epsG:'+5.0%'},
  COST:{y:'FY26', rev:'$301.6B', revG:'+9.6%', eps:'$20.58', epsG:'+13.0%'},
- ADBE:{y:'FY26', rev:'$26.5B', revG:'+11.7%', eps:'$24.41', epsG:'+16.6%'},
+ ADBE:{y:'FY26', rev:'$26.6B', revG:'+12.7%', eps:'$24.48', epsG:'+16.9%'},
  CDNS:{y:'2026', rev:'$6.3B', revG:'+19.3%', eps:'$8.14', epsG:'+14.0%'},
  GOOGL:{y:'2026', rev:'$498.0B', revG:'+23.6%', eps:'$20.60', epsG:'+90.5%'},
  TSLA:{y:'2026', rev:'$106.0B', revG:'+11.8%', eps:'$1.77', epsG:'+6.8%'},
@@ -4379,7 +4379,6 @@ const NEXTFY = {
  ODFL:{y:'2026', rev:'$5.9B', revG:'+8%', eps:'$5.82', epsG:'+20%'},
  FAST:{y:'2026', rev:'$9.3B', revG:'+13%', eps:'$1.26', epsG:'+16%'},
  PCAR:{y:'2026', rev:'$28.9B', revG:'+1.6%', eps:'$5.93', epsG:'+18.5%'},
- CPRT:{y:'FY26', rev:'$4.6B', revG:'-0.1%', eps:'$1.58', epsG:'-0.5%'},
  ROP:{y:'2026', rev:'$8.6B', revG:'+8.4%', eps:'$22.22', epsG:'+11.1%'},
  AXON:{y:'2026', rev:'$3.7B', revG:'+33.4%', eps:'$7.71', epsG:'+12.6%'},
  CEG:{y:'2026', rev:'$35.1B', revG:'+37.6%', eps:'$12.12', epsG:'+29.1%'},
@@ -4408,7 +4407,7 @@ const EPSB = {
  AVGO:{y:'FY25', a:6.82, f:11.6, b:'조정'},
  META:{y:'2025', a:29.68, f:31.16, b:'조정'},
  COST:{y:'FY25', a:18.21, f:20.57, b:'GAAP'},
- ADBE:{y:'FY25', a:20.94, f:24.41, b:'조정'},
+ ADBE:{y:'FY25', a:20.94, f:24.48, b:'조정'},
  ADSK:{y:'FY26', a:10.43, f:12.6, b:'조정'},
  CDNS:{y:'2025', a:7.14, f:8.14, b:'조정'},
  GOOGL:{y:'2025', a:10.81, f:20.6, b:'GAAP'},
@@ -4486,7 +4485,7 @@ const EPSB = {
  ODFL:{y:'2025', a:4.84, f:5.82, b:'GAAP'},
  FAST:{y:'2025', a:1.09, f:1.26, b:'GAAP'},
  PCAR:{y:'2025', a:5.01, f:5.93, b:'조정'},
- CPRT:{y:'FY25', a:1.59, f:1.58, b:'GAAP'},
+ CPRT:{y:'FY26', a:1.55, f:null, b:'GAAP'},   // 회사 가이던스 없음 · 연간 컨센서스 미확인 → 전망 미제시
  ROP:{y:'2025', a:20.0, f:22.22, b:'조정'},
  AXON:{y:'2025', a:6.85, f:7.71, b:'조정'},
  CEG:{y:'2025', a:9.39, f:12.12, b:'조정'},
@@ -4561,7 +4560,7 @@ function fwdRev(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null;
 /* 연EPS: 기준 통일 짝(epsb) 우선 → 연간 컨센서스 → E연도 — 카드와 동일 */
 function fwdEps(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null, ebx=c.epsb||null;
   const epsAct=fy.eps[actI], estY=estI>=0? fy.years[estI] : null;
-  if(ebx) return {y:Q_fyLab(Q_nextFY(ebx.y)), act:ebx.a, fc:Q_dEps(ebx.f), g:Q_grow(ebx.a, ebx.f), basis:ebx.b};
+  if(ebx) return {y:Q_fyLab(Q_nextFY(ebx.y)), act:ebx.a, fc:(ebx.f==null? null : Q_dEps(ebx.f)), g:(ebx.f==null? null : Q_grow(ebx.a, ebx.f)), basis:ebx.b};
   const y=Q_fyLab(nfy&&nfy.y? nfy.y : (estY? estY.replace(/E$/,'') : ''));
   if(nfy&&nfy.eps) return {y, act:epsAct, fc:nfy.eps, g:Q_grow(epsAct, nfy.eps)};
   if(estY) return {y, act:epsAct, fc:Q_dEps(fy.eps[estI]), g:Q_grow(epsAct, fy.eps[estI])};
@@ -4987,7 +4986,8 @@ function buildDetail(c){
     /* 한글 1자는 영문 약 2배 폭 — 가중 길이로 글자크기 결정 */
     const w=[...t].reduce((n,ch)=>n+(/[가-힣]/.test(ch)?2:1),0);
     const fz=w>=21?10.2:(w>=18?11:(w>=16?11.6:12.4));
-    return `<div style="font-size:${fz}px;font-weight:800;white-space:nowrap;margin-top:3px"><span style="color:${gold?'#9c8340':'#6a6a6a'};font-weight:700">${lab}</span> <b style="color:${gold?'#c9a544':'#e8e8e8'};font-variant-numeric:tabular-nums">${val}</b></div>`; };
+    const vc = String(val)==='미제시'? '#8f8f8f' : (gold?'#c9a544':'#e8e8e8');
+    return `<div style="font-size:${fz}px;font-weight:800;white-space:nowrap;margin-top:3px"><span style="color:${gold?'#9c8340':'#6a6a6a'};font-weight:700">${lab}</span> <b style="color:${vc};font-variant-numeric:tabular-nums">${val}</b></div>`; };
   const growRow=g=> g? `<div style="font-size:${g.t.length>=9?11:12.4}px;font-weight:800;white-space:nowrap;color:${g.up?'#4ade80':'#f87171'}">${g.t}</div>`:'';
   const dEps=v=> (v<0?'-$'+Math.abs(v):'$'+v);
   const krwEps=v=> Math.round(v*FX).toLocaleString('ko-KR')+'원';
@@ -5001,7 +5001,7 @@ function buildDetail(c){
   const ebx=c.epsb||null;
   const epsA = ebx? ebx.a : epsAct;                       // 확정 (기준 통일)
   const epsY = ebx? fyLab(ebx.y) : fyLab(actY);
-  const epsFc = ebx? [dEps(ebx.f), growOf(ebx.a, ebx.f)]
+  const epsFc = ebx? (ebx.f==null? null : [dEps(ebx.f), growOf(ebx.a, ebx.f)])
     : (nfy&&nfy.eps? [nfy.eps, growOf(epsAct, nfy.eps)] : (estY? [dEps(epsEst), growOf(epsAct, epsEst)] : null));
   const ebTag = ebx? ` <span style="font-size:8.5px;color:#6f6f6f;font-weight:700">${ebx.b}</span>` : '';
   /* 주가 — 카드 3개 위에 가로 한 줄 카드로 (live.json이 매일 채움) */
@@ -5055,10 +5055,10 @@ function buildDetail(c){
       <div class="stat"><div class="k">시가총액</div>${vFit(krw(c.capB,true))}<div class="krw" style="white-space:nowrap">${fB(c.capB)}${c.capNote?' ~':''}</div><div class="s" style="color:#bbb;white-space:nowrap">QQQ비중 ${c.qqq}%</div>${c.qqqNote?`<div class="krw">${c.qqqNote}</div>`:''}</div>
       <div class="stat"><div class="k">연매출</div>${vFit(krwS(fB(revAct),true))}
         ${fyRow(fyLab(actY)+' 확정', fB(revAct))}
-        ${revFc?fyRow(fcY+' 전망', revFc[0], 1)+growRow(revFc[1]):''}</div>
+        ${revFc?fyRow(fcY+' 전망', revFc[0], 1)+growRow(revFc[1]):fyRow(fyLab(nextFY(actY))+' 전망', '미제시', 1)}</div>
       <div class="stat"><div class="k">연EPS${ebTag}${c.fyDue?` <span style="font-size:8.5px;color:#c9a544;font-weight:800">갱신예정</span>`:''}</div>${vFit(krwEps(epsA))}
         ${fyRow(epsY+' 확정', dEps(epsA))}
-        ${epsFc?fyRow((ebx?fyLab(nextFY(ebx.y)):fcY)+' 전망', epsFc[0], 1)+growRow(epsFc[1]):''}</div>
+        ${epsFc?fyRow((ebx?fyLab(nextFY(ebx.y)):fcY)+' 전망', epsFc[0], 1)+growRow(epsFc[1]):fyRow((ebx?fyLab(nextFY(ebx.y)):fyLab(nextFY(actY)))+' 전망', '미제시', 1)}</div>
     </div>
   </div>
   <div class="tabbar">${DTABS.map(([t,k,e])=>`<span class="tab dtab ${t==='ov'?'on':''}" data-t="${t}" onclick="showDTab('${t}')">${k}<small>${e}</small></span>`).join('')}</div>
