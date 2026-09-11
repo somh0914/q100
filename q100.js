@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.11-BN';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.11-BO';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -5367,15 +5367,14 @@ function renderQQQ(){
     ${DB.idxChanges.added.map(a=>{const c=byId[a.id]; if(!c) return '';
       return `<div class="list-row" onclick="openCompany('${c.id}')">
       <div class="avatar" style="width:52px;height:32px;border-radius:10px;background:${c.color};color:${c.tx};font-size:11px;flex:none">${c.ticker}</div>
-      <div style="flex:1;min-width:0"><b style="font-size:13.5px;color:#d9d9d9">${krName(c)}</b>
+      <div style="flex:1;min-width:0"><b style="font-size:13.5px;color:#d9d9d9;white-space:nowrap;display:block">${krName(c)}</b>
         <div class="tiny" style="margin-top:2px">${a.why}</div></div>
-      <span class="pill" style="background:#0a2e1a;color:#4ade80;font-weight:800;white-space:nowrap;flex:none">🆕 ${a.d} 편입</span></div>`;}).join('')}
+      <span class="pill" style="background:#0a2e1a;color:#4ade80;font-weight:800;white-space:nowrap;flex:none">🆕 ${a.d.slice(2)} 편입</span></div>`;}).join('')}
     ${DB.idxChanges.removed.map(x=>`<div class="list-row" style="opacity:.65;cursor:default">
       <div class="avatar" style="width:52px;height:32px;border-radius:10px;background:#2a2a2a;color:#888;font-size:11px;flex:none">${x.t}</div>
-      <div style="flex:1;min-width:0"><b style="font-size:13.5px;color:#a8a8a8">${x.n}</b>
+      <div style="flex:1;min-width:0"><b style="font-size:13.5px;color:#a8a8a8;white-space:nowrap;display:block">${x.n}</b>
         <div class="tiny" style="margin-top:2px">${x.why}</div></div>
-      <span class="pill" style="background:#3a1212;color:#f87171;font-weight:800;white-space:nowrap;flex:none">📤 ${x.d} 편출</span></div>`).join('')}
-    <p class="tiny" style="margin-top:8px">지수 구성은 매일 자동 감시 중 — 변경이 감지되면 앱에 반영됩니다.</p>
+      <span class="pill" style="background:#3a1212;color:#f87171;font-weight:800;white-space:nowrap;flex:none">📤 ${x.d.slice(2)} 편출</span></div>`).join('')}
   </div>`:''}
   <div class="sec-t" id="contrib-sec">수익률 기여도 <small>YTD · ${DB.meta.retAsOf} 기준 근사</small></div>
   <div class="card" style="padding:12px 16px">${(()=>{
@@ -5387,11 +5386,10 @@ function renderQQQ(){
       <div><div class="tiny" style="font-weight:600">QQQ 수익률 ($ 기준 · 연초 대비)</div><div style="font-size:14px;font-weight:900;color:#e8e8e8;margin-top:1px">기여도 합계</div></div>
       <b style="font-size:17px;font-variant-numeric:tabular-nums;color:${tot>=0?'#4ade80':'#f87171'}">${fPct(tot,1)}</b></div>`
     + show.map((r,i)=>{const c=r.c, neg=r.v<0, sh=Math.abs(r.v)/mag*100;
-      return `<div class="row" style="margin:8px 0;cursor:pointer" onclick="openCompany('${c.id}')"><span class="rank-n">${i+1}</span><div class="metric-lbl" style="width:150px;flex:0 0 150px;min-width:0;font-weight:800;color:#ddd"><div style="white-space:nowrap">${krName(c)}</div><div class="tiny" style="font-weight:600;white-space:nowrap">${c.qqq}% × ${fPct(c.ret.ytd,0)}</div></div>
+      return `<div class="row" style="margin:8px 0;cursor:pointer" onclick="openCompany('${c.id}')"><span class="rank-n">${i+1}</span><div class="metric-lbl" style="width:162px;flex:0 0 162px;min-width:0;font-weight:800;color:#ddd"><div style="white-space:nowrap">${krName(c)}</div><div class="tiny" style="font-weight:600;white-space:nowrap">비중 ${c.qqq}% × 수익률 ${fPct(c.ret.ytd,0)}</div></div>
       <div class="hbar"><i style="width:${Math.max(sh,1.5).toFixed(1)}%;background:${neg?'#f87171':c.color}"></i></div>
       <div class="metric-val" style="width:58px;color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
-  })()}
-    <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 QQQ 연초 대비 수익률을 나눠 배분한 근사치입니다. 띠 길이는 전체 수익률 중 그 기업이 차지하는 비율이라, ${C.length}개 띠를 이어 붙이면 꽉 찹니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
+  })()}</div>
   <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>`;
 }
 function contribRows(){
