@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.11-BF';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.11-BN';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -4692,10 +4692,18 @@ function hRow(label, val, max, color, valText){
 
 /* ---------- shared components ---------- */
 function krName(c){ return c.kr.replace(/\s*\(.*\)$/,''); }
+function fitFz(t,maxW,base){ const est=[...String(t)].reduce((w,ch)=>w+(/[가-힣]/.test(ch)?base*1.03:/\s/.test(ch)?base*0.31:base*0.65),0);
+  return est<=maxW? base : Math.max(9.5, Math.floor(base*maxW/est*10)/10); }
 function avatar(c, size=40, fs=13){
-  const n=krName(c), len=n.length;
-  const f=Math.max(8, Math.round(size*(len<=4?0.34: len<=6?0.29: len<=8?0.25:0.21)));
-  return `<div class="avatar" style="height:${size}px;padding:0 ${Math.round(size*0.24)}px;border-radius:${Math.round(size*0.3)}px;background:${c.color};color:${c.tx};font-size:${f}px">${n}</div>`;
+  /* 티커 박스: 크기 고정(높이 size, 폭 size×1.6), 회사색 배경 위에 살짝 어두운 막을 깔아
+     어떤 색이든 흰 글자로 통일. 긴 티커(5자)는 글자만 조금 축소. */
+  const w=Math.round(size*1.6), r=Math.round(size*0.28);
+  const f=c.ticker.length>=5? Math.round(size*0.31) : Math.round(size*0.35);
+  return `<div class="avatar" style="width:${w}px;height:${size}px;border-radius:${r}px;background:${c.color};position:relative;overflow:hidden;color:#fff;font-size:${f}px;letter-spacing:.2px"><div style="position:absolute;inset:0;background:rgba(0,0,0,.28)"></div><span style="position:relative;text-shadow:0 1px 2px rgba(0,0,0,.5)">${c.ticker}</span></div>`;
+}
+/* 티커 박스 오른쪽에 붙는 이름 블록: 한글명(굵게) + 그 아래 영문명(작게) */
+function nameBlock(c, big=13.5, sub){
+  return `<div style="flex:1;min-width:0"><div style="font-size:${big}px;font-weight:800;color:#e8e8e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${krName(c)}</div><div class="tiny" style="margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}${sub?' · '+sub:''}</div></div>`;
 }
 function hdrHTML(){
   return `<div class="hdr"><div class="logo">Q100<small>QQQ 기업해부</small></div>
@@ -4718,8 +4726,9 @@ function ccard(c){
     <div class="cs">$${b}</div>`;
   }
   return `<div class="ccard" onclick="openEnc('${c.id}')" style="background:linear-gradient(155deg,${c.color}24,#121212 58%)">
-    <div class="row sb">${avatar(c,38,12)}<span class="tiny" style="font-weight:800;color:#8f8f8f">${c.ticker}</span></div>
-    <div class="tg" style="margin-top:10px">${c.name}</div>
+    <div class="row" style="gap:9px;align-items:center">${avatar(c,34,12)}</div>
+    <div style="margin-top:9px;font-size:14px;font-weight:800;color:#e8e8e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${krName(c)}</div>
+    <div class="tiny" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
     <div class="ck">시가총액 · <b style="color:#bbb">QQQ비중 ${c.qqq}%</b></div>
     <div class="cv">${krw(c.capB,true)}</div>
     <div class="cs">${fB(c.capB)}${c.capNote?' ~':''}</div>
@@ -4729,10 +4738,9 @@ function ccard(c){
     ${epsHtml}</div>`;
 }
 function listRow(c, right, sub){
-  return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,38,12)}
-    <div style="flex:1;min-width:0"><b style="font-size:13.5px;color:#d9d9d9">${c.name}</b>
-    <div class="tiny" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub!==undefined?sub:c.industry}</div></div>
-    <div style="text-align:right">${right}</div></div>`;
+  return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,36,12)}
+    ${nameBlock(c,13.5, sub!==undefined?sub:c.industry)}
+    <div style="text-align:right;flex:none">${right}</div></div>`;
 }
 function videoCard(c, wide=false){
   const v=c.videos[0];
@@ -4808,14 +4816,20 @@ function openRank(key,id){ st.navList=rankIds(key); openCompany(id,true); }
 function rankList(key, n=5){
   const r=RANKS[key];
   const arr=C.filter(c=>isFinite(r.get(c))).sort((a,b)=>r.get(b)-r.get(a)).slice(0,n);
-  const max=Math.max(...arr.map(c=>Math.abs(r.get(c))))||1;
-  return arr.map((c,i)=>{
+  /* 띠 기준: QQQ 비중은 100% 중 실제 비중(전 종목 합=100), 나머지 랭킹은 1등 대비 상대 길이 */
+  const max= key==='qqq' ? 100 : (Math.max(...arr.map(c=>Math.abs(r.get(c))))||1);
+  /* QQQ 비중 랭킹: 101개 비중 합계를 맨 위에 (아래 숫자들이 이 합계를 나눠 가진다는 뜻) */
+  const head = key==='qqq' ? (()=>{ const tot=C.reduce((s,c)=>s+(isFinite(c.qqq)?c.qqq:0),0);
+    return `<div class="row sb" style="padding:8px 0 10px;border-bottom:1px solid #222;margin-bottom:2px;align-items:center">
+      <div><div class="tiny" style="font-weight:600">QQQ 안의 ${C.length}개 기업</div><div style="font-size:14px;font-weight:900;color:#e8e8e8;margin-top:1px">비중 합계</div></div>
+      <b style="font-size:17px;font-variant-numeric:tabular-nums;color:#e8e8e8">${tot.toFixed(1)}%</b></div>`; })() : '';
+  return head + arr.map((c,i)=>{
     const v=r.get(c);
     const vc = key==='price' ? (v>=0?'#4ade80':'#f87171') : '#fff';
     return `<div class="list-row" onclick="openRank('${key}','${c.id}')">
     <span class="rank-n">${i+1}</span>${avatar(c,34,11)}
-    <div style="flex:1;min-width:0"><span class="tiny" style="font-weight:700;color:#c9c9c9;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</span>
-      <div class="hbar" style="margin-top:5px;height:5px"><i style="width:${Math.max(Math.abs(v)/max*100,3).toFixed(0)}%;background:${c.color}"></i></div></div>
+    <div style="flex:1;min-width:0"><span style="font-size:13px;font-weight:800;color:#e8e8e8;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${krName(c)}</span><span class="tiny" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</span>
+      <div class="hbar" style="margin-top:4px;height:5px"><i style="width:${Math.max(Math.abs(v)/max*100, key==='qqq'?1:3).toFixed(1)}%;background:${c.color}"></i></div></div>
     <div style="text-align:right;flex:none;white-space:nowrap"><b style="font-size:14px;font-variant-numeric:tabular-nums;color:${vc}">${r.fmt(v,c)}</b>${key==='growth'? epsBadge(c):''}${key==='price'&&c.ret&&c.ret.ipo?`<div style="font-size:11px;font-weight:700;color:#7fb2ff;margin-top:1px">상장 후 (${c.ret.ipo.slice(5).replace('-','.')}~)</div>`:''}</div></div>`;
   }).join('');
 }
@@ -4888,8 +4902,9 @@ function renderHome(){
     </div>`).join('')}</div>
   <div class="sec-t">이런 기업은 어때요</div>
   <div class="grid3">${rec.map(c=>`<div class="stat" style="cursor:pointer;padding:14px 6px" onclick="openCompany('${c.id}')">
-    <div style="display:flex;justify-content:center">${avatar(c,40,13)}</div>
-    <div class="tiny" style="margin-top:8px;font-weight:700;color:#bbb">${c.name}</div></div>`).join('')}</div>`;
+    <div style="display:flex;justify-content:center">${avatar(c,34,12)}</div>
+    <div style="margin-top:8px;font-size:12.5px;font-weight:800;color:#e8e8e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${krName(c)}</div>
+    <div class="tiny" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div></div>`).join('')}</div>`;
 }
 
 /* ---------- COMPANIES ---------- */
@@ -5280,7 +5295,7 @@ function renderCompare(){
   const sel=[...st.cmp].map(id=>byId[id]);
   const slots=Array.from({length:4},(_,i)=>{
     const c=sel[i];
-    if(c) return `<div class="slot fl"><span class="rm" onclick="toggleCmp('${c.id}')">✕</span>${avatar(c,36,12)}<b style="font-size:12.5px">${c.ticker}</b></div>`;
+    if(c) return `<div class="slot fl"><span class="rm" onclick="toggleCmp('${c.id}')">✕</span>${avatar(c,34,12)}<b style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${krName(c)}</b></div>`;
     return `<div class="slot" onclick="toast('아래 목록에서 기업을 추가하세요')">+<span>기업 추가</span></div>`;
   }).join('');
   const rest=C.filter(c=>!st.cmp.has(c.id));
@@ -5320,8 +5335,8 @@ function renderQQQ(){
     const c=h.id?byId[h.id]:null;
     return `<div class="wrow" ${c?`style="cursor:pointer" onclick="openCompany('${c.id}')"`:''}>
       <span class="rank-n">${i+1}</span>
-      ${c?avatar(c,32,11):`<div class="avatar" style="width:32px;height:32px;background:#222;color:#777;font-size:12.5px">${h.n[0]}</div>`}
-      <div style="flex:1;min-width:0"><b style="font-size:13px;color:${c?'#d9d9d9':'#909090'}">${h.n}</b> <span class="tiny">${h.t}</span>
+      ${c?avatar(c,32,11):`<div class="avatar" style="width:51px;height:32px;border-radius:9px;background:#222;color:#888;font-size:11px">${h.t}</div>`}
+      <div style="flex:1;min-width:0"><b style="font-size:13px;color:${c?'#e8e8e8':'#909090'}">${c?krName(c):h.n}</b>${c?` <span class="tiny">${c.name}</span>`:''}
         <div class="hbar" style="margin-top:4px;height:5px"><i style="width:${(h.w/mx*100).toFixed(0)}%;background:${c?c.color:'#3a3a3a'}"></i></div></div>
       <div style="text-align:right"><b style="font-size:14px;font-variant-numeric:tabular-nums">${h.w}%</b>${c?'':'<div class="tiny" style="font-size:10.5px">준비 중</div>'}</div></div>`;
   };
@@ -5366,13 +5381,17 @@ function renderQQQ(){
   <div class="card" style="padding:12px 16px">${(()=>{
     const rows=contribRows();
     const show=st.contribAll? rows : rows.slice(0,10);
-    const mx=Math.max(...rows.map(r=>Math.abs(r.v)))||1;
-    return show.map((r,i)=>{const c=r.c, neg=r.v<0;
-      return `<div class="row" style="margin:8px 0;cursor:pointer" onclick="openCompany('${c.id}')"><span class="rank-n">${i+1}</span><div class="metric-lbl" style="width:100px;font-weight:800;color:#ddd">${krName(c)}<div class="tiny" style="font-weight:600;white-space:nowrap">${c.qqq}% × ${fPct(c.ret.ytd,0)}</div></div>
-      <div class="hbar"><i style="width:${Math.max(Math.abs(r.v)/mx*100,2).toFixed(0)}%;background:${neg?'#f87171':c.color}"></i></div>
-      <div class="metric-val" style="color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
+    const tot=qqqYtdStats().usd, mag=Math.abs(tot)||1;
+    /* 띠 = 전체 수익률 중 그 기업이 차지하는 비율 (모든 띠를 이어 붙이면 100%) */
+    return `<div class="row sb" style="padding:2px 0 10px;border-bottom:1px solid #222;margin-bottom:4px;align-items:center">
+      <div><div class="tiny" style="font-weight:600">QQQ 수익률 ($ 기준 · 연초 대비)</div><div style="font-size:14px;font-weight:900;color:#e8e8e8;margin-top:1px">기여도 합계</div></div>
+      <b style="font-size:17px;font-variant-numeric:tabular-nums;color:${tot>=0?'#4ade80':'#f87171'}">${fPct(tot,1)}</b></div>`
+    + show.map((r,i)=>{const c=r.c, neg=r.v<0, sh=Math.abs(r.v)/mag*100;
+      return `<div class="row" style="margin:8px 0;cursor:pointer" onclick="openCompany('${c.id}')"><span class="rank-n">${i+1}</span><div class="metric-lbl" style="width:150px;flex:0 0 150px;min-width:0;font-weight:800;color:#ddd"><div style="white-space:nowrap">${krName(c)}</div><div class="tiny" style="font-weight:600;white-space:nowrap">${c.qqq}% × ${fPct(c.ret.ytd,0)}</div></div>
+      <div class="hbar"><i style="width:${Math.max(sh,1.5).toFixed(1)}%;background:${neg?'#f87171':c.color}"></i></div>
+      <div class="metric-val" style="width:58px;color:${neg?'#f87171':'#4ade80'}">${(r.v>=0?'+':'')+r.v.toFixed(2)}%p</div></div>`;}).join('');
   })()}
-    <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 실제 QQQ 연초 대비 수익률(${fPct(qqqYtdStats().usd,1)})을 나눠 배분한 근사치입니다. ${C.length}개 기여도를 전부 더하면 QQQ 수익률과 같아집니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
+    <p class="tiny" style="margin-top:10px;line-height:1.6">각 기업의 <b style="color:#ccc">비중 × YTD 수익률</b> 크기 비율대로 QQQ 연초 대비 수익률을 나눠 배분한 근사치입니다. 띠 길이는 전체 수익률 중 그 기업이 차지하는 비율이라, ${C.length}개 띠를 이어 붙이면 꽉 찹니다. 마이너스인 기업은 QQQ를 끌어내린 쪽입니다.</p></div>
   <button class="btn ghost blk" onclick="toggleContrib()">${st.contribAll? '접기 ↑' : '전체 '+C.length+'개 기업 기여도 보기'}</button>`;
 }
 function contribRows(){
@@ -5419,7 +5438,7 @@ function renderDiscover(){
   <div class="sec-t">실적 캘린더 <small>예상 일정</small></div>
   <div class="card" style="padding:8px 16px">${DB.earnings.map(e=>{const c=byId[e.id];
     return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,32,11)}
-      <div style="flex:1"><b style="font-size:13px;color:#d9d9d9">${c.name}</b><div class="tiny">${e.q}</div></div>
+      <div style="flex:1;min-width:0"><b style="font-size:13px;color:#e8e8e8">${krName(c)}</b> <span class="tiny">${c.name}</span><div class="tiny">${e.q}</div></div>
       <span style="font-size:13.5px;font-weight:800;color:#ccc">${e.d}</span></div>`;}).join('')}</div>`;
 }
 
@@ -5441,7 +5460,7 @@ function renderMy(){
   <div class="sec-t">알림 <small>예시</small></div>
   <div class="card" style="padding:8px 16px">${DB.alerts.map(a=>{const c=byId[a.id];
     return `<div class="list-row" onclick="openCompany('${c.id}')">${avatar(c,32,11)}
-      <div style="flex:1"><b style="font-size:13px;color:#d9d9d9">${c.name}</b> <span class="pill g" style="margin-left:4px">${a.k}</span>
+      <div style="flex:1;min-width:0"><b style="font-size:13px;color:#e8e8e8">${krName(c)}</b> <span class="pill g" style="margin-left:4px">${a.k}</span>
       <div class="tiny" style="margin-top:2px">${a.d}</div></div></div>`;}).join('')}
     <p class="tiny" style="padding:8px 0 6px">주가 단기 알림이 아니라, 기업을 이해하는 데 필요한 소식만 보냅니다.</p></div>
   <div class="sec-t">보기 모드</div>
