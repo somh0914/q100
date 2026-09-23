@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.16-BP';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.23-BQ';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -3910,7 +3910,7 @@ DB.companies.push({
   tagline:'Space & Starlink', sub:'역대 최대 IPO, 우주의 지배자',
   oneLiner:'재사용 로켓으로 전 세계 발사의 3분의 2를 장악하고 스타링크로 지구를 연결하는 우주 인프라 기업',
   capB:1830, qqq:1.18, capNote:1,
-  qqqNote:'상장 초기 · 유통주식 적음',
+  qqqNote:'2026.09 리밸런싱 — 유통주식 증가로 비중 확대',
   newIn:'2026.07',
   products:['팰컨 9·스타십 (발사)','스타링크 (위성 인터넷)','드래곤 (유인 우주선)'],
   customers:['NASA·미 우주군','스타링크 가입자 1,000만+','전 세계 위성 사업자'],
@@ -4025,28 +4025,28 @@ DB.idxChanges = {
     {n:'일렉트로닉 아츠', t:'EA', d:'2026.08', why:'사우디 PIF 컨소시엄에 550억 달러 인수되어 상장폐지'}
   ]
 };
-/* --- QQQ 실제 비중 (인베스코 공식 보유내역 2026.08.28 · 분기마다 갱신) --- */
-const QW = {AAPL:7.49, ABNB:0.35, ADBE:0.52, ADI:0.78, ADP:0.51, ADSK:0.24, AEP:0.3, ALAB:0.22, ALNY:0.14, AMAT:1.62, AMD:3.34, AMGN:1.03, AMZN:4.57, APP:0.43, ARM:0.45, ASML:0.68, AVGO:2.79, AXON:0.21, BKNG:0.7, BKR:0.27, CCEP:0.21, CDNS:0.41, CEG:0.44, CMCSA:0.42, COST:1.85, CPRT:0.13, CRWD:0.98, CRWV:0.17, CSCO:1.91, CSX:0.42, CTAS:0.36, DASH:0.43, DDOG:0.35, DXCM:0.15, EXC:0.2, FANG:0.24, FAST:0.25, FER:0.19, FTNT:0.54, GEHC:0.14, GILD:0.8, GOOGL:6.2, HON:0.3, HONA:0.23, IDXX:0.19, INTC:1.98, INTU:0.43, ISRG:0.58, KDP:0.19, KLAC:1.01, LIN:1.0, LITE:0.31, LRCX:1.66, MAR:0.41, MCHP:0.18, MDLZ:0.35, MELI:0.44, META:2.73, MNST:0.4, MPWR:0.27, MRVL:0.83, MSFT:6.09, MSTR:0.19, MU:4.63, NBIS:0.2, NFLX:1.51, NVDA:8.4, NXPI:0.25, ODFL:0.18, ORLY:0.32, PANW:1.33, PAYX:0.2, PCAR:0.29, PDD:0.25, PEP:0.85, PLTR:1.88, PYPL:0.21, QCOM:0.76, REGN:0.36, RKLB:0.16, ROP:0.19, ROST:0.32, SBUX:0.54, SHOP:0.82, SNDK:0.97, SNPS:0.37, SPCX:1.19, STX:0.82, TER:0.24, TMUS:0.87, TRI:0.18, TSLA:2.78, TTWO:0.19, TXN:1.04, VRTX:0.61, WBD:0.32, WDAY:0.18, WDC:0.7, WMT:2.22, XEL:0.21};
+/* --- QQQ 실제 비중 (인베스코 공식 보유내역 2026.09.21 · 분기마다 갱신) --- */
+const QW = {AAPL:7.47, ABNB:0.29, ADBE:0.41, ADI:0.77, ADP:0.45, ADSK:0.19, AEP:0.27, ALAB:0.25, ALNY:0.14, AMAT:1.54, AMD:4.19, AMGN:0.89, AMZN:4.21, APP:0.42, ARM:0.59, ASML:0.67, AVGO:2.61, AXON:0.15, BKNG:0.53, BKR:0.24, CCEP:0.18, CDNS:0.34, CEG:0.39, CMCSA:0.34, COST:1.66, CPRT:0.11, CRWD:1.06, CRWV:0.16, CSCO:1.83, CSX:0.36, CTAS:0.33, DASH:0.33, DDOG:0.34, DXCM:0.14, EXC:0.18, FANG:0.22, FAST:0.24, FER:0.17, FTNT:0.54, GEHC:0.12, GILD:0.78, GOOGL:6.08, HON:0.27, HONA:0.22, IDXX:0.17, INTC:2.67, INTU:0.35, ISRG:0.59, KDP:0.17, KLAC:1, LIN:0.88, LITE:0.36, LRCX:1.58, MAR:0.37, MCHP:0.17, MDLZ:0.32, MELI:0.38, META:3.33, MNST:0.36, MPWR:0.26, MRVL:0.94, MSFT:5.63, MSTR:0.26, MU:4.92, NBIS:0.23, NFLX:1.27, NVDA:8.29, NXPI:0.25, ODFL:0.15, ORLY:0.28, PANW:1.26, PAYX:0.17, PCAR:0.25, PDD:0.22, PEP:0.75, PLTR:1.76, PYPL:0.19, QCOM:0.85, REGN:0.34, RKLB:0.17, ROP:0.15, ROST:0.31, SBUX:0.45, SHOP:0.7, SNDK:1.08, SNPS:0.32, SPCX:2.72, STX:0.83, TER:0.25, TMUS:0.74, TRI:0.15, TSLA:2.98, TTWO:0.16, TXN:1.03, VRTX:0.54, WBD:0.32, WDAY:0.16, WDC:0.67, WMT:2.18, XEL:0.19};
 DB.companies.forEach(c => { if (QW[c.ticker] != null) c.qqq = QW[c.ticker]; });
 DB.qqqTop = [
-  {n:'NVIDIA', t:'NVDA', w:8.4, id:'nvda'},
-  {n:'Apple', t:'AAPL', w:7.49, id:'aapl'},
-  {n:'Microsoft', t:'MSFT', w:6.09, id:'msft'},
-  {n:'Micron', t:'MU', w:4.63, id:'mu'},
-  {n:'Amazon', t:'AMZN', w:4.57, id:'amzn'},
-  {n:'AMD', t:'AMD', w:3.34, id:'amd'},
-  {n:'Alphabet A', t:'GOOGL', w:3.22, id:'googl'},
-  {n:'Alphabet C', t:'GOOG', w:2.98, id:'googl'},
-  {n:'Broadcom', t:'AVGO', w:2.79, id:'avgo'},
-  {n:'Tesla', t:'TSLA', w:2.78, id:'tsla'},
-  {n:'Meta', t:'META', w:2.73, id:'meta'},
-  {n:'Walmart', t:'WMT', w:2.22, id:'wmt'},
-  {n:'Intel', t:'INTC', w:1.98, id:'intc'},
-  {n:'Cisco', t:'CSCO', w:1.91, id:'csco'},
-  {n:'Palantir', t:'PLTR', w:1.88, id:'pltr'}
+  {n:'NVIDIA', t:'NVDA', w:8.29, id:'nvda'},
+  {n:'Apple', t:'AAPL', w:7.47, id:'aapl'},
+  {n:'Microsoft', t:'MSFT', w:5.63, id:'msft'},
+  {n:'Micron', t:'MU', w:4.92, id:'mu'},
+  {n:'Amazon', t:'AMZN', w:4.21, id:'amzn'},
+  {n:'AMD', t:'AMD', w:4.19, id:'amd'},
+  {n:'Meta', t:'META', w:3.33, id:'meta'},
+  {n:'Alphabet A', t:'GOOGL', w:3.15, id:'googl'},
+  {n:'Tesla', t:'TSLA', w:2.98, id:'tsla'},
+  {n:'Alphabet C', t:'GOOG', w:2.93, id:'googl'},
+  {n:'SpaceX', t:'SPCX', w:2.72, id:'spcx'},
+  {n:'Intel', t:'INTC', w:2.67, id:'intc'},
+  {n:'Broadcom', t:'AVGO', w:2.61, id:'avgo'},
+  {n:'Walmart', t:'WMT', w:2.18, id:'wmt'},
+  {n:'Cisco', t:'CSCO', w:1.83, id:'csco'}
 ];
-DB.top10 = 46.3;
-DB.meta.weightsAsOf = '2026.08.28';
+DB.top10 = 47.1;
+DB.meta.weightsAsOf = '2026.09.21';
 DB.meta.weightsQ = '2026.3Q';   // 비중 기준 분기 — 분기 CSV 갱신 때 함께 수정
 
 /* ===== 재무 데이터 '반영 분기' 라벨 (검증용) =====
