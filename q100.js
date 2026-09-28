@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.09.25-BS';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.09.28-BT';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -2254,7 +2254,7 @@ DB.companies.push(
     {t:'가격 인상', d:'인플레이션 전가력 탁월'}
   ],
   segments:[{n:'유니폼 대여·시설',p:78},{n:'응급안전·기타',p:22}],
-  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[7.1,8.0,8.8,9.6,10.3,11.3], op:[1.4,1.7,1.9,2.2,2.4,2.6], ni:[1.1,1.2,1.3,1.6,1.7,2.0], fcf:[1.0,1.3,1.4,1.6,1.7,1.9], eps:[2.73,3.07,3.33,3.90,4.20,4.91]},
+  fin:{years:['FY21','FY22','FY23','FY24','FY25','FY26'], rev:[7.1,8.0,8.8,9.6,10.3,11.3], op:[1.4,1.7,1.9,2.2,2.4,2.6], ni:[1.1,1.2,1.3,1.6,1.8,2.0], fcf:[1.0,1.3,1.4,1.6,1.7,1.9], eps:[2.73,3.07,3.33,3.90,4.40,4.91]},
   finNote:'회계연도 5월 종료 · 주당 지표는 액면분할 반영',
   key:{rev:'$11.3B', revG:'+9%', opm:'23%', fcf:'$1.7B', extraK:'연속 성장', extraV:'50년+'},
   score:{biz:87, growth:72, profit:86, cash:88, moat:90, fin:94, val:45, total:81},
@@ -4483,7 +4483,8 @@ const fB = v => { const a = Math.abs(v); const s = v < 0 ? '-' : '';
 const fPct = (v, d=0) => (v > 0 ? '+' : '') + v.toFixed(d) + '%';
 const mPct = (v, d=1) => v.toFixed(d) + '%';
 const last = a => a[a.length-1];
-const lastG = c => (last(c.fin.rev)/c.fin.rev[c.fin.rev.length-2]-1)*100;
+/* 매출 성장률 = '확정 연도' 대비 그 전년 (전망 E연도는 제외) — 상세 화면의 연매출 확정값과 같은 기준 */
+const lastG = c => { const f=c.fin, n=f.years.length, i=/E$/.test(f.years[n-1])? n-2 : n-1; return (f.rev[i]/f.rev[i-1]-1)*100; };
 
 /* ---------- 연간 확정 → 전망 증감 (기업 카드의 연매출·연EPS와 랭킹이 같은 계산을 쓴다) ---------- */
 /* 문자열 금액 → 숫자 ($129.7B→129.7, $953M→0.953, -$0.43→-0.43) */
@@ -4524,6 +4525,13 @@ function fwdEps(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null, ebx=c.
   if(nfy&&nfy.eps) return {y, act:epsAct, fc:nfy.eps, g:Q_grow(epsAct, nfy.eps)};
   if(estY) return {y, act:epsAct, fc:Q_dEps(fy.eps[estI]), g:Q_grow(epsAct, fy.eps[estI])};
   return {y, act:epsAct, fc:null, g:null}; }
+/* 핵심 매출 숫자(key.rev·revG)를 연도별 표의 '확정 연도' 값에서 자동 생성 —
+   기업백과사전 카드·30초 요약·핵심 숫자·상세의 연매출이 모두 같은 숫자를 쓰게 한다 */
+DB.companies.forEach(c => { const {fy,actI}=fyIdx(c); const a=fy.rev[actI], p=fy.rev[actI-1];
+  if (!isFinite(a)) return;
+  c.key.rev = fB(a);
+  if (p>0 && a>0) { const g=(a/p-1)*100; c.key.revG = (g>=0?'+':'-')+Math.round(Math.abs(g))+'%'; }
+  c.key.revY = Q_fyLab(fy.years[actI]); });
 const lastOpm = c => last(c.fin.op)/last(c.fin.rev)*100;
 const fcfM = c => last(c.fin.fcf)/last(c.fin.rev)*100;
 let FX = DB.meta.fx;
@@ -4671,18 +4679,24 @@ function hdrHTML(){
     </div></div>`;
 }
 function ccard(c){
-  const g=lastG(c), e=c.fin.eps;
+  const g=lastG(c);
+  /* EPS = 상세 화면 연EPS의 확정값과 동일 (조정/GAAP 기준 통일 짝 우선) */
+  const {fy,actI}=fyIdx(c), fe=fwdEps(c);
   let epsHtml='';
-  if(e){
-    const a=e[e.length-2], b=e[e.length-1];
-    const wv=Math.round(b*FX).toLocaleString('ko-KR')+'원';
-    let chg, cc;
-    if(a>0 && b>0){ const p=(b/a-1)*100; chg=fPct(p,0); cc=p>=0?'#4ade80':'#f87171'; }
-    else if(b>0){ chg='흑자전환'; cc='#4ade80'; }
-    else { chg='적자'; cc='#f87171'; }
-    epsHtml=`<div class="ck">주당순이익 (EPS)</div>
-    <div class="cv2">${wv} <span style="color:${cc};font-size:11.5px">${chg}</span></div>
-    <div class="cs">$${b}</div>`;
+  if(fe && isFinite(fe.act)){
+    const b=fe.act, finB=fy.eps[actI], a=fy.eps[actI-1];
+    /* 전년 대비는 같은 기준일 때만 계산 (조정 EPS인데 전년은 GAAP만 있으면 생략) */
+    const same=isFinite(finB) && Math.abs(finB-b) <= Math.max(0.02, Math.abs(b)*0.02);
+    const wv=(b<0?'-':'')+Math.round(Math.abs(b)*FX).toLocaleString('ko-KR')+'원';
+    let chg='', cc='#8f8f8f';
+    if(same && isFinite(a)){
+      if(a>0 && b>0){ const p=(b/a-1)*100; chg=fPct(p,0); cc=p>=0?'#4ade80':'#f87171'; }
+      else if(a<=0 && b>0){ chg='흑자전환'; cc='#4ade80'; }
+      else if(b<0){ chg='적자'; cc='#f87171'; }
+    } else if(b<0){ chg='적자'; cc='#f87171'; }
+    epsHtml=`<div class="ck">주당순이익 (${c.key.revY||'FY'}${fe.basis==='조정'?' · 조정':''})</div>
+    <div class="cv2">${wv}${chg?` <span style="color:${cc};font-size:11.5px">${chg}</span>`:''}</div>
+    <div class="cs">${Q_dEps(b)}</div>`;
   }
   return `<div class="ccard" onclick="openEnc('${c.id}')" style="background:linear-gradient(155deg,${c.color}24,#121212 58%)">
     <div class="row" style="gap:9px;align-items:center">${avatar(c,34,12)}</div>
@@ -4691,7 +4705,7 @@ function ccard(c){
     <div class="ck">시가총액 · <b style="color:#bbb">QQQ비중 ${c.qqq}%</b></div>
     <div class="cv">${krw(c.capB,true)}</div>
     <div class="cs">${fB(c.capB)}${c.capNote?' ~':''}</div>
-    <div class="ck">매출 (FY)</div>
+    <div class="ck">매출 (${c.key.revY||'FY'})</div>
     <div class="cv2">${krwS(c.key.rev,true)} <span style="color:${g>=0?'#4ade80':'#f87171'};font-size:11.5px">${fPct(g,0)}</span></div>
     <div class="cs">${c.key.rev}</div>
     ${epsHtml}</div>`;
@@ -5119,7 +5133,7 @@ function secOverview(c){
   </div>
   <div class="grid2">
     ${c.share?`<div class="stat"><div class="k">시장점유율 <span style="color:#5f5f5f">(업계 추정)</span></div><div class="v">${c.share[0]}</div><div class="krw">${c.share[1]}</div></div>`
-    :`<div class="stat"><div class="k">최근 매출 (FY)</div><div class="v">${c.key.rev}</div><div class="krw">${krwS(c.key.rev)}</div><div class="s" style="color:#4ade80">${c.key.revG}</div></div>`}
+    :`<div class="stat"><div class="k">최근 매출 (${c.key.revY||'FY'})</div><div class="v">${c.key.rev}</div><div class="krw">${krwS(c.key.rev)}</div><div class="s" style="color:#4ade80">${c.key.revG}</div></div>`}
     <div class="stat"><div class="k">${c.key.extraK}</div><div class="v">${c.key.extraV}</div>${krwS(c.key.extraV)?`<div class="krw">${krwS(c.key.extraV)}</div>`:''}</div>
   </div>
   <div class="sec-t">Q100 SCORE</div>
@@ -5143,7 +5157,7 @@ function secFin(c){
   const f=c.fin, col=c.color==='#F5F5F7'?'#fff':c.color;
   const opm=f.rev.map((r,i)=> r ? f.op[i]/r*100 : 0);
   return `
-  <div class="sec-t">핵심 숫자 <small>${f.years[4]} 기준${c.lastQ?` · ${c.lastQ.replace(' ','.')} 반영`:''}</small></div>
+  <div class="sec-t">핵심 숫자 <small>${c.key.revY||f.years[4]} 기준${c.lastQ?` · ${c.lastQ.replace(' ','.')} 반영`:''}</small></div>
   <div class="grid2">
     <div class="stat"><div class="k">매출</div><div class="v">${c.key.rev}</div><div class="krw">${krwS(c.key.rev)}</div><div class="s" style="color:#4ade80">${c.key.revG}</div></div>
     <div class="stat"><div class="k">영업이익률</div><div class="v">${c.key.opm}</div></div>
