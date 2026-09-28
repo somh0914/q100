@@ -34,6 +34,24 @@ jobs:
         run: |
           git config user.name "q100-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add live.json
-          git diff --cached --quiet || git commit -m "📈 데이터 자동 업데이트 $(date -u -d '+9 hours' +%Y-%m-%d)"
-          git push
+          cp live.json /tmp/new_live.json
+          upd() { python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('updated',''))" "$1"; }
+          # 실행이 겹쳐도 안전하게: 저장 직전에 저장소 최신 상태를 다시 받아
+          #  - 다른 실행이 이미 같은 날짜(또는 더 최신) 종가를 저장했다면 → 그대로 두고 성공 종료 (실패 메일 없음)
+          #  - 내 데이터가 더 최신이면 → 최신 저장소 위에 내 live.json만 얹어서 저장 (최대 3번 시도)
+          for i in 1 2 3; do
+            git fetch -q origin main
+            git show origin/main:live.json > /tmp/remote_live.json 2>/dev/null || echo '{}' > /tmp/remote_live.json
+            NEW=$(upd /tmp/new_live.json); OLD=$(upd /tmp/remote_live.json)
+            if [ -n "$OLD" ] && [[ ! "$NEW" > "$OLD" ]]; then
+              echo "저장소에 이미 $OLD 종가가 있음 → 이번 결과($NEW)는 저장하지 않고 성공 종료"; exit 0
+            fi
+            git reset -q --hard origin/main
+            cp /tmp/new_live.json live.json
+            git add live.json
+            git diff --cached --quiet && { echo "변경 없음"; exit 0; }
+            git commit -q -m "📈 데이터 자동 업데이트 $(date -u -d '+9 hours' +%Y-%m-%d)"
+            git push -q origin HEAD:main && exit 0
+            sleep 10
+          done
+          exit 1
