@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.11.06-CI';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.11.07-CJ';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -2996,7 +2996,7 @@ DB.companies.push(
   ],
   segments:[{n:'미국',p:50},{n:'해외',p:50}],
   fin:{years:['2021','2022','2023','2024','2025'], rev:[18.47,19.26,6.85,3.24,1.94], op:[13.30,9.42,-4.24,-3.95,-3.07], ni:[12.20,8.36,-4.71,-3.56,-2.82], fcf:[13.34,4.58,-3.83,-4.06,-2.07], eps:[28.29,20.12,-12.34,-9.27,-7.25]},
-  finNote:'12월 결산 · 2025년 확정 · 2026년 매출 전망은 회사 제시 상한(최대 +10%) · 미국·해외 약 50:50',
+  finNote:'12월 결산 · 2025년 확정 · 2026년 매출 전망은 회사 가이던스 중간값(+15~25%로 상향) · 미국·해외 약 50:50',
   key:{rev:'$1.9B', revG:'-40%', opm:'적자', fcf:'-$2.1B', extraK:'현금·투자자산', extraV:'$6.9B (26.6월 말)'},
   score:{biz:62, growth:55, profit:20, cash:40, moat:72, fin:68, val:30, total:52},
   moat:[70,40,30,55,65,88,55],
@@ -4074,7 +4074,7 @@ NBIS:'FY26 2Q', AXON:'FY26 3Q', PYPL:'FY26 3Q', ADSK:'FY27 2Q', EXC:'FY26 3Q',
 XEL:'FY26 3Q', FER:'FY26 2Q', IDXX:'FY26 3Q', ODFL:'FY26 3Q', MCHP:'FY27 2Q',
 RKLB:'FY26 2Q', PAYX:'FY27 1Q', TTWO:'FY27 1Q', CRWV:'FY26 2Q', KDP:'FY26 3Q',
 ROP:'FY26 3Q', TRI:'FY26 3Q', WDAY:'FY27 2Q', MSTR:'FY26 3Q', DXCM:'FY26 3Q',
-GEHC:'FY26 3Q', ALNY:'FY26 3Q', MRNA:'FY26 2Q', CPRT:'FY26 4Q',
+GEHC:'FY26 3Q', ALNY:'FY26 3Q', MRNA:'FY26 3Q', CPRT:'FY26 4Q',
 SPCX:'FY26 3Q', HONA:'FY26 3Q'
 };
 DB.companies.forEach(c => { if (LASTQ[c.ticker]) c.lastQ = LASTQ[c.ticker]; });
@@ -4181,7 +4181,7 @@ Object.assign(QR, {
  ADP:{q:'FY27 1Q', d:'10월 28일', rev:'$5.49B', revE:'$5.48B', revD:'+0.2%', eps:'$2.82', epsE:'$2.77', epsD:'+1.8%', basis:'조정', verdict:'beat'},
  PAYX:{q:'FY27 1Q', d:'9월 23일', rev:'$1.63B', revE:'$1.62B', revD:'+0.8%', eps:'$1.34', epsE:'$1.33', epsD:'+0.8%', basis:'조정', verdict:'beat'},
  CTAS:{q:'FY27 1Q', d:'9월 23일', rev:'$3.01B', revE:'$2.98B', revD:'+1.0%', eps:'$1.36', epsE:'$1.35', epsD:'+0.7%', basis:'GAAP', verdict:'beat'},
- DASH:{q:'FY26 3Q', d:'10월 29일', rev:'$4.62B', revE:'$4.55B', revD:'+1.5%', eps:'$1.06', epsE:'$0.82', epsD:'+29.3%', basis:'조정', verdict:'beat'},
+ DASH:{q:'FY26 3Q', d:'10월 29일', rev:'$4.62B', revE:'$4.55B', revD:'+1.5%', eps:'$1.06', epsE:'$0.82', epsD:'+29.3%', basis:'GAAP', verdict:'beat'},
  ABNB:{q:'FY26 3Q', d:'11월 5일', rev:'$4.87B', revE:'$4.75B', revD:'+2.5%', eps:'$3.16', epsE:'$2.85', epsD:'+10.9%', basis:'GAAP', verdict:'beat', gq:'2026 4Q', gRev:'$3.22~3.28B'},
  BKNG:{q:'FY26 3Q', d:'11월 3일', rev:'$8.89B', revE:'$9.56B', revD:'-7.0%', eps:'$4.66', epsE:'$4.48', epsD:'+4.0%', basis:'조정', verdict:'mixed', gq:'2026 4Q', gRev:'+0~2% YoY'},
  MAR:{q:'FY26 3Q', d:'11월 2일', rev:'$7.00B', revE:'$6.92B', revD:'+1.2%', eps:'$3.02', epsE:'$2.85', epsD:'+6.0%', basis:'조정', verdict:'beat'},
@@ -4205,7 +4205,7 @@ Object.assign(QR, {
  ISRG:{q:'FY26 3Q', d:'10월 20일', rev:'$3.05B', revE:'$2.90B', revD:'+5.2%', eps:'$3.00', epsE:'$2.64', epsD:'+13.6%', basis:'조정', verdict:'beat'},
  IDXX:{q:'FY26 3Q', d:'11월 2일', rev:'$1.21B', revE:'$1.19B', revD:'+1.7%', eps:'$4.01', epsE:'$3.72', epsD:'+7.8%', basis:'GAAP', verdict:'beat'},
  DXCM:{q:'FY26 3Q', d:'10월 29일', rev:'$1.34B', revE:'$1.33B', revD:'+0.8%', eps:'$0.73', epsE:'$0.67', epsD:'+9.0%', basis:'조정', verdict:'beat'},
- MRNA:{q:'FY26 2Q', d:'7월 31일', rev:'$145M', revE:'$127M', revD:'+14.4%', eps:'-$1.97', epsE:'-$1.97', epsD:'0.0%', basis:'GAAP', verdict:'beat'},
+ MRNA:{q:'FY26 3Q', d:'11월 6일', rev:'$1.31B', revE:'$891M', revD:'+47.0%', eps:'$0.38', epsE:'-$1.28', epsD:'', basis:'GAAP', verdict:'beat'},
  ALNY:{q:'FY26 3Q', d:'10월 29일', rev:'$1.46B', revE:'$1.43B', revD:'+2.1%', eps:'$16.26', epsE:'$2.25', epsD:'+622.7%', basis:'조정', verdict:'beat'},
  GEHC:{q:'FY26 3Q', d:'10월 28일', rev:'$5.51B', revE:'$5.36B', revD:'+2.8%', eps:'$1.34', epsE:'$1.21', epsD:'+10.7%', basis:'조정', verdict:'beat'},
  CMCSA:{q:'FY26 3Q', d:'10월 22일', rev:'$29.30B', revE:'$29.23B', revD:'+0.2%', eps:'$1.07', epsE:'$0.98', epsD:'+9.2%', basis:'조정', verdict:'beat'},
@@ -4255,7 +4255,6 @@ const GEXP = {
  GILD:{gq:'FY26 4Q', gRevE:'$8.23B', gEpsE:'$2.05'},
  REGN:{gq:'FY26 4Q', gRevE:'$5.21B', gEpsE:'$19.99'},
  ISRG:{gq:'FY26 4Q', gRevE:'$3.21B', gEpsE:'$2.84'},
- MRNA:{gq:'FY26 3Q', gRevE:'$942M', gEpsE:'-$1.28'},
  HON:{gq:'FY26 4Q', gRevE:'$5.28B', gEpsE:'$2.41'},
  ODFL:{gq:'FY26 4Q', gRevE:'$1.52B', gEpsE:'$1.45'},
  FAST:{gq:'FY26 4Q', gRevE:'$2.38B', gEpsE:'$0.31'},
@@ -4323,7 +4322,7 @@ const NEXTFY = {
  ISRG:{y:'2026', rev:'$11.7B', revG:'+19%', eps:'$10.74', epsG:'+20%'},
  IDXX:{y:'2026', rev:'$4.7B', revG:'+10%', eps:'$15.06', epsG:'+15.1%'},
  DXCM:{y:'2026', rev:'$5.23B', revG:'+13%', eps:'$2.66', epsG:'+27%'},
- MRNA:{y:'2026', rev:'$2.14B', revG:'+10%'},
+ MRNA:{y:'2026', rev:'$2.33B', revG:'+20%'},
  ALNY:{y:'2026', rev:'$5.5B', revG:'+48%', eps:'$8.92', epsG:'+76%'},
  GEHC:{y:'2026', rev:'$21.5B', revG:'+4%', eps:'$5.00', epsG:'+8.9%'},
  LIN:{y:'2026', rev:'$36.3B', revG:'+7%', eps:'$17.88', epsG:'+9%'},
