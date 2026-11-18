@@ -28,6 +28,19 @@ TICKERS = [
  "SPCX","HONA",  # 2026년 신규 편입 (스페이스X·하니웰 에어로스페이스) — 앱 반영 전이라도 데이터 선수집
  "QQQ",
 ]
+
+# 지수 구성종목 명단에 섞여 들어오는 ETF·지수 티커.
+# 슬릭차트는 구성종목 표 아래에 비교용 ETF 행(SPY·QQQ·DIA 등)을 함께 보여 주기 때문에
+# /symbol/ 링크를 긁으면 같이 들어온다.
+# 2026-11-17: SMH(반에크 반도체 ETF)가 명단에 들어와 가짜 '편입' 알림이 났다.
+#             아래 목록과, 더 확실한 안전장치인 '합친 뒤 정확히 100개' 검사를 함께 둔다.
+# (주의: 위 TICKERS에는 QQQ가 시세 조회용으로 일부러 들어 있다. 여기는 구성종목 명단 전용이다.)
+NOT_STOCK = {
+ "SPY","DIA","IWM","VOO","VTI","QQQ","QQQM","QQQE","QQEW","QQQJ","ONEQ","TQQQ","SQQQ",
+ "SMH","SOXX","SOXL","XLK","VGT","IYW","FTEC","ARKK","MAGS","IBIT","GLD","TLT","AGG","BND",
+ "EFA","EEM","VEA","VWO","IVV","SPLG","VUG","SCHG","RSP","MDY","XLF","XLE","XLV","XLY",
+}
+
 # 연초 기준일 = 항상 "작년 12월 31일" — 해가 바뀌면 1월 첫 실행 때 자동으로 새 기준년도로 전환됨
 YE_DATE = datetime.date(datetime.date.today().year - 1, 12, 31)
 REF_DATE = datetime.date(2026, 8, 7)           # 앱에 내장된 시가총액의 기준일
@@ -223,10 +236,18 @@ def main():
             _e.pop("w", None)
     live.pop("top", None)
     live.pop("top10", None)
-    # 이전 실행에서 명단에 섞여 들어온 ETF 티커 청소 (가짜 편출 알림 방지)
+    # 이전 실행에서 명단에 섞여 들어온 ETF 티커 청소 (가짜 편입·편출 알림 방지)
     if isinstance(live.get("members"), list):
-        _bad = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
-        live["members"] = [t for t in live["members"] if t not in _bad]
+        live["members"] = [t for t in live["members"] if t not in NOT_STOCK]
+    # 이미 기록된 가짜 편입·편출도 지운다 (안 지우면 120일간 매일 같은 알림이 반복된다)
+    if isinstance(live.get("chg"), dict):
+        for _k in ("added", "removed"):
+            if isinstance(live["chg"].get(_k), list):
+                _n0 = len(live["chg"][_k])
+                live["chg"][_k] = [x for x in live["chg"][_k]
+                                   if x.get("t") not in NOT_STOCK]
+                if len(live["chg"][_k]) != _n0:
+                    print(f"가짜 지수변경 기록 정리: chg.{_k}")
 
     ok, fail = 0, []
     latest_date = None
@@ -409,14 +430,16 @@ def main():
                                      headers={"User-Agent": UA["User-Agent"]})
         with urllib.request.urlopen(req, timeout=30) as r:
             html = r.read().decode("utf-8", "replace")
-        NOT_STOCK = {"SPY", "DIA", "IWM", "VOO", "VTI", "QQQM", "ONEQ", "TQQQ", "SQQQ", "QQQ"}
         syms = []
         for m in re.finditer(r'/symbol/([A-Z][A-Z0-9.\-]{0,6})', html):
             s = m.group(1)
             if s not in syms and s not in NOT_STOCK:
                 syms.append(s)
-        if 95 <= len(syms) <= 110:
-            cur = sorted(set("GOOGL" if s in ("GOOG", "GOOGL") else s for s in syms))
+        cur = sorted(set("GOOGL" if s in ("GOOG", "GOOGL") else s for s in syms))
+        # 나스닥100은 '정확히 100개 기업'이다. 듀얼클래스(GOOG/GOOGL)는 위에서 하나로 합쳤으므로
+        # 합친 결과가 100개가 아니면 명단에 무언가 섞인 것 → 반영하지 않고 기존 명단을 지킨다.
+        # (2026-11-17 SMH가 섞여 101개가 됐는데 당시 기준은 95~110이라 통과해 가짜 알림이 났다.)
+        if len(cur) == 100:
             prev = live.get("members")
             today_s = datetime.date.today().isoformat()
             if prev:
@@ -439,7 +462,9 @@ def main():
             live["members"] = cur
             print(f"구성종목 명단 확보(슬릭차트): {len(cur)}개 티커")
         else:
-            print(f"구성종목 명단 수집 건너뜀 — 티커 수 비정상({len(syms)}개), 기존 명단 유지")
+            _new = sorted(set(cur) - set(live.get("members") or []))
+            print(f"구성종목 명단 수집 건너뜀 — 합친 뒤 {len(cur)}개(100개가 아님), 기존 명단 유지. "
+                  f"처음 보는 티커: {_new}")
     except Exception as e:
         print("구성종목 명단 수집 실패 (기존 명단 유지):", repr(e))
 

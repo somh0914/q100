@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.11.13-CL';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.11.18-CM';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -31,10 +31,10 @@ companies: [
   ],
   segments:[{n:'데이터센터',p:92},{n:'게이밍',p:6},{n:'전문 시각화',p:1},{n:'자동차',p:1}],
   fin:{ years:['FY23','FY24','FY25','FY26','FY27E'],
-    rev:[27.0,60.9,130.5,215.9,400], op:[4.2,33.0,81.5,134,255],
+    rev:[27.0,60.9,130.5,215.9,424], op:[4.2,33.0,81.5,134,255],
     ni:[4.4,29.8,72.9,120.1,235], fcf:[3.8,27.0,60.9,96.6,160],
     eps:[0.17,1.19,2.94,4.90,9.50] },
-  finNote:'회계연도 1월 종료 · FY26 매출 $215.9B (+65%) 확정 · FY27E는 2Q 실적($96.2B, +106%)과 가이던스 기반 근사치',
+  finNote:'회계연도 1월 종료 · FY26 매출 $215.9B (+65%) 확정 · FY27E 매출 $424B = 3분기 누적 $293.7B + 4분기 가이던스 $130.0B · EPS 전망은 발표 전 컨센서스 유지',
   key:{rev:'$400B', revG:'+85%', opm:'64%', fcf:'$160B', extraK:'데이터센터 비중', extraV:'92%'},
   score:{biz:96, growth:97, profit:98, cash:96, moat:93, fin:95, val:52, total:92},
   moat:[90,92,88,95,75,98,96],
@@ -4055,7 +4055,7 @@ DB.meta.weightsQ = '2026.3Q';   // 비중 기준 분기 — 분기 CSV 갱신 �
    각 기업의 재무 숫자에 어느 분기 실적까지 반영됐는지 표시.
    실적 업데이트 때마다 해당 기업의 라벨을 함께 갱신할 것. (2026.08.31 동기화) */
 const LASTQ = {
-NVDA:'FY27 2Q', AAPL:'FY26 4Q', GOOGL:'FY26 3Q', MSFT:'FY27 1Q', AMZN:'FY26 3Q',
+NVDA:'FY27 3Q', AAPL:'FY26 4Q', GOOGL:'FY26 3Q', MSFT:'FY27 1Q', AMZN:'FY26 3Q',
 MU:'FY26 4Q', AMD:'FY26 3Q', AVGO:'FY26 3Q', META:'FY26 3Q', TSLA:'FY26 3Q',
 WMT:'FY27 2Q', INTC:'FY26 3Q', CSCO:'FY27 1Q', AMAT:'FY26 4Q', COST:'FY26 4Q',
 LRCX:'FY27 1Q', PLTR:'FY26 3Q', NFLX:'FY26 3Q', PANW:'FY26 4Q', TXN:'FY26 3Q',
@@ -4128,7 +4128,7 @@ DB.companies.forEach(c => {
    rev/eps=실제, revE/epsE=발표 직전 월가 컨센서스, revD/epsD=차이, g*=다음 분기 회사 가이던스 */
 const QR = {
  PANW:{q:'FY26 4Q', d:'9월 1일', rev:'$3.41B', revE:'$3.35B', revD:'+1.8%', eps:'$1.02', epsE:'$0.98', epsD:'+4.1%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$3.31B', gRevE:'$3.21B', gRevD:'+3.0%', gEps:'$0.97', gEpsE:'$0.94', gEpsD:'+3.2%'},
- NVDA:{q:'FY27 2Q', d:'8월 26일', rev:'$96.2B', revE:'$92.2B', revD:'+4.4%', eps:'$2.22', epsE:'$2.10', epsD:'+5.7%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$108B', gRevE:'$104.2B', gRevD:'+3.7%', gEpsE:'$2.46', gNote:'매출 가이던스는 $108B ±2% · EPS 가이던스는 미제공 — EPS는 월가 예상만 표시'},
+ NVDA:{q:'FY27 3Q', d:'11월 17일', rev:'$115.8B', revE:'$109.3B', revD:'+5.9%', eps:'$2.68', epsE:'$2.47', epsD:'+8.5%', basis:'조정', verdict:'beat', gq:'FY27 4Q', gRev:'$130.0B±3%', gRevE:'$124.4B', gRevD:'+4.5%', gNote:'매출 가이던스 $130.0B ±3%(추가 1주 포함) · 회사는 EPS 가이던스를 주지 않고 4분기 월가 EPS 예상은 확인하지 못함'},
  CRWD:{q:'FY27 2Q', d:'8월 26일', rev:'$1.47B', revE:'$1.44B', revD:'+2.2%', eps:'$0.31', epsE:'$0.29', epsD:'+6.9%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$1.53B', gRevE:'$1.52B', gRevD:'+0.4%', gEps:'$0.31', gEpsE:'$0.31', gEpsD:'+0.0%'},
  SNPS:{q:'FY26 3Q', d:'8월 26일', rev:'$2.48B', revE:'$2.44B', revD:'+1.6%', eps:'$3.91', epsE:'$3.67', epsD:'+6.4%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$2.56B', gRevE:'$2.55B', gRevD:'+0.1%', gEps:'$4.13', gEpsE:'$3.99', gEpsD:'+3.5%'},
  MRVL:{q:'FY27 2Q', d:'8월 27일', rev:'$2.74B', revE:'$2.71B', revD:'+1.1%', eps:'$0.94', epsE:'$0.93', epsD:'+1.1%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$3.15B', gRevE:'$3.03B', gRevD:'+4.0%', gEps:'$1.10', gEpsE:'$1.08', gEpsD:'+1.9%'},
