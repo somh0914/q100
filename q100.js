@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.11.19-CN';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.11.19-CO';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -4081,10 +4081,15 @@ DB.companies.forEach(c => { if (LASTQ[c.ticker]) c.lastQ = LASTQ[c.ticker]; });
 
 /* ===== 다음 실적 발표 예정일 — 정적 예비값 (실적 캘린더 기반) =====
    온라인에서는 live.json의 next(야후 예정일)가 이 값을 덮어씀 */
+/* 'FY27 1Q' → 다음 분기 라벨 'FY27 2Q' (4Q 다음은 새 회계연도 1Q) */
+function nextQLab(lastQ){ const m=String(lastQ||'').match(/^FY(\d+)\s(\d)Q$/); if(!m) return '';
+  let y=+m[1], q=+m[2]+1; if(q>4){ q=1; y++; } return 'FY'+y+' '+q+'Q'; }
 (function(){
   const m = {};
   (DB.earnings || []).forEach(e => { if (!m[e.id]) m[e.id] = e; });
-  DB.companies.forEach(c => { const e = m[c.id]; if (e && e.q !== c.lastQ) { c.nextEarn = e.d; c.nextEarnQ = e.q || ''; } });  // 이미 발표된 분기면 건너뜀
+  /* 정적 캘린더는 '바로 다음 분기'와 일치할 때만 쓴다 — 실적을 반영할수록 lastQ가 앞서가는데
+     옛 조건(e.q !== c.lastQ)은 지난 시즌 항목을 계속 통과시켜 과거 날짜를 예정일로 띄웠다 */
+  DB.companies.forEach(c => { const e = m[c.id]; if (e && e.q && e.q === nextQLab(c.lastQ)) { c.nextEarn = e.d; c.nextEarnQ = e.q; } });
 })();
 
 /* ===== 결산월 + 다음 실적 추정 (전 기업) =====
@@ -4103,25 +4108,21 @@ const FYEND = {
   ADBE:11, ADI:11
 };
 DB.companies.forEach(c => { c.fyEnd = FYEND[c.ticker] || 12; });
-/* 다음 발표 추정 시기 (2026.08.31 기준 — live.json이 실제 날짜로 매일 대체) */
-const NEXTE = {1:'11월 말경', 3:'10월 말경', 5:'12월 하순경', 6:'10월 말경', 7:'11월 중순경',
-               8:'12월 중순경', 9:'10월 말경', 10:'11월 중순경', 11:'11월 말경', 12:'10월 말~11월 초'};
+/* 다음 발표 추정 시기 — 반드시 lastQ와 결산월로 계산한다.
+   예전엔 결산월→고정 문구 표(NEXTE, 2026.08.31 기준)를 예비값으로 썼는데, 실적을 반영할수록
+   낡아서 이미 발표한 기업에 '지난 달'을 예정일로 띄웠다(샌디스크: 10/29 발표 후에도 '10월 말경').
+   계산식은 '다음 분기말 달 + 약 1개월 = 발표 달'. live.json의 next(야후 실제 예정일)가 이를 덮어쓴다. */
 DB.companies.forEach(c => {
   if (c.nextEarn) return;
-  // 최근 반영 분기(lastQ)와 결산월로 다음 발표 달을 계산 — 다음 분기말 + 약 1개월
   const m = String(c.lastQ||'').match(/(\d)Q$/);
-  const ne = NEXTE[c.fyEnd];
-  if (m) {
-    const q = +m[1], nm = ((c.fyEnd + 3*(q+1)) % 12) + 1, cur = new Date().getMonth()+1;
-    const ahead = x => (x - cur + 12) % 12;
-    const neM = ne ? +((ne.match(/^(\d+)월/)||[])[1]||0) : 0;
-    // 기본 추정 시기(NEXTE)보다 뒤라면 = 이번 시즌 발표를 이미 반영한 기업 → 다음 시즌 달 표시
-    if (!neM || ahead(nm) > ahead(neM) + 1) {
-      c.nextEarn = q===3 ? nm+'~'+(nm%12+1)+'월경' : nm+'월경';   // 다음이 4분기(연간)면 발표가 늦어 두 달 범위
-      c.nextEarnQ = ''; return;
-    }
-  }
-  if (ne) { c.nextEarn = ne; c.nextEarnQ = ''; }
+  if (!m) return;                      // 근거가 없으면 아무것도 띄우지 않는다 (틀린 날짜보다 낫다)
+  const q = +m[1], nm = ((c.fyEnd + 3*(q+1)) % 12) + 1, cur = new Date().getMonth()+1;
+  /* 계산한 달이 이미 지났으면 = 분기마다 실적을 내지 않는 기업(반기 보고 등) → 아무것도 띄우지 않는다.
+     CCEP·FER이 그 경우다(반기·연간만 공시해서 '다음 분기' 계산이 맞지 않는다). */
+  if (((nm - cur + 12) % 12) > 6) return;
+  c.nextEarnEst = q===3 ? nm+'~'+(nm%12+1)+'월경' : nm+'월경';   // 다음이 4분기(연간)면 발표가 늦어 두 달 범위
+  c.nextEarn = c.nextEarnEst;
+  c.nextEarnQ = '';
 });
 
 /* ===== 최근 실적 vs 예상 카드 데이터 (실적 반영 사이클마다 해당 기업 갱신) =====
@@ -4506,6 +4507,25 @@ function fwdRev(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null;
   if(nfy&&nfy.rev) return {y, act:revAct, fc:nfy.rev, g:Q_grow(revAct, nfy.rev)};
   if(estY) return {y, act:revAct, fc:fB(fy.rev[estI]), g:Q_grow(revAct, fB(fy.rev[estI]))};
   return {y, act:revAct, fc:null, g:null}; }
+/* ===== 홈 '최근 실적 발표' — QR의 발표일(d)을 날짜로 바꿔 최신순 정렬 =====
+   live.json의 fresh(야후 발표 감지)는 하루 늦게 올라와 당일 발표가 빠지고, 앱에 반영한 것과도
+   어긋난다. QR의 d는 실적을 반영할 때마다 갱신되므로 '무엇이 반영됐는지' 확인용으로 정확하다.
+   d에는 연도가 없어서(예 '11월 18일') 후보 연도 중 '오늘보다 과거인 가장 최근'을 고른다. */
+function recentEarned(n){
+  const now=Date.now(), y0=new Date().getUTCFullYear(), L=[];
+  C.forEach(c=>{
+    const r=c.qr; if(!r||!r.d) return;
+    const m=String(r.d).match(/(\d+)월\s*(\d+)일/); if(!m) return;
+    let pick=null;
+    for(const y of [y0-1,y0,y0+1]){ const t=Date.UTC(y, +m[1]-1, +m[2], 12);
+      if(t<=now+3*864e5 && (pick===null || t>pick)) pick=t; }
+    if(pick===null) return;
+    const dt=new Date(pick);
+    L.push({c:c, t:pick, lab:(dt.getUTCMonth()+1)+'.'+dt.getUTCDate()});
+  });
+  L.sort((a,b)=>b.t-a.t);
+  return L.slice(0, n||8);
+}
 /* 연EPS: 기준 통일 짝(epsb) 우선 → 연간 컨센서스 → E연도 — 카드와 동일 */
 function fwdEps(c){ const {fy,actI,estI}=fyIdx(c); const nfy=c.nfy||null, ebx=c.epsb||null;
   const epsAct=fy.eps[actI], estY=estI>=0? fy.years[estI] : null;
@@ -4854,9 +4874,9 @@ function renderHome(){
     <div class="hbar" style="margin-top:9px"><i style="width:${DB.top10}%;background:#fff"></i></div>
     <div class="row sb" style="margin-top:9px"><span class="tiny">${C.length}개 기업 중 상위 10개의 비중</span><span class="tiny" style="font-weight:800;color:#bbb">QQQ 분석 →</span></div>
   </div>
-  <div class="sec-t">최근 실적 발표 <small>${DB.earnLabel||'2026년 7월 말'}</small></div>
-  <div class="chiprow">${DB.recentEarnings.map(id=>{const c=byId[id];
-    return `<span class="chip" onclick="openCompany('${id}')"><span class="dot" style="background:${c.color}"></span>${krName(c)} <span style="color:#888">${c.name}</span></span>`;}).join('')}</div>
+  ${(()=>{ const rc=recentEarned(8); if(!rc.length) return '';
+    return `<div class="sec-t">최근 실적 발표 <small>발표일 최신순 · 앱 반영 기준</small></div>
+  <div class="chiprow" style="flex-wrap:wrap;overflow-x:visible">${rc.map(x=>`<span class="chip" onclick="openCompany('${x.c.id}')"><span class="dot" style="background:${x.c.color}"></span>${krName(x.c)} <span style="color:#7fb2ff;font-weight:800">${x.lab}</span></span>`).join('')}</div>`; })()}
   <div class="sec-t">최근 영상 <small>Q100 채널</small></div>
   <div class="hscroll">${[today,...C.filter(c=>c.videos.length&&c.id!==today.id)].filter(c=>c.videos.length||c.id===today.id).slice(0,4).map(c=>videoCard(c)).join('')}</div>
   <div class="sec-t">기업 랭킹</div>
@@ -5490,11 +5510,8 @@ nav('home');
         const days=(now-new Date(f.d+'T12:00:00Z').getTime())/864e5;
         if(days>=-1 && days<=21){ c.freshEarn=f.d.slice(5).replace('-','.'); fr.push({id:c.id, d:f.d}); }
       });
-      if(fr.length){
-        fr.sort((a,b)=>b.d.localeCompare(a.d));
-        DB.recentEarnings=fr.slice(0,6).map(x=>x.id);
-        DB.earnLabel='최근 3주 · 공시 기준';
-      }
+      /* 홈의 '최근 실적 발표'는 recentEarned()가 QR 발표일로 직접 정렬하므로 여기서 덮어쓰지 않는다.
+         위 루프는 기업 화면의 '🔔 새 실적 발표' 배지(c.freshEarn)를 세우는 역할만 남는다. */
     }
     /* 회계연도 마감(4Q) 발표 감지 → 연간 확정/전망이 아직 옛 연도면 갱신 예정 표시 */
     if(L.fyq4 && typeof L.fyq4==='object'){
@@ -5512,7 +5529,8 @@ nav('home');
           const dt=new Date(d+'T12:00:00Z');
           if(dt.getTime() > Date.now()-864e5){ const lab=(dt.getUTCMonth()+1)+'월 '+dt.getUTCDate()+'일';
             // 이미 반영한 발표일이면(야후가 다음 날짜로 바꾸기 전) 예정일 칩을 잠시 숨김
-            if(QR[c.ticker] && QR[c.ticker].d===lab){ c.nextEarn=null; c.nextEarnQ=''; }
+            /* 이미 반영한 발표일이면(야후가 다음 날짜로 바꾸기 전) 날짜 대신 계산한 추정 시기로 되돌린다 */
+            if(QR[c.ticker] && QR[c.ticker].d===lab){ c.nextEarn=c.nextEarnEst||null; c.nextEarnQ=''; }
             else { c.nextEarn=lab; c.nextEarnQ=''; } }
         }
       });
