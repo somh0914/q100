@@ -1,4 +1,4 @@
-const BUILD='빌드 2026.11.19-CO';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
+const BUILD='빌드 2026.11.27-CP';(function(){var e=document.getElementById('build-tag');if(e)e.textContent=BUILD;})();
 /* ============ Q100 DATABASE (MVP 10개 기업) ============ */
 const DB = {
 meta: {
@@ -395,10 +395,10 @@ companies: [
   ],
   segments:[{n:'건축·건설 (AEC)',p:47},{n:'AutoCAD',p:27},{n:'제조 (MFG)',p:21},{n:'미디어',p:5}],
   fin:{ years:['FY23','FY24','FY25','FY26','FY27E'],
-    rev:[5.0,5.5,6.1,7.2,8.3], op:[0.99,1.13,1.40,1.59,2.0],
-    ni:[0.82,0.91,1.11,1.12,1.4], fcf:[2.0,1.3,1.6,2.4,2.7],
-    eps:[3.78,4.19,5.12,5.23,6.50] },
-  finNote:'회계연도 1월 종료 · FY26 매출 $7.2B (+18%) 확정 · FY27E는 회사 가이던스 기준 (2026.8월 상향)',
+    rev:[5.0,5.5,6.1,7.2,8.37], op:[0.99,1.13,1.40,1.59,2.0],
+    ni:[0.82,0.91,1.11,1.12,2.2], fcf:[2.0,1.3,1.6,2.4,2.7],
+    eps:[3.78,4.19,5.12,5.23,10.17] },
+  finNote:'회계연도 1월 종료 · FY26 매출 $7.2B (+18%) 확정 · FY27E 매출·EPS는 회사 가이던스 중간값(매출 $8.36~8.38B, GAAP EPS $9.98~10.35), 영업이익·순이익은 근사치',
   key:{rev:'$8.3B', revG:'+15%', opm:'24%', fcf:'$2.7B', extraK:'구독 비중', extraV:'93%'},
   score:{biz:84, growth:78, profit:80, cash:86, moat:89, fin:88, val:68, total:81},
   moat:[88,94,78,80,75,82,85],
@@ -706,7 +706,7 @@ DB.companies.push(
   ],
   segments:[{n:'미국 월마트',p:69},{n:'해외',p:17},{n:'샘스클럽',p:14}],
   fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[611.3,648.1,681.0,704.0,740], op:[20.4,27.0,29.3,30.5,35.0], ni:[11.7,15.5,19.4,21.0,24.0], fcf:[7.0,15.1,12.7,13.5,15.0], eps:[1.42,1.91,2.41,2.60,2.95]},
-  finNote:'회계연도 1월 종료 · FY27E는 2Q 실적(매출 +5.9%) 기반 근사치 · 나스닥 이전 상장으로 지수 편입',
+  finNote:'회계연도 1월 종료 · FY27 가이던스 두 번째 상향(매출 +4.9~5.2%, 조정 EPS $2.84~2.89) · FY27E 매출은 가이던스 기반 근사치 · 나스닥 이전 상장으로 지수 편입',
   key:{rev:'$740B', revG:'+5%', opm:'4.7%', fcf:'$15B', extraK:'이커머스 성장', extraV:'+23%'},
   score:{biz:90, growth:72, profit:70, cash:82, moat:93, fin:94, val:48, total:82},
   moat:[93,70,75,99,80,68,85],
@@ -1198,8 +1198,8 @@ DB.companies.push(
     {t:'배당 성장', d:'20년 연속 배당 인상'}
   ],
   segments:[{n:'산업',p:50},{n:'자동차',p:30},{n:'통신·소비자',p:20}],
-  fin:{years:['FY22','FY23','FY24','FY25','FY26E'], rev:[12.0,12.3,9.4,11.2,15.0], op:[2.9,3.8,2.0,2.9,4.5], ni:[2.7,3.3,1.6,2.5,3.7], fcf:[3.5,3.6,3.0,3.6,5.0], eps:[5.25,6.55,3.29,5.00,7.40]},
-  finNote:'회계연도 11월 종료 · FY22부터 Maxim 인수 반영 · FY26E는 분기 실적 기반 근사치 (3Q 매출 $4.0B, +40%)',
+  fin:{years:['FY22','FY23','FY24','FY25','FY26'], rev:[12.0,12.3,9.4,11.2,15.2], op:[2.9,3.8,2.0,2.9,5.86], ni:[2.7,3.3,1.6,2.5,5.00], fcf:[3.5,3.6,3.0,3.6,5.45], eps:[5.25,6.55,3.29,5.00,10.21]},
+  finNote:'회계연도 10월 말 종료 · FY22부터 Maxim 인수 반영 · FY26 매출 $15.2B (+38%) 확정, 영업이익·순이익·FCF·EPS는 GAAP 확정치 · FY27 전망은 발표 전 월가 컨센서스',
   key:{rev:'$15.0B', revG:'+34%', opm:'30%', fcf:'$5B', extraK:'AI 인프라 수요', extraV:'3Q +40%'},
   score:{biz:84, growth:70, profit:85, cash:90, moat:87, fin:90, val:58, total:80},
   moat:[82,86,58,80,68,88,75],
@@ -1869,8 +1869,8 @@ DB.companies.push(
     {t:'AI 재무비서', d:'데이터 기반 AI로 서비스 업셀'}
   ],
   segments:[{n:'중소기업 (QB)',p:55},{n:'소비자 (TurboTax)',p:30},{n:'Credit Karma·기타',p:15}],
-  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[14.4,16.3,18.8,21.4,23.4], op:[3.1,3.6,4.6,5.4,6.5], ni:[2.4,3.0,3.9,4.6,5.7], fcf:[4.6,4.9,6.0,6.8,7.5], eps:[8.42,10.43,13.60,16.46,20.24]},
-  finNote:'회계연도 7월 종료 · FY26 매출 $21.4B (+14%) 확정 · FY27E는 회사 가이던스 기준',
+  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[14.4,16.3,18.8,21.4,23.2], op:[3.1,3.6,4.6,5.4,6.5], ni:[2.4,3.0,3.9,4.6,5.7], fcf:[4.6,4.9,6.0,6.8,7.5], eps:[8.42,10.43,13.60,16.46,20.24]},
+  finNote:'회계연도 7월 종료 · FY26 매출 $21.4B (+14%) 확정 · FY27E는 회사 가이던스 중간값(매출 $23.08~23.37B, GAAP EPS $20.12~20.36) · 2026.8부터 조정 EPS에 주식보상비용을 포함해 과거와 비교할 수 없어 연간 EPS는 GAAP으로 비교',
   key:{rev:'$23.4B', revG:'+9%', opm:'28%', fcf:'$7.5B', extraK:'비GAAP (조정 기준) 마진', extraV:'40%'},
   score:{biz:91, growth:82, profit:90, cash:92, moat:93, fin:93, val:60, total:86},
   moat:[90,94,75,85,88,85,90],
@@ -1904,8 +1904,8 @@ DB.companies.push(
     {t:'ARR 복리 성장', d:'구독 반복매출의 눈덩이'}
   ],
   segments:[{n:'구독 (Falcon)',p:95},{n:'서비스',p:5}],
-  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[2.24,3.06,3.95,4.81,6.0], op:[-0.19,0.00,-0.12,-0.30,0.05], ni:[-0.18,0.09,-0.02,-0.16,0.10], fcf:[0.68,0.94,1.07,1.24,1.6], eps:[-0.79,0.37,-0.08,-0.65,0.40]},
-  finNote:'회계연도 1월 종료 · FY26 매출 $4.81B (+22%) 확정 · FY27E는 회사 가이던스 기준 · GAAP 이익은 SBC로 낮음',
+  fin:{years:['FY23','FY24','FY25','FY26','FY27E'], rev:[2.24,3.06,3.95,4.81,6.08], op:[-0.19,0.00,-0.12,-0.30,0.05], ni:[-0.18,0.09,-0.02,-0.16,0.10], fcf:[0.68,0.94,1.07,1.24,1.6], eps:[-0.79,0.37,-0.08,-0.65,0.40]},
+  finNote:'회계연도 1월 종료 · FY26 매출 $4.81B (+22%) 확정 · FY27E 매출은 회사 가이던스($6.08B) 기준 · GAAP 이익은 SBC로 낮음',
   key:{rev:'$6.0B', revG:'+25%', opm:'1%', fcf:'$1.6B', extraK:'ARR (연간 반복매출)', extraV:'$5.8B'},
   score:{biz:88, growth:90, profit:74, cash:88, moat:87, fin:92, val:35, total:82},
   moat:[88,86,80,70,92,90,85],
@@ -2503,7 +2503,7 @@ DB.companies.push(
   ],
   segments:[{n:'Ross 매장',p:90},{n:'dd\'s',p:10}],
   fin:{years:['FY21','FY22','FY23','FY24','FY25'], rev:[18.9,18.7,20.4,21.1,22.8], op:[2.3,2.0,2.3,2.6,2.7], ni:[1.72,1.51,1.88,2.09,2.15], fcf:[1.18,1.04,1.75,1.64,2.21], eps:[4.87,4.38,5.56,6.32,6.61]},
-  finNote:'회계연도 1월 종료 (FY25 = 2025.2~2026.1) · FY26 매출 전망은 회사 미제시',
+  finNote:'회계연도 1월 종료 (FY25 = 2025.2~2026.1) · FY26 EPS 전망은 회사 가이던스($8.75~8.84) 중간값으로 관세 환급 일회성 이익(약 $0.60) 포함 · FY26 매출 전망은 월가 컨센서스',
   key:{rev:'$23.4B', revG:'+11%', opm:'15%', fcf:'$2.2B', extraK:'동일점 성장', extraV:'+10%'},
   score:{biz:80, growth:66, profit:76, cash:80, moat:82, fin:92, val:62, total:76},
   moat:[75,50,55,90,60,45,78],
@@ -4057,23 +4057,23 @@ DB.meta.weightsQ = '2026.3Q';   // 비중 기준 분기 — 분기 CSV 갱신 �
 const LASTQ = {
 NVDA:'FY27 3Q', AAPL:'FY26 4Q', GOOGL:'FY26 3Q', MSFT:'FY27 1Q', AMZN:'FY26 3Q',
 MU:'FY26 4Q', AMD:'FY26 3Q', AVGO:'FY26 3Q', META:'FY26 3Q', TSLA:'FY26 3Q',
-WMT:'FY27 2Q', INTC:'FY26 3Q', CSCO:'FY27 1Q', AMAT:'FY26 4Q', COST:'FY26 4Q',
+WMT:'FY27 3Q', INTC:'FY26 3Q', CSCO:'FY27 1Q', AMAT:'FY26 4Q', COST:'FY26 4Q',
 LRCX:'FY27 1Q', PLTR:'FY26 3Q', NFLX:'FY26 3Q', PANW:'FY27 1Q', TXN:'FY26 3Q',
-KLAC:'FY27 1Q', LIN:'FY26 3Q', AMGN:'FY26 3Q', CRWD:'FY27 2Q', SNDK:'FY27 1Q',
-STX:'FY27 1Q', PEP:'FY26 3Q', TMUS:'FY26 3Q', ADI:'FY26 3Q', WDC:'FY27 1Q',
+KLAC:'FY27 1Q', LIN:'FY26 3Q', AMGN:'FY26 3Q', CRWD:'FY27 3Q', SNDK:'FY27 1Q',
+STX:'FY27 1Q', PEP:'FY26 3Q', TMUS:'FY26 3Q', ADI:'FY26 4Q', WDC:'FY27 1Q',
 SHOP:'FY26 3Q', QCOM:'FY26 4Q', GILD:'FY26 3Q', MRVL:'FY27 2Q', BKNG:'FY26 3Q',
 ASML:'FY26 3Q', ARM:'FY27 2Q', ISRG:'FY26 3Q', APP:'FY26 3Q', FTNT:'FY26 3Q',
 VRTX:'FY26 3Q', SBUX:'FY26 4Q', ADP:'FY27 1Q', ADBE:'FY26 3Q', MELI:'FY26 3Q',
 MAR:'FY26 3Q', CSX:'FY26 3Q', CEG:'FY26 3Q', CDNS:'FY26 3Q', DDOG:'FY26 3Q',
-MNST:'FY26 3Q', CMCSA:'FY26 3Q', INTU:'FY26 4Q', DASH:'FY26 3Q', ROST:'FY26 2Q',
+MNST:'FY26 3Q', CMCSA:'FY26 3Q', INTU:'FY27 1Q', DASH:'FY26 3Q', ROST:'FY26 3Q',
 CTAS:'FY27 1Q', MDLZ:'FY26 3Q', REGN:'FY26 3Q', HON:'FY26 3Q', SNPS:'FY26 3Q',
 ORLY:'FY26 3Q', PCAR:'FY26 3Q', AEP:'FY26 3Q', MPWR:'FY26 3Q', LITE:'FY27 1Q',
-ABNB:'FY26 3Q', PDD:'FY26 2Q', TER:'FY26 3Q', FANG:'FY26 3Q',
+ABNB:'FY26 3Q', PDD:'FY26 3Q', TER:'FY26 3Q', FANG:'FY26 3Q',
 ALAB:'FY26 3Q', FAST:'FY26 3Q', NXPI:'FY26 3Q', BKR:'FY26 3Q', CCEP:'FY26 2Q',
-NBIS:'FY26 3Q', AXON:'FY26 3Q', PYPL:'FY26 3Q', ADSK:'FY27 2Q', EXC:'FY26 3Q',
+NBIS:'FY26 3Q', AXON:'FY26 3Q', PYPL:'FY26 3Q', ADSK:'FY27 3Q', EXC:'FY26 3Q',
 XEL:'FY26 3Q', FER:'FY26 2Q', IDXX:'FY26 3Q', ODFL:'FY26 3Q', MCHP:'FY27 2Q',
 RKLB:'FY26 3Q', PAYX:'FY27 1Q', TTWO:'FY27 2Q', CRWV:'FY26 3Q', KDP:'FY26 3Q',
-ROP:'FY26 3Q', TRI:'FY26 3Q', WDAY:'FY27 2Q', MSTR:'FY26 3Q', DXCM:'FY26 3Q',
+ROP:'FY26 3Q', TRI:'FY26 3Q', WDAY:'FY27 3Q', MSTR:'FY26 3Q', DXCM:'FY26 3Q',
 GEHC:'FY26 3Q', ALNY:'FY26 3Q', MRNA:'FY26 3Q', CPRT:'FY26 4Q',
 SPCX:'FY26 3Q', HONA:'FY26 3Q'
 };
@@ -4105,7 +4105,7 @@ const FYEND = {
   COST:8, MU:8,
   AAPL:9, QCOM:9, SBUX:9,
   AVGO:10, AMAT:10, SNPS:10,
-  ADBE:11, ADI:11
+  ADBE:11, ADI:10   // ADI 분기말은 1·4·7·10월 말(FY 10월 말 종료). 11로 두면 예정일이 한 달씩 밀린다
 };
 DB.companies.forEach(c => { c.fyEnd = FYEND[c.ticker] || 12; });
 /* 다음 발표 추정 시기 — 반드시 lastQ와 결산월로 계산한다.
@@ -4130,16 +4130,16 @@ DB.companies.forEach(c => {
 const QR = {
  PANW:{q:'FY27 1Q', d:'11월 18일', rev:'$3.44B', revE:'$3.31B', revD:'+4.1%', eps:'$1.05', epsE:'$0.97', epsD:'+8.2%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$3.53~3.55B', gRevE:'$3.42B', gRevD:'+3.5%', gEps:'$1.01~1.03', gEpsE:'$1.01', gEpsD:'+1.0%'},
  NVDA:{q:'FY27 3Q', d:'11월 17일', rev:'$115.8B', revE:'$109.3B', revD:'+5.9%', eps:'$2.68', epsE:'$2.47', epsD:'+8.5%', basis:'조정', verdict:'beat', gq:'FY27 4Q', gRev:'$130.0B±3%', gRevE:'$124.4B', gRevD:'+4.5%', gNote:'매출 가이던스 $130.0B ±3%(추가 1주 포함) · 회사는 EPS 가이던스를 주지 않고 4분기 월가 EPS 예상은 확인하지 못함'},
- CRWD:{q:'FY27 2Q', d:'8월 26일', rev:'$1.47B', revE:'$1.44B', revD:'+2.2%', eps:'$0.31', epsE:'$0.29', epsD:'+6.9%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$1.53B', gRevE:'$1.52B', gRevD:'+0.4%', gEps:'$0.31', gEpsE:'$0.31', gEpsD:'+0.0%'},
+ CRWD:{q:'FY27 3Q', d:'11월 23일', rev:'$1.58B', revE:'$1.52B', revD:'+3.9%', eps:'$0.34', epsE:'$0.31', epsD:'+9.7%', basis:'조정', verdict:'beat', gq:'FY27 4Q', gRev:'$1.64B', gRevE:'$1.62B', gRevD:'+1.2%', gEps:'$0.36', gEpsE:'$0.36', gEpsD:'+0.0%'},
  SNPS:{q:'FY26 3Q', d:'8월 26일', rev:'$2.48B', revE:'$2.44B', revD:'+1.6%', eps:'$3.91', epsE:'$3.67', epsD:'+6.4%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$2.56B', gRevE:'$2.55B', gRevD:'+0.1%', gEps:'$4.13', gEpsE:'$3.99', gEpsD:'+3.5%'},
  MRVL:{q:'FY27 2Q', d:'8월 27일', rev:'$2.74B', revE:'$2.71B', revD:'+1.1%', eps:'$0.94', epsE:'$0.93', epsD:'+1.1%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$3.15B', gRevE:'$3.03B', gRevD:'+4.0%', gEps:'$1.10', gEpsE:'$1.08', gEpsD:'+1.9%'},
- ADSK:{q:'FY27 2Q', d:'8월 27일', rev:'$2.05B', revE:'$2.01B', revD:'+2.0%', eps:'$3.30', epsE:'$3.12', epsD:'+5.8%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$2.13B', gRevE:'$2.08B', gRevD:'+2.5%', gEps:'$3.07', gEpsE:'$3.14', gEpsD:'-2.4%'},
- WDAY:{q:'FY27 2Q', d:'8월 27일', rev:'$2.65B', revE:'$2.64B', revD:'+0.5%', eps:'$2.75', epsE:'$2.61', epsD:'+5.3%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$2.52B', gRevE:'$2.51B', gRevD:'+0.2%', gEpsE:'$2.64', gNote:'매출 가이던스는 구독매출 기준 (총매출 월가 예상은 $2.70B) · EPS는 월가 예상만 표시'}
+ ADSK:{q:'FY27 3Q', d:'11월 24일', rev:'$2.16B', revE:'$2.13B', revD:'+1.4%', eps:'$3.20', epsE:'$3.07', epsD:'+4.2%', basis:'조정', verdict:'beat', gq:'FY27 4Q', gRev:'$2.22~2.24B', gRevE:'$2.21B', gRevD:'+0.9%', gEps:'$3.21~3.26', gEpsE:'$3.19', gEpsD:'+1.4%'},
+ WDAY:{q:'FY27 3Q', d:'11월 24일', rev:'$2.71B', revE:'$2.69B', revD:'+0.7%', eps:'$2.82', epsE:'$2.74', epsD:'+2.9%', basis:'조정', verdict:'beat', gq:'FY27 4Q', gRevE:'$2.77B', gEpsE:'$2.95', gNote:'회사는 구독매출($2.600B)만 가이던스해 총매출과 비교 불가 → 총매출 기준 월가 예상만 표시'}
 };
 DB.companies.forEach(c => { if (QR[c.ticker]) c.qr = QR[c.ticker]; });
 /* 나머지 기업 (2026.09.02 일괄 조사 — 실적 반영 사이클마다 갱신) */
 Object.assign(QR, {
- PDD:{q:'FY26 2Q', d:'8월 24일', rev:'$15.7B', revE:'$15.9B', revD:'-1.3%', eps:'$2.70', epsE:'$2.57', epsD:'+5.3%', basis:'조정', verdict:'mixed'},
+ PDD:{q:'FY26 3Q', d:'11월 19일', rev:'$16.16B', revE:'$17.18B', revD:'-5.9%', eps:'$3.14', epsE:'$2.77', epsD:'+13.4%', basis:'조정', verdict:'mixed', gNote:'위안화 실적을 회사 환산율(6.7045)로 달러 환산 — 매출 RMB1,083억 vs 예상 1,152억, EPS RMB21.04 vs 18.54'},
  AAPL:{q:'FY26 4Q', d:'11월 2일', rev:'$114.5B', revE:'$113.4B', revD:'+1.0%', eps:'$2.10', epsE:'$1.99', epsD:'+5.5%', basis:'GAAP', verdict:'beat', gq:'FY27 1Q', gRev:'+7~10% YoY', gRevE:'$153.5B', gEpsE:'$2.90'},
  GOOGL:{q:'FY26 3Q', d:'10월 28일', rev:'$127.6B', revE:'$127.9B', revD:'-0.2%', eps:'$2.12', epsE:'$3.01', epsD:'-29.6%', basis:'GAAP', verdict:'miss'},
  MSFT:{q:'FY27 1Q', d:'10월 28일', rev:'$92.3B', revE:'$90.7B', revD:'+1.7%', eps:'$4.89', epsE:'$4.72', epsD:'+3.6%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$96.0~97.1B', gRevE:'$95.7B', gRevD:'+0.9%', gEpsE:'$4.82'},
@@ -4153,7 +4153,7 @@ Object.assign(QR, {
  INTC:{q:'FY26 3Q', d:'10월 29일', rev:'$16.5B', revE:'$16.42B', revD:'+0.6%', eps:'$0.52', epsE:'$0.40', epsD:'+30.0%', basis:'조정', verdict:'beat', gq:'2026 4Q', gRev:'$15.0~16.0B', gRevE:'$17.02B', gRevD:'-8.9%', gEps:'$0.25', gEpsE:'$0.44', gEpsD:'-43.2%'},
  TXN:{q:'FY26 3Q', d:'10월 21일', rev:'$6.06B', revE:'$5.90B', revD:'+2.7%', eps:'$2.62', epsE:'$2.43', epsD:'+7.8%', basis:'GAAP', verdict:'beat', gq:'2026 4Q', gRev:'$5.80~6.30B', gRevE:'$5.73B', gRevD:'+5.6%', gEps:'$2.45~2.79', gEpsE:'$2.21', gEpsD:'+18.6%'},
  QCOM:{q:'FY26 4Q', d:'11월 4일', rev:'$10.44B', revE:'$10.12B', revD:'+3.2%', eps:'$2.17', epsE:'$2.16', epsD:'+0.5%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$10.4~11.2B', gRevE:'$10.65B', gRevD:'+1.4%', gEps:'$2.15~2.35', gEpsE:'$2.37', gEpsD:'-5.1%'},
- ADI:{q:'FY26 3Q', d:'8월 19일', rev:'$4.02B', revE:'$3.91B', revD:'+2.8%', eps:'$3.45', epsE:'$3.34', epsD:'+3.3%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$4.3B±0.1B', gEps:'$3.86±0.15', gRevE:'$4.3B', gRevD:'+0.0%', gEpsE:'$3.85', gEpsD:'+0.3%'},
+ ADI:{q:'FY26 4Q', d:'11월 24일', rev:'$4.37B', revE:'$4.32B', revD:'+1.2%', eps:'$4.06', epsE:'$3.89', epsD:'+4.4%', basis:'조정', verdict:'beat', gq:'FY27 1Q', gRev:'$4.4B±0.15B', gRevE:'$4.38B', gRevD:'+0.5%', gEps:'$3.82±0.20', gNote:'EPS 월가 예상은 집계처마다 달라(Zacks $3.82 = 가이던스 중간값, 일부 보도는 하회라 표현) 비교 생략'},
  NXPI:{q:'FY26 3Q', d:'10월 27일', rev:'$3.79B', revE:'$3.76B', revD:'+0.7%', eps:'$4.20', epsE:'$4.12', epsD:'+1.9%', basis:'조정', verdict:'beat', gq:'2026 4Q', gRev:'$3.75~3.95B', gRevE:'$3.86B', gRevD:'-0.3%', gEps:'$4.14~4.58', gEpsE:'$4.35', gEpsD:'+0.2%'},
  MCHP:{q:'FY27 2Q', d:'11월 5일', rev:'$1.62B', revE:'$1.61B', revD:'+0.6%', eps:'$0.97', epsE:'$0.93', epsD:'+4.3%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'$1.573~1.638B', gEps:'$0.87~0.95'},
  MPWR:{q:'FY26 3Q', d:'10월 29일', rev:'$1.20B', revE:'$1.16B', revD:'+3.4%', eps:'$8.19', epsE:'$7.75', epsD:'+5.7%', basis:'조정', verdict:'beat', gq:'2026 4Q', gRev:'$1.35B', gRevE:'$1.23B', gRevD:'+9.8%', gNote:'4분기 EPS 가이던스·월가 예상은 확인되지 않아 미표시'},
@@ -4176,7 +4176,7 @@ Object.assign(QR, {
  DDOG:{q:'FY26 3Q', d:'11월 4일', rev:'$1.20B', revE:'$1.14B', revD:'+5.3%', eps:'$0.81', epsE:'$0.64', epsD:'+26.6%', basis:'조정', verdict:'beat', gq:'2026 4Q', gRev:'$1.19~1.20B', gEps:'$0.69~0.71'},
  CDNS:{q:'FY26 3Q', d:'10월 26일', rev:'$1.63B', revE:'$1.61B', revD:'+1.2%', eps:'$2.11', epsE:'$2.05', epsD:'+2.9%', basis:'조정', verdict:'beat', gq:'2026 4Q', gRev:'$1.695~1.725B', gRevE:'$1.66B', gRevD:'+3.0%', gEps:'$2.19~2.25', gEpsE:'$2.03', gEpsD:'+9.4%'},
  CSCO:{q:'FY27 1Q', d:'11월 12일', rev:'$18.5B', revE:'$18.11B', revD:'+2.2%', eps:'$1.40', epsE:'$1.32', epsD:'+6.1%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$18.0~18.2B', gEps:'$1.34~1.36'},
- INTU:{q:'FY26 4Q', d:'8월 25일', rev:'$4.35B', revE:'$4.27B', revD:'+1.9%', eps:'$4.03', epsE:'$3.59', epsD:'+12.3%', basis:'조정', verdict:'beat'},
+ INTU:{q:'FY27 1Q', d:'11월 19일', rev:'$4.35B', revE:'$4.30B', revD:'+1.2%', eps:'$2.91', epsE:'$2.46', epsD:'+18.3%', basis:'조정', verdict:'beat', gq:'FY27 2Q', gRev:'$4.93~4.95B', gEps:'$3.17~3.22', gNote:'2026.8부터 조정 EPS에 주식보상비용 포함(기준 변경). 월가 다음 분기 예상($3.70·$5.15B)은 옛 기준·Mailchimp 포함이라 비교 생략'},
  FTNT:{q:'FY26 3Q', d:'10월 28일', rev:'$2.08B', revE:'$2.1B', revD:'-1.0%', eps:'$0.91', epsE:'$0.85', epsD:'+7.1%', basis:'조정', verdict:'mixed', gq:'2026 4Q', gRev:'$2.155~2.245B', gRevE:'$2.16B', gRevD:'+1.9%', gEps:'$0.93~0.95', gEpsE:'$0.88', gEpsD:'+6.8%', gNote:'3분기 매출 예상치는 발표 전 집계 기준 — 회사 가이던스 중간값($2.055B)은 상회'},
  ADBE:{q:'FY26 3Q', d:'9월 10일', rev:'$6.76B', revE:'$6.69B', revD:'+1.0%', eps:'$6.13', epsE:'$6.07', epsD:'+1.0%', basis:'조정', verdict:'beat', gq:'FY26 4Q', gRev:'$6.80~6.85B', gEps:'$6.30~6.35', gRevE:'$6.85B', gRevD:'-0.4%', gEpsE:'$6.33', gEpsD:'0%'},
  ADP:{q:'FY27 1Q', d:'10월 28일', rev:'$5.49B', revE:'$5.48B', revD:'+0.2%', eps:'$2.82', epsE:'$2.77', epsD:'+1.8%', basis:'조정', verdict:'beat'},
@@ -4188,13 +4188,13 @@ Object.assign(QR, {
  MAR:{q:'FY26 3Q', d:'11월 2일', rev:'$7.00B', revE:'$6.92B', revD:'+1.2%', eps:'$3.02', epsE:'$2.85', epsD:'+6.0%', basis:'조정', verdict:'beat'},
  MELI:{q:'FY26 3Q', d:'11월 4일', rev:'$10.75B', revE:'$10.64B', revD:'+1.0%', eps:'$8.83', epsE:'$9.27', epsD:'-4.7%', basis:'GAAP', verdict:'mixed'},
  COST:{q:'FY26 4Q', d:'9월 24일', rev:'$95.7B', revE:'$95.0B', revD:'+0.8%', eps:'$6.75', epsE:'$6.54', epsD:'+3.2%', basis:'GAAP', verdict:'beat'},
- WMT:{q:'FY27 2Q', d:'8월 20일', rev:'$187.9B', revE:'$186.8B', revD:'+0.6%', eps:'$0.81', epsE:'$0.74', epsD:'+9.5%', basis:'조정', verdict:'beat', gq:'FY27 3Q', gRev:'+3.0~3.75%', gEps:'$0.62~0.64', gRevE:'$188.2B', gEpsE:'$0.68', gEpsD:'-7.4%'},
+ WMT:{q:'FY27 3Q', d:'11월 19일', rev:'$188.8B', revE:'$187.2B', revD:'+0.9%', eps:'$0.65', epsE:'$0.64', epsD:'+1.6%', basis:'조정', verdict:'beat'},
  PEP:{q:'FY26 3Q', d:'10월 8일', rev:'$25.3B', revE:'$25.0B', revD:'+1.3%', eps:'$2.34', epsE:'$2.30', epsD:'+1.7%', basis:'조정', verdict:'beat'},
  KDP:{q:'FY26 3Q', d:'11월 3일', rev:'$7.3B', revE:'$7.4B', revD:'-1.4%', eps:'$0.66', epsE:'$0.63', epsD:'+4.8%', basis:'조정', verdict:'mixed'},
  MDLZ:{q:'FY26 3Q', d:'10월 29일', rev:'$9.97B', revE:'$9.97B', revD:'0.0%', eps:'$0.78', epsE:'$0.71', epsD:'+9.9%', basis:'조정', verdict:'beat'},
  MNST:{q:'FY26 3Q', d:'11월 5일', rev:'$2.56B', revE:'$2.48B', revD:'+3.2%', eps:'$0.30', epsE:'$0.30', epsD:'+0.0%', basis:'조정', verdict:'beat'},
  SBUX:{q:'FY26 4Q', d:'10월 29일', rev:'$9.14B', revE:'$9.24B', revD:'-1.1%', eps:'$0.80', epsE:'$0.71', epsD:'+12.7%', basis:'조정', verdict:'mixed'},
- ROST:{q:'FY26 2Q', d:'8월 20일', rev:'$6.27B', revE:'$6.18B', revD:'+1.5%', eps:'$2.66', epsE:'$1.94', epsD:'+37.1%', basis:'GAAP', verdict:'beat', gq:'FY26 3Q', gEps:'$1.75~1.83', gRevE:'$6.0B', gEpsE:'$1.75', gEpsD:'+2.3%'},
+ ROST:{q:'FY26 3Q', d:'11월 19일', rev:'$6.26B', revE:'$6.23B', revD:'+0.5%', eps:'$1.91', epsE:'$1.85', epsD:'+3.2%', basis:'GAAP', verdict:'beat', gq:'FY26 4Q', gEps:'$2.16~2.25', gRevE:'$7.18B', gEpsE:'$2.26', gEpsD:'-2.4%'},
  ORLY:{q:'FY26 3Q', d:'10월 28일', rev:'$5.12B', revE:'$5.02B', revD:'+2.0%', eps:'$0.97', epsE:'$0.93', epsD:'+4.3%', basis:'GAAP', verdict:'beat'},
  TTWO:{q:'FY27 2Q', d:'11월 9일', rev:'$1.60B', revE:'$1.66B', revD:'-3.6%', eps:'$1.00', epsE:'$0.90', epsD:'+11.1%', basis:'조정', verdict:'mixed', gq:'FY27 3Q', gRev:'$3.35~3.50B', gEps:'$1.30~1.44'},
  AMGN:{q:'FY26 3Q', d:'11월 3일', rev:'$10.37B', revE:'$10.05B', revD:'+3.2%', eps:'$6.45', epsE:'$5.78', epsD:'+11.6%', basis:'조정', verdict:'beat'},
@@ -4241,11 +4241,9 @@ const GEXP = {
  GOOGL:{gq:'FY26 4Q', gRevE:'$142.7B', gEpsE:'$3.34'},
  TMUS:{gq:'FY26 4Q', gRevE:'$25.42B', gEpsE:'$2.77'},
  CMCSA:{gq:'FY26 4Q', gRevE:'$30.3B', gEpsE:'$0.70'},
- PDD:{gq:'FY26 3Q', gRevE:'$17.1B', gEpsE:'$2.43'},
  ARM:{gq:'FY27 2Q', gRevE:'$1.4B', gEpsE:'$0.42'},
  LITE:{gq:'FY27 1Q', gRevE:'$1.2B', gEpsE:'$3.61'},
  ALAB:{gq:'FY26 3Q', gRevE:'$551M', gEpsE:'$1.12'},
- INTU:{gq:'FY27 1Q', gRevE:'$4.31B', gEpsE:'$2.85'},
  APP:{gq:'FY26 3Q', gRevE:'$2.1B', gEpsE:'$3.75'},
  DASH:{gq:'FY26 4Q', gRevE:'$4.82B', gEpsE:'$0.80'},
  PAYX:{gq:'FY27 2Q', gRevE:'$1.65B', gEpsE:'$1.36'},
@@ -4345,6 +4343,8 @@ const NEXTFY = {
  NEXTFY.MCHP={y:'FY27', rev:'$6.4B', revG:'+36%', eps:'$3.65', epsG:'+122%'};
  NEXTFY.TTWO={y:'FY27', rev:'$8.08B', revG:'+21%', eps:'$6.87', epsG:'+68%'};
  NEXTFY.AMAT={y:'FY27', rev:'$45.7B', revG:'+32.5%', eps:'$18.28', epsG:'+41.8%'};
+ NEXTFY.ADI={y:'FY27', rev:'$18.7B', revG:'+23%', eps:'$16.65', epsG:'+28%'};
+ NEXTFY.ROST={y:'FY26', rev:'$25.7B', revG:'+13%', eps:'$8.80', epsG:'+33%'};
 DB.companies.forEach(c => { const n = NEXTFY[c.ticker]; if (n) c.nfy = n; });
 
 /* 연EPS 확정·전망을 같은 기준으로 (2026.09.04 stockanalysis 일괄 조사)
@@ -4358,13 +4358,13 @@ const EPSB = {
  META:{y:'2025', a:29.68, f:31.16, b:'조정'},
  COST:{y:'FY26', a:20.76, f:null, b:'GAAP'},
  ADBE:{y:'FY25', a:20.94, f:24.48, b:'조정'},
- ADSK:{y:'FY26', a:10.43, f:12.6, b:'조정'},
+ ADSK:{y:'FY26', a:10.43, f:12.73, b:'조정'},
  CDNS:{y:'2025', a:7.14, f:8.40, b:'조정'},
  GOOGL:{y:'2025', a:10.81, f:20.6, b:'GAAP'},
  TSLA:{y:'2025', a:1.66, f:1.77, b:'조정'},
  NFLX:{y:'2025', a:2.53, f:3.59, b:'GAAP'},
  PLTR:{y:'2025', a:0.75, f:1.6, b:'조정'},
- WMT:{y:'FY26', a:2.64, f:2.89, b:'조정'},
+ WMT:{y:'FY26', a:2.64, f:2.87, b:'조정'},
  INTC:{y:'2025', a:0.42, f:1.5, b:'조정'},
  CSCO:{y:'FY26', a:4.33, f:5.50, b:'조정'},
  TMUS:{y:'2025', a:10.66, f:12.18, b:'조정'},
@@ -4372,13 +4372,13 @@ const EPSB = {
  PYPL:{y:'2025', a:5.31, f:5.60, b:'조정'},
  SHOP:{y:'2025', a:1.43, f:1.91, b:'조정'},
  MELI:{y:'2025', a:39.4, f:39.07, b:'GAAP'},
- PDD:{y:'2025', a:72.38, f:69.15, b:'조정'},
+ PDD:{y:'2025', a:9.19, f:null, b:'GAAP'},
  MU:{y:'FY26', a:75.52, f:null, b:'조정'},
  AMD:{y:'2025', a:4.17, f:7.55, b:'조정'},
  ARM:{y:'FY26', a:1.77, f:2.23, b:'조정'},
  TXN:{y:'2025', a:5.59, f:8.49, b:'조정'},
  QCOM:{y:'FY26', a:10.54, f:10.02, b:'조정'},
- ADI:{y:'FY25', a:7.79, f:12.84, b:'조정'},
+ ADI:{y:'FY26', a:13.05, f:16.65, b:'조정'},
  NXPI:{y:'2025', a:11.81, f:15.11, b:'조정'},
  MRVL:{y:'FY26', a:2.84, f:4.2, b:'조정'},
  MCHP:{y:'FY26', a:1.64, f:3.65, b:'조정'},
@@ -4396,11 +4396,11 @@ const EPSB = {
  CRWV:{y:'2025', a:-1.39, f:-3.93, b:'조정'},
  RKLB:{y:'2025', a:-0.18, f:-0.05, b:'조정'},
  SNPS:{y:'FY25', a:12.91, f:15.15, b:'조정'},
- INTU:{y:'FY26', a:24.27, f:24.14, b:'조정'},
- CRWD:{y:'FY26', a:0.93, f:1.26, b:'조정'},
+ INTU:{y:'FY26', a:16.46, f:20.24, b:'GAAP'},
+ CRWD:{y:'FY26', a:0.93, f:1.28, b:'조정'},
  FTNT:{y:'2025', a:2.76, f:3.56, b:'조정'},
  DDOG:{y:'2025', a:2.05, f:2.74, b:'조정'},
- WDAY:{y:'FY26', a:9.23, f:11.06, b:'조정'},
+ WDAY:{y:'FY26', a:9.23, f:11.12, b:'조정'},
  APP:{y:'2025', a:10.64, f:16.81, b:'조정'},
  DASH:{y:'2025', a:5.1, f:5.79, b:'조정'},
  ADP:{y:'FY26', a:11.12, f:12.34, b:'GAAP'},
@@ -4412,7 +4412,7 @@ const EPSB = {
  KDP:{y:'2025', a:2.05, f:2.29, b:'조정'},
  CCEP:{y:'2025', a:4.29, f:4.49, b:'GAAP'},
  SBUX:{y:'FY26', a:2.72, f:3.2, b:'조정'},
- ROST:{y:'FY25', a:6.61, f:8.69, b:'GAAP'},
+ ROST:{y:'FY25', a:6.61, f:8.80, b:'GAAP'},
  ORLY:{y:'2025', a:2.97, f:3.30, b:'GAAP'},
  TTWO:{y:'FY26', a:4.1, f:6.87, b:'조정'},
  BKNG:{y:'2025', a:9.12, f:10.45, b:'조정'},
@@ -5528,9 +5528,15 @@ nav('home');
         if(typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)){
           const dt=new Date(d+'T12:00:00Z');
           if(dt.getTime() > Date.now()-864e5){ const lab=(dt.getUTCMonth()+1)+'월 '+dt.getUTCDate()+'일';
-            // 이미 반영한 발표일이면(야후가 다음 날짜로 바꾸기 전) 예정일 칩을 잠시 숨김
-            /* 이미 반영한 발표일이면(야후가 다음 날짜로 바꾸기 전) 날짜 대신 계산한 추정 시기로 되돌린다 */
-            if(QR[c.ticker] && QR[c.ticker].d===lab){ c.nextEarn=c.nextEarnEst||null; c.nextEarnQ=''; }
+            /* 야후 예정일이 직전 발표일(QR d)로부터 30일 이내면 낡은 값이다 — 같은 날짜이거나(야후가 아직 안 바꿈)
+               회사가 발표를 앞당긴 경우(크라우드스트라이크: 11/23 발표했는데 야후는 12/1). 분기 실적은 약 90일 간격.
+               이때는 날짜 대신 계산한 추정 시기(nextEarnEst)로 되돌린다. */
+            const qd=QR[c.ticker]&&QR[c.ticker].d, qm=qd&&String(qd).match(/(\d+)월\s*(\d+)일/);
+            let gap=null;
+            if(qm){ const y0=dt.getUTCFullYear(); let best=null;
+              for(const y of [y0-1,y0,y0+1]){ const t=Date.UTC(y,+qm[1]-1,+qm[2],12); if(t<=dt.getTime() && (best===null||t>best)) best=t; }
+              if(best!==null) gap=(dt.getTime()-best)/864e5; }
+            if(gap!==null && gap<=30){ c.nextEarn=c.nextEarnEst||null; c.nextEarnQ=''; }
             else { c.nextEarn=lab; c.nextEarnQ=''; } }
         }
       });
